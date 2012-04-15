@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="converter">
+      <UniqueIdentifier>{8bfd58db-628f-42ab-97bf-ec81ef28b6f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="object">
+      <UniqueIdentifier>{c114a040-4f93-49ec-9346-917cfcebbc0b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\dep\src\BoostPython\dict.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\errors.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\exec.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\import.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\list.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\long.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\module.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\numeric.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\object_operators.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\object_protocol.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\slice.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\str.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\tuple.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\wrapper.cpp" />
+    <ClCompile Include="..\..\dep\src\BoostPython\object\function.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\function_doc_signature.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\inheritance.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\iterator.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\life_support.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\pickle_support.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\stl_iterator.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\class.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\object\enum.cpp">
+      <Filter>object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\converter\arg_to_python_base.cpp">
+      <Filter>converter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\converter\builtin_converters.cpp">
+      <Filter>converter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\converter\from_python.cpp">
+      <Filter>converter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\converter\registry.cpp">
+      <Filter>converter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\BoostPython\converter\type_id.cpp">
+      <Filter>converter</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
