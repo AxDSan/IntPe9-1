@@ -150,11 +150,11 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Injector.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Injector.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -162,51 +162,51 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing About.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing About.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Views\Parser.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Parser.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Parser.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Views\Main.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Main.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Main.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Models\PacketList.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing PacketList.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing PacketList.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Models\Packet.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Packet.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Packet.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h" />
     <ClInclude Include="..\..\IntPe9\QHexEdit\xbytearray.h" />
@@ -214,21 +214,21 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing qhexedit_p.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing qhexedit_p.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\QHexEdit\qhexedit.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing qhexedit.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB "-I." "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -D_DEBUG "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing qhexedit.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I." "-I." "-I." "-I." "%(FullPath)" -o "..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"   -DBOOST_DATE_TIME_NO_LIB -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB "-D$(NOINHERIT)\." -D_UNICODE  "-I." "-I.\..\..\IntPe9" "-I.\..\.." "-I.\..\..\dep\include" "-I.\..\..\IntPe9\GeneratedFiles" "-I$(QTDIR)\include" "-I.\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(NOINHERIT)\." "-I." "-I." "-I." "-I." "%(FullPath)" -o ".\..\..\IntPe9\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"</Command>
     </CustomBuild>
     <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_About.h" />
     <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_Main.h" />
@@ -241,6 +241,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -264,38 +265,44 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(ConfigurationName)</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\VC$(PlatformToolsetVersion)_$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\VC$(PlatformToolsetVersion)_$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)__$(Platform)_$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)__$(Platform)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\IntPe9\GeneratedFiles;$(QTDIR)\include;..\..\IntPe9\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;_DEBUG;</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../IntPe9;../../;../../dep/include;..\..\IntPe9\GeneratedFiles;$(QTDIR)\include;..\..\IntPe9\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;QtCored4.lib;QtGuid4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;QtCored4.lib;QtGuid4.lib;user32.lib</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(QTDIR)\bin\QtCored4.dll $(OutDir)
+copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Qt Runtime</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>BOOST_DATE_TIME_NO_LIB;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../IntPe9;../../;../../dep/include;..\..\IntPe9\GeneratedFiles;$(QTDIR)\include;..\..\IntPe9\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../IntPe9;../../;../../dep/include;..\..\IntPe9\GeneratedFiles;$(QTDIR)\include;..\..\IntPe9\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;</AdditionalIncludeDirectories>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;User32.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;user32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(QTDIR)\bin\QtCore4.dll $(OutDir)

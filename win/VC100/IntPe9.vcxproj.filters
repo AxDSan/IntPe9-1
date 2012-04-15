@@ -99,18 +99,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GeneratedFiles\qrc_IntPe.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\EntryPoint.cpp" />
     <ClCompile Include="..\..\IntPe9\Injector.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Injector.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Injector.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\QHexEdit\commands.cpp">
       <Filter>QHexEdit</Filter>
@@ -118,20 +109,8 @@
     <ClCompile Include="..\..\IntPe9\QHexEdit\qhexedit.cpp">
       <Filter>QHexEdit</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_qhexedit.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_qhexedit.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\QHexEdit\qhexedit_p.cpp">
       <Filter>QHexEdit</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_qhexedit_p.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_qhexedit_p.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\QHexEdit\xbytearray.cpp">
       <Filter>QHexEdit</Filter>
@@ -139,47 +118,68 @@
     <ClCompile Include="..\..\IntPe9\Models\Packet.cpp">
       <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Packet.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Packet.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\Models\PacketList.cpp">
       <Filter>Models</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_PacketList.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_PacketList.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\Views\Main.cpp">
       <Filter>Views</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Main.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Main.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\Views\Parser.cpp">
       <Filter>Views</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_Parser.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_Parser.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\Views\About.cpp">
       <Filter>Views</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_About.cpp">
-      <Filter>Generated Files\Debug</Filter>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_About.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_About.cpp">
-      <Filter>Generated Files\Release</Filter>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Injector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Packet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_PacketList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit_p.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\qrc_IntPe.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_About.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Injector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Packet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_PacketList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_qhexedit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_qhexedit_p.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,20 +188,20 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeneratedFiles\ui_About.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_Main.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_Parser.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h">
       <Filter>QHexEdit</Filter>
     </ClInclude>
     <ClInclude Include="..\..\IntPe9\QHexEdit\xbytearray.h">
       <Filter>QHexEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_About.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_Parser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
