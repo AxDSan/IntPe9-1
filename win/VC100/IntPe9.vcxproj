@@ -77,6 +77,54 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\IntPe9\EntryPoint.cpp" />
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_About.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Injector.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>	
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Main.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Packet.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_PacketList.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Parser.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit_p.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_About.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Injector.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Main.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Packet.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_PacketList.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Parser.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_qhexedit.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_qhexedit_p.cpp">
+		<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	</ClCompile>
     <ClCompile Include="..\..\IntPe9\Injector.cpp" />
     <ClCompile Include="..\..\IntPe9\Models\Packet.cpp" />
     <ClCompile Include="..\..\IntPe9\Models\PacketList.cpp" />
@@ -87,59 +135,11 @@
     <ClCompile Include="..\..\IntPe9\Views\About.cpp" />
     <ClCompile Include="..\..\IntPe9\Views\Main.cpp" />
     <ClCompile Include="..\..\IntPe9\Views\Parser.cpp" />
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_About.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Injector.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Packet.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_PacketList.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Parser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit_p.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\qrc_IntPe.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_About.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Injector.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Packet.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_PacketList.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Parser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_qhexedit.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_qhexedit_p.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
