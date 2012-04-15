@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{2ea4e190-07bb-477c-8a0a-75752a72e12c}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{800a9b16-500a-4960-a9ac-e578909dd399}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="QHexEdit">
+      <UniqueIdentifier>{059ccc7e-7b97-48c6-9075-c71f679cbe21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{eab71a0b-4d4e-4bb3-9bfd-eb55a1814642}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views">
+      <UniqueIdentifier>{0f3b9dcc-088c-4faa-8dc6-a574dc6f8566}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\IntPe9\IntPe.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Injector.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Ui\About.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Ui\Main.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Ui\Parser.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\QHexEdit\qhexedit.h">
+      <Filter>QHexEdit</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\QHexEdit\qhexedit_p.h">
+      <Filter>QHexEdit</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Models\Packet.h">
+      <Filter>Models</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Models\PacketList.h">
+      <Filter>Models</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Views\Main.h">
+      <Filter>Views</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Views\Parser.h">
+      <Filter>Views</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Views\About.h">
+      <Filter>Views</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\IntPe9\Resources\send.gif">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\recv.gif">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\16ico.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\logo.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\QHexEdit\license.txt">
+      <Filter>QHexEdit</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GeneratedFiles\qrc_IntPe.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\EntryPoint.cpp" />
+    <ClCompile Include="..\..\IntPe9\Injector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Injector.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Injector.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\QHexEdit\commands.cpp">
+      <Filter>QHexEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\QHexEdit\qhexedit.cpp">
+      <Filter>QHexEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qhexedit.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qhexedit.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\QHexEdit\qhexedit_p.cpp">
+      <Filter>QHexEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qhexedit_p.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qhexedit_p.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\QHexEdit\xbytearray.cpp">
+      <Filter>QHexEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Models\Packet.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Packet.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Packet.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Models\PacketList.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PacketList.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PacketList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Views\Main.cpp">
+      <Filter>Views</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Main.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Main.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Views\Parser.cpp">
+      <Filter>Views</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Parser.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Parser.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Views\About.cpp">
+      <Filter>Views</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_About.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_About.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\IntPe9\IntPe.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_About.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_Main.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_Parser.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h">
+      <Filter>QHexEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\IntPe9\QHexEdit\xbytearray.h">
+      <Filter>QHexEdit</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
