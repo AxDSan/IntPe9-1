@@ -49,6 +49,7 @@ QVariant Core::getField(int column)
 
 QPixmap Core::getIcon()
 {
+	return QPixmap(":/Common/Resources/ok.png");
 /*
 	if(_type == WSASENDTO)
 		return QPixmap(":/Common/Resources/send.gif");

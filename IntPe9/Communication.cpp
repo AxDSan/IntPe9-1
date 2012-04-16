@@ -17,7 +17,7 @@ Communication::Communication(Core *core, uint32 pid)
 
 	//Setup the packet list model + packet listener
 	_packetList = new PacketList(_pid);
-
+	
 	_isStopped = false;
 
 	//Start the main thread
@@ -53,6 +53,7 @@ void Communication::buildGui()
 	_layout = new QBoxLayout(QBoxLayout::TopToBottom);
 	_view->setLayout(_layout);
 	packetView = new QTableView(_view);
+	_layout->setContentsMargins(0,0,0,0);
 	_layout->addWidget(packetView);
 	packetView->setModel(_packetList);
 

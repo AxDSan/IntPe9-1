@@ -101,11 +101,9 @@ QVariant Packet::getField(int column)
 QPixmap Packet::getIcon()
 {
 	if(_type == WSASENDTO)
-		return QPixmap(":/Common/Resources/send.gif");
+		return QPixmap(":/Common/Resources/out.png");
 	else if(_type == WSARECVFROM)
-		return QPixmap(":/Common/Resources/recv.gif");
-	else if(_type == WSARECV)
-		return QPixmap(":/Common/Resources/logo.png");
+		return QPixmap(":/Common/Resources/in.png");
 	else
 		return QPixmap();
 }	
