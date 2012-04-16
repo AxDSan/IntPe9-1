@@ -3,13 +3,25 @@
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
+#ifdef _DEBUG
+	QDir::setCurrent("../../bin/VC100_Debug");
+#endif
+
 	_mainView.setupUi(this);
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
 
-	//
-	_injector = new Injector();
+	//Docks
+	_cores = new Cores(&_mainView);
+	_mainView.tableCores->setModel(_cores);
+	_mainView.tableCores->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+	_mainView.tableCores->horizontalHeader()->resizeSection(0, 45);
+	_mainView.tableCores->horizontalHeader()->resizeSection(1, 50);
+	_mainView.tableCores->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+	_cores->readCores("Cores");
+
+	//Other initializing
 	_packetList = new PacketList();
 	_mainView.packetList->setModel(_packetList);
 
@@ -23,17 +35,22 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.packetList->horizontalHeader()->resizeSection(1, 50);
 	_mainView.packetList->horizontalHeader()->resizeSection(2, 420);
 
-	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()) );
-	connect(_mainView.actionSavePackets, SIGNAL(triggered()), this, SLOT(saveAllAsText()) );
+	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
+	connect(_mainView.actionSavePackets, SIGNAL(triggered()), this, SLOT(saveAllAsText()));
+	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
+	
 	connect(_mainView.packetList->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(slotOnClickPacketList(const QModelIndex &, const QModelIndex &)) );
-	//_mainView.packetList->setColumnWidth(0, 17);
-	//_mainView.packetList->setColumnWidth(1, 40);
-	//_mainView.packetList->setColumnWidth(2, 100);
 }
 
 MainGui::~MainGui()
 {
 
+}
+
+void MainGui::clearList()
+{
+	_packetList->clear();
+	_hexView->setData(NULL);
 }
 
 void MainGui::saveAllAsText()

@@ -7,6 +7,8 @@
 #include <QPixmap>
 #include <QThread>
 #include <QMetaObject>
+#include <QMutex>
+
 #include "Packet.h"
 #include <boost/interprocess/ipc/message_queue.hpp>
 
@@ -25,6 +27,7 @@ public:
 	QVariant data(const QModelIndex &index, int role) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 	Packet *getPacketAt(int index);
+
 private:
 	bool _running;
 	QVector<Packet*> _packets;
@@ -33,6 +36,7 @@ private:
 
 public slots:
 	void packetPoll();
+	void clear();
 
 };
 

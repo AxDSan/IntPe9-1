@@ -6,12 +6,16 @@
 #include <QStyledItemDelegate>
 #include <QFile>
 
-
-#include "Models/PacketList.h"
+//Ui
 #include "ui_Main.h"
-#include "About.h"
-#include "Injector.h"
+
+//Classes
+#include "Models/PacketList.h"
 #include "QHexEdit/qhexedit.h"
+
+//Extra views/handlers
+#include "About.h"
+#include "Cores.h"
 
 class MainGui : public QMainWindow
 {
@@ -29,12 +33,16 @@ public:
 		void slotShow();
 		void slotHide();
 
+		void clearList();
+
+	
+
 private:
 	//Views
 	QHexEdit *_hexView;
 	AboutGui *_aboutGui;
 	Ui::mainView _mainView;
-	Injector *_injector;
+	Cores *_cores;
 	PacketList *_packetList;
 };
 

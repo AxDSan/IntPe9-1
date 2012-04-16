@@ -1,5 +1,7 @@
 #include "PacketList.h"
 
+QMutex mutexList;
+
 PacketList::PacketList(QObject *parent /* = 0 */) : QAbstractListModel(parent)
 {
 	_running = true;
@@ -17,6 +19,18 @@ PacketList::~PacketList()
 	delete _thread;
 }
 
+void PacketList::clear()
+{
+	mutexList.lock();
+	Packet *packet;
+	foreach(packet, _packets)
+		delete packet;
+	_packets.clear();
+	mutexList.unlock();
+	reset();
+	emit layoutChanged();
+}
+
 void PacketList::packetPoll()
 {
 	MessagePacket *recvPacket = (MessagePacket*)new uint8[MQ_MAX_SIZE];
@@ -32,8 +46,10 @@ void PacketList::packetPoll()
 		else
 		{
 			//Handle this packet
+			mutexList.lock();
 			_packets.push_back(new Packet(recvPacket));
 			emit layoutChanged();
+			mutexList.unlock();
 		}
 		//packetQueue
 	}

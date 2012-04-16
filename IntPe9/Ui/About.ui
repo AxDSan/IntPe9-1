@@ -20,7 +20,7 @@
    <string>About</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="IntPe.qrc">
+   <iconset resource="../IntPe.qrc">
     <normaloff>:/Common/Resources/16ico.png</normaloff>:/Common/Resources/16ico.png</iconset>
   </property>
   <property name="layoutDirection">
@@ -109,7 +109,7 @@ p, li { white-space: pre-wrap; }
       <enum>Qt::PlainText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="IntPe.qrc">:/Common/Resources/logo.png</pixmap>
+      <pixmap resource="../IntPe.qrc">:/Common/Resources/logo.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>false</bool>
@@ -125,7 +125,9 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="IntPe.qrc"/>
+  <include location="../IntPe.qrc"/>
+  <include location="../IntPe.qrc"/>
+  <include location="../IntPe.qrc"/>
  </resources>
  <connections>
   <connection>
