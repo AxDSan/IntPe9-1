@@ -36,43 +36,17 @@ bool Skeleton::sendPacket(MessagePacket *packet)
 
 DWORD WINAPI commandListener(LPVOID lpParam) 
 {
-	CommandControll *command = (CommandControll*)new uint8[MQ_MAX_SIZE];
+	CommandControll *command = (CommandControll*)new uint8[sizeof(CommandControll)];
 	uint32 recvdSize, priority;
 
+/*
 	message_queue *queue = new message_queue(open_only, "CommandControll");
 	while(me->isActive)
 	{
 		queue->receive(command, MQ_MAX_SIZE, recvdSize, priority);
-		me->processCommand(command);
-	}
+	}*/
 	return 0;
 } 
-
-void skipUnused(uint8 *data, uint32 *c)
-{
-	uint32 i = *c;
-	while(data[i] == ' ' || data[i] == '\r' || data[i] == '\n' || data[i] == '\0' || data[i] == '\t')
-		i++;
-	*c = i;
-}
-void Skeleton::processCommand(CommandControll *command)
-{
-	uint32 i = 0;
-	uint8 *data = command->getData();
-	while(i < command->length)
-	{
-		if(data[i] == '.')
-		{
-			i++;
-			if(memcmp(&data[i], "settings", 8) == 0)
-			{
-				skipUnused(data, &i);
-			}
-		}
-		i++;
-	}
-
-}
 
 Skeleton::Skeleton()
 {

@@ -19,6 +19,7 @@
 using std::map;
 using std::list;
 using std::string;
+
 using namespace boost::python;
 using namespace boost::interprocess;
 
@@ -37,17 +38,6 @@ int		WSAAPI newWSAConnect(SOCKET s, const struct sockaddr *name, int namelen, LP
 int		WSAAPI newWSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine);
 SOCKET		WSAAPI newWSASocketA(int af, int type, int protocol, LPWSAPROTOCOL_INFOA lpProtocolInfo, GROUP g, DWORD dwFlags);
 
-enum TypeVariable
-{
-	T_SOCKET,
-	T_STRING,
-};
-typedef struct
-{
-	TypeVariable type;
-	uint32 length;
-	void *data;
-} SettingVariable;
 
 class Skeleton
 {
@@ -55,8 +45,6 @@ protected:
 	Upx *_upx;
 	virtual void initialize() = 0;
 	virtual void finalize() = 0;
-
-	map<string, SettingVariable> settings;
 
 private:
 	message_queue *_masterQue, *_packetQue;
@@ -73,7 +61,6 @@ public:
 	//Public functions
 	bool sendCommand();
 	bool sendPacket(MessagePacket *packet);
-	void processCommand(CommandControll *command);
 
 	//All hookable functions
 	defWSASendTo			_oldWSASendTo;

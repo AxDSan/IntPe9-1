@@ -51,11 +51,13 @@ LeagueOfLegends::LeagueOfLegends()
 
 void LeagueOfLegends::initialize()
 {
+	//First create buffers!!! then hook
+	sendBuf = (MessagePacket*)new uint8[MQ_MAX_SIZE];
+	recvBuf = (MessagePacket*)new uint8[MQ_MAX_SIZE];
+	
 	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&newWSASendTo);
 	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&newWSARecvFrom);
 
-	sendBuf = (MessagePacket*)new uint8[MQ_MAX_SIZE];
-	recvBuf = (MessagePacket*)new uint8[MQ_MAX_SIZE];
 	DbgPrint("League of Legends engine started!");
 }
 
