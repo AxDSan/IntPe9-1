@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>IntPe9</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../IntPe.qrc">
-    <normaloff>:/Common/Resources/16ico.png</normaloff>:/Common/Resources/16ico.png</iconset>
-  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <property name="margin">

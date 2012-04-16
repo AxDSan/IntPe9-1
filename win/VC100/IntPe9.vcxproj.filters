@@ -88,20 +88,23 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\IntPe9\Resources\send.gif">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\IntPe9\Resources\recv.gif">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\IntPe9\Resources\16ico.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\IntPe9\Resources\logo.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\IntPe9\QHexEdit\license.txt">
       <Filter>QHexEdit</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\no.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\ok.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\in.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\out.png">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

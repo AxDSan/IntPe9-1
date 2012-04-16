@@ -25,19 +25,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\IntPe9\QHexEdit\license.txt" />
-    <None Include="..\..\IntPe9\Resources\16ico.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </None>
+    <None Include="..\..\IntPe9\Resources\in.png" />
     <None Include="..\..\IntPe9\Resources\logo.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\IntPe9\Resources\recv.gif">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="..\..\IntPe9\Resources\send.gif">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </None>
@@ -74,6 +63,9 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\IntPe9\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o "..\..\IntPe9\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
     </CustomBuild>
+    <None Include="..\..\IntPe9\Resources\no.png" />
+    <None Include="..\..\IntPe9\Resources\ok.png" />
+    <None Include="..\..\IntPe9\Resources\out.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\IntPe9\Communication.cpp" />
