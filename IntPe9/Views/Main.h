@@ -5,6 +5,7 @@
 #include <QtGui/QMainWindow>
 #include <QStyledItemDelegate>
 #include <QFile>
+#include <QSettings>
 
 //Ui
 #include "ui_Main.h"

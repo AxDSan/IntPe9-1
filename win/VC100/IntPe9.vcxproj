@@ -321,10 +321,11 @@
     </Link>
     <PostBuildEvent>
       <Command>copy $(QTDIR)\bin\QtCored4.dll $(OutDir)
-copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)</Command>
+copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)
+copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Qt Runtime</Message>
+      <Message>Qt  &amp; Python runtime</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -342,10 +343,11 @@ copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)</Command>
     </Link>
     <PostBuildEvent>
       <Command>copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
-copy $(QTDIR)\bin\QtGui4.dll $(OutDir)</Command>
+copy $(QTDIR)\bin\QtGui4.dll $(OutDir)
+copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Qt Runtime</Message>
+      <Message>Qt  &amp; Python runtime</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

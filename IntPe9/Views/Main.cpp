@@ -5,6 +5,7 @@ MainGui* gui;
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
+//As debug i run from compiler so change the path to the output path of all bins
 #ifdef _DEBUG
 	QDir::setCurrent("../../bin/VC100_Debug");
 #endif
@@ -12,6 +13,15 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	gui = this;
 
 	_mainView.setupUi(this);
+
+	//Add this running directory to the path environment (for custom dll's, python)
+	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
+	QStringList paths = environment.value("Path").toString().split(';');
+	if(!paths.contains(QDir::currentPath(), Qt::CaseInsensitive))
+	{
+		paths.append(QDir::currentPath());
+		environment.setValue("Path", paths.join(";"));
+	}
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
@@ -46,7 +56,11 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 MainGui::~MainGui()
 {
-
+	//Delete this dir from path environment
+	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
+	QStringList paths = environment.value("Path").toString().split(';');
+	if(paths.removeAll(QDir::currentPath()) > 0)
+		environment.setValue("Path", paths.join(";"));
 }
 
 void MainGui::clearList()
