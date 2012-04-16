@@ -12,7 +12,7 @@
 #include <QMap>
 #include <QList>
 
-#include "Communication.h"
+#include "Sniffer.h"
 #include "Models/Core.h"
 //Views
 #include "ui_Main.h"
@@ -48,7 +48,7 @@ private:
 	bool _running;
 	QThread *_thread;
 	QVector<Core*> _cores;
-	QVector<Communication*> _communications;
+	QVector<Sniffer*> _communications;
 	InjectMap _injected;
 
 	Ui::mainView *_view;

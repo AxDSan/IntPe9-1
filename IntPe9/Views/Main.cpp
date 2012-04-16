@@ -51,7 +51,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	
 	//
 
-	qRegisterMetaType<Communication*>("Communication*");
+	qRegisterMetaType<Sniffer*>("Sniffer*");
 }
 
 MainGui::~MainGui()
@@ -69,13 +69,13 @@ void MainGui::clearList()
 	_hexView->setData(NULL);
 }
 
-void MainGui::registerPacketView(Communication *communication)
+void MainGui::registerPacketView(Sniffer *sniffer)
 {
-	communication->buildGui();
-	_mainView.tabPackets->addTab(communication->getView(), communication->getCore()->getExeName());
+	sniffer->buildGui();
+	_mainView.tabPackets->addTab(sniffer->getView(), sniffer->getCore()->getExeName());
 
 	//Change some settings in the layout
-	connect(communication->packetView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(slotOnClickPacketList(const QModelIndex &, const QModelIndex &)));
+	connect(sniffer->packetView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(slotOnClickPacketList(const QModelIndex &, const QModelIndex &)));
 
 }
 

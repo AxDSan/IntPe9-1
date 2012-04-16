@@ -73,7 +73,7 @@ void Cores::cleanInjectedList()
 
 bool Cores::hasCommunication(uint32 pid)
 {
-	Communication *communication;
+	Sniffer *communication;
 	foreach(communication, _communications)
 		if(communication->getPid() == pid)
 			return true;
@@ -116,18 +116,18 @@ bool Cores::injectAllCores()
 			if(!hasCommunication(pe32.th32ProcessID))
 			{
 				//Nop we are not, so create new one and try to inject
-				Communication *communication = new Communication(core, pe32.th32ProcessID);
+				Sniffer *sniffer = new Sniffer(core, pe32.th32ProcessID);
 				if(inject(core, pe32.th32ProcessID))                //Try to inject this core into this pid
 				{
-					_communications.push_back(communication);
-					QMetaObject::invokeMethod(gui, "registerPacketView", Q_ARG(Communication*, communication));
+					_communications.push_back(sniffer);
+					QMetaObject::invokeMethod(gui, "registerPacketView", Q_ARG(Sniffer*, sniffer));
 
 					//_injected[pe32.th32ProcessID] = core;       //Save the pid so we know we injected into this pid
 					core->addPid(pe32.th32ProcessID);
 					emit layoutChanged();
 				}
 				else
-					delete communication;
+					delete sniffer;
 			}
 		}
 	}while (Process32Next(hProcessSnap, &pe32));

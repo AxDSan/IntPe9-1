@@ -1,6 +1,6 @@
-#include "Communication.h"
+#include "Sniffer.h"
 
-Communication::Communication(Core *core, uint32 pid)
+Sniffer::Sniffer(Core *core, uint32 pid)
 {
 	_core = core;
 	_pid = pid;
@@ -24,7 +24,7 @@ Communication::Communication(Core *core, uint32 pid)
 	QMetaObject::invokeMethod(this, "mainLoop", Qt::QueuedConnection);
 }
 
-Communication::~Communication()
+Sniffer::~Sniffer()
 {
 	_running = false;
 	_thread->exit();
@@ -41,12 +41,20 @@ Communication::~Communication()
 	delete _thread;
 }
 
-uint32 Communication::getPid()
+uint32 Sniffer::getPid()
 {
 	return _pid;
 }
 
-void Communication::buildGui()
+void Sniffer::autoScroll(bool state)
+{
+	if(state)
+		connect(_packetList, SIGNAL(layoutChanged()), packetView, SLOT(scrollToBottom()));
+	else
+		disconnect(_packetList, SIGNAL(layoutChanged()), packetView, SLOT(scrollToBottom()));
+}
+
+void Sniffer::buildGui()
 {
 	//Build the layout
 	_view = new QWidget();
@@ -81,28 +89,31 @@ void Communication::buildGui()
 	packetView->setWordWrap(false);
 	packetView->setCornerButtonEnabled(false);
 
+	autoScroll(true);
+	autoScroll(false);
+
 	//Set font
 	QFont font;
 	font.setFamily(QString::fromUtf8("Consolas"));
 	packetView->setFont(font);
 }
 
-bool Communication::isStopped()
+bool Sniffer::isStopped()
 {
 	return _isStopped;
 }
 
-Core *Communication::getCore()
+Core *Sniffer::getCore()
 {
 	return _core;
 }
 
-QWidget *Communication::getView()
+QWidget *Sniffer::getView()
 {
 	return _view;
 }
 
-void Communication::mainLoop()
+void Sniffer::mainLoop()
 {
 	wait(20);
 	QMetaObject::invokeMethod(this, "mainLoop", Qt::QueuedConnection);

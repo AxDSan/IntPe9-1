@@ -11,13 +11,13 @@
 #include "Models/Core.h"
 #include "Models/PacketList.h"
 
-class Communication : public QThread
+class Sniffer : public QThread
 {
 	Q_OBJECT
 
 public:
-	Communication(Core *core, uint32 pid);
-	~Communication();
+	Sniffer(Core *core, uint32 pid);
+	~Sniffer();
 
 	QWidget *getView();
 	Core *getCore();
@@ -40,7 +40,7 @@ private:
 
 public slots:
 	void mainLoop();
-
+	void autoScroll(bool state);
 };
 
 #endif

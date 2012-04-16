@@ -35,7 +35,7 @@ public:
 		void slotHide();
 
 		void clearList();
-		void registerPacketView(Communication *communication);
+		void registerPacketView(Sniffer *sniffer);
 private:
 	//Views
 	QHexEdit *_hexView;

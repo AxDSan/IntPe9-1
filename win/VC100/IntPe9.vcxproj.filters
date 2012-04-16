@@ -83,7 +83,7 @@
     <CustomBuild Include="..\..\IntPe9\Cores.h">
       <Filter>Models</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Communication.h">
+    <CustomBuild Include="..\..\IntPe9\Sniffer.h">
       <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -199,13 +199,13 @@
     <ClCompile Include="..\..\IntPe9\Cores.cpp">
       <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Communication.cpp">
+    <ClCompile Include="..\..\IntPe9\Sniffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Communication.cpp">
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Sniffer.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Communication.cpp">
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Sniffer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,7 +13,6 @@ PacketList::PacketList(uint32 pid, QObject *parent /* = 0 */) : QAbstractListMod
 
 	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	sprintf_s(_queueName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, _pid);
-	OutputDebugStringA(_queueName);
 	_packetQueue = new message_queue(open_or_create, _queueName, MP_MAX_NO, MP_MAX_SIZE);
 
 	QMetaObject::invokeMethod(this, "packetPoll", Qt::QueuedConnection);
