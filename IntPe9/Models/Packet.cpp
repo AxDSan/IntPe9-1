@@ -1,6 +1,6 @@
 #include "Packet.h"
 
-#define SUMMARY_LEN 18
+#define SUMMARY_LEN 16
 
 Packet::Packet(MessagePacket *data)
 {

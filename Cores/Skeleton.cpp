@@ -29,7 +29,7 @@ bool Skeleton::sendPacket(MessagePacket *packet)
 	}
 	catch(...)
 	{
-		DbgPrint("Exception raised on try send, packetLength: %i, structLength: %i", packet->length, packet->messagePacketSize());
+		DbgPrint("Exception raised on try send...");
 		return false;
 	}
 }
@@ -61,7 +61,17 @@ Skeleton::Skeleton()
 	CreateThread( NULL, 0, commandListener, NULL, 0, NULL);
 	
 	//Initialize all message_queue's
-	_packetQue = new message_queue(open_only, "packetSniffer");
+	try
+	{
+		int8 queueName[MP_QUEUE_NAME_SIZE];
+		sprintf_s(queueName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, GetCurrentProcessId());
+		_packetQue = new message_queue(open_or_create, queueName, MP_MAX_NO, MP_MAX_SIZE);
+		DbgPrint("Opened queue: %s", queueName);
+	}
+	catch(...)
+	{
+		DbgPrint("Was not able to open the queue packet queue");
+	}
 }
 
 Skeleton::~Skeleton()

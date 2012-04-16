@@ -1,20 +1,17 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-
 #include <iostream>
 #include <vector>
 #include <cstdarg>
 
-#define MQ_NUM_SIZE	0x400
-#define MQ_MAX_SIZE	0x4000
-
-#define MQ_MASTER_NUM_SIZE	0x100
-#define MQ_MASTER_MAX_SIZE	0x100
-#define MQ_MASTER_NAME		"IntPe9Master"
+#define MP_QUEUE_NAME "PacketListener_"
+#define MP_QUEUE_NAME_SIZE 30
+#define MP_MAX_SIZE 0x1500
+#define MP_MAX_NO 0x400
 
 typedef long long		int64;
-typedef int				int32;
+typedef int			int32;
 typedef short			int16;
 typedef char			int8; 
 typedef unsigned long long	uint64;

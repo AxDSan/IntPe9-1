@@ -34,9 +34,7 @@ public:
 		void slotHide();
 
 		void clearList();
-
-	
-
+		void registerPacketView(Communication *communication);
 private:
 	//Views
 	QHexEdit *_hexView;
@@ -45,5 +43,7 @@ private:
 	Cores *_cores;
 	PacketList *_packetList;
 };
+
+extern MainGui* gui;
 
 #endif // MAIN_H

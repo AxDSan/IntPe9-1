@@ -1,4 +1,5 @@
 #include "Cores.h"
+#include "Views/Main.h"
 #include <windows.h>
 #include <tlhelp32.h>
 
@@ -43,7 +44,7 @@ void Cores::listenerLoop()
 	while(_running)
 	{
 		injectAllCores();
-		cleanInjectedList();
+		//cleanInjectedList();
 		Sleep(50);
 	}
 }
@@ -68,6 +69,15 @@ void Cores::cleanInjectedList()
 		CloseHandle(check);
 	}
 
+}
+
+bool Cores::hasCommunication(uint32 pid)
+{
+	Communication *communication;
+	foreach(communication, _communications)
+		if(communication->getPid() == pid)
+			return true;
+	return false;
 }
 
 Core *Cores::haveCore(QString name)
@@ -102,13 +112,23 @@ bool Cores::injectAllCores()
 		Core *core = haveCore(QString::fromWCharArray(pe32.szExeFile));
 		if(core)
 		{
-			if(_injected.find(pe32.th32ProcessID) == _injected.end())   //Check if we already injected into this pid
+			//We have a core to inject for this process, but are we already running for this pid?
+			if(!hasCommunication(pe32.th32ProcessID))
+			{
+				//Nop we are not, so create new one and try to inject
+				Communication *communication = new Communication(core, pe32.th32ProcessID);
 				if(inject(core, pe32.th32ProcessID))                //Try to inject this core into this pid
 				{
-					_injected[pe32.th32ProcessID] = core;       //Save the pid so we know we injected into this pid
+					_communications.push_back(communication);
+					QMetaObject::invokeMethod(gui, "registerPacketView", Q_ARG(Communication*, communication));
+
+					//_injected[pe32.th32ProcessID] = core;       //Save the pid so we know we injected into this pid
 					core->addPid(pe32.th32ProcessID);
 					emit layoutChanged();
 				}
+				else
+					delete communication;
+			}
 		}
 	}while (Process32Next(hProcessSnap, &pe32));
 

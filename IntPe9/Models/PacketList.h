@@ -9,6 +9,7 @@
 #include <QMetaObject>
 #include <QMutex>
 
+#include <common.h>
 #include "Packet.h"
 #include <boost/interprocess/ipc/message_queue.hpp>
 
@@ -19,7 +20,7 @@ class PacketList : public QAbstractListModel
 	Q_OBJECT
 
 public:
-	PacketList(QObject *parent = 0);
+	PacketList(uint32 pid, QObject *parent = 0);
 	~PacketList();
 
 	int columnCount(const QModelIndex &parent) const;
@@ -27,16 +28,22 @@ public:
 	QVariant data(const QModelIndex &index, int role) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 	Packet *getPacketAt(int index);
+	void clear();
 
 private:
+	uint32 _pid;
 	bool _running;
 	QVector<Packet*> _packets;
 	QThread *_thread;
-	message_queue *mq;
 
+	//Packet IPC
+	message_queue *_packetQueue;
+	MessagePacket *recvPacket;
+	int8 _queueName[MP_QUEUE_NAME_SIZE];
+
+//This thread is main loop so it can not recive other signals
 public slots:
 	void packetPoll();
-	void clear();
 
 };
 

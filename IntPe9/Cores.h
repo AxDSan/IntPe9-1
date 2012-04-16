@@ -12,6 +12,7 @@
 #include <QMap>
 #include <QList>
 
+#include "Communication.h"
 #include "Models/Core.h"
 //Views
 #include "ui_Main.h"
@@ -37,15 +38,17 @@ public:
 	bool injectAllCores();
 	void cleanInjectedList();
 	Core *haveCore(QString name);
+	bool hasCommunication(uint32 pid);
 
 public slots:
 	void listenerLoop();
 	void readCores(QString path);
-	
+
 private:
 	bool _running;
 	QThread *_thread;
 	QVector<Core*> _cores;
+	QVector<Communication*> _communications;
 	InjectMap _injected;
 
 	Ui::mainView *_view;

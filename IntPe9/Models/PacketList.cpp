@@ -1,13 +1,20 @@
 #include "PacketList.h"
-
+#include <Windows.h>
 QMutex mutexList;
 
-PacketList::PacketList(QObject *parent /* = 0 */) : QAbstractListModel(parent)
+PacketList::PacketList(uint32 pid, QObject *parent /* = 0 */) : QAbstractListModel(parent)
 {
+	_pid = pid;
 	_running = true;
 	_thread = new QThread;
 	moveToThread(_thread);
 	_thread->start();
+
+
+	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
+	sprintf_s(_queueName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, _pid);
+	OutputDebugStringA(_queueName);
+	_packetQueue = new message_queue(open_or_create, _queueName, MP_MAX_NO, MP_MAX_SIZE);
 
 	QMetaObject::invokeMethod(this, "packetPoll", Qt::QueuedConnection);
 }
@@ -16,6 +23,10 @@ PacketList::~PacketList()
 {
 	_running = false;
 	_thread->exit();
+
+	delete[] recvPacket;
+	delete _packetQueue;
+	message_queue::remove(_queueName);
 	delete _thread;
 }
 
@@ -33,27 +44,23 @@ void PacketList::clear()
 
 void PacketList::packetPoll()
 {
-	MessagePacket *recvPacket = (MessagePacket*)new uint8[MQ_MAX_SIZE];
 	uint32 recvdSize, priority;
 
-	message_queue::remove("packetSniffer");
-	message_queue *packetQueue = new message_queue(create_only, "packetSniffer", 1000, MQ_MAX_SIZE);
-	while(_running)
+	_packetQueue->receive(recvPacket, MP_MAX_SIZE, recvdSize, priority);
+	if(recvPacket->messagePacketSize() != recvdSize)
+		throw; //Malformed packet
+	else
 	{
-		packetQueue->receive(recvPacket, MQ_MAX_SIZE, recvdSize, priority);
-		if(recvPacket->messagePacketSize() != recvdSize)
-			throw; //Malformed packet
-		else
-		{
-			//Handle this packet
-			mutexList.lock();
-			_packets.push_back(new Packet(recvPacket));
-			emit layoutChanged();
-			mutexList.unlock();
-		}
-		//packetQueue
+		//Handle this packet
+		mutexList.lock();
+		_packets.push_back(new Packet(recvPacket));
+		emit layoutChanged();
+		mutexList.unlock();
 	}
-	delete[] recvPacket;
+	//packetQueue
+
+	//Loop
+	QMetaObject::invokeMethod(this, "packetPoll", Qt::QueuedConnection);	
 }
 
 Packet *PacketList::getPacketAt(int index)

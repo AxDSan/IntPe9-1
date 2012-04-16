@@ -77,11 +77,14 @@
     <CustomBuild Include="..\..\IntPe9\Views\About.h">
       <Filter>Views</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Cores.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Models\Core.h">
       <Filter>Models</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Cores.h">
+      <Filter>Models</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Communication.h">
+      <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -175,9 +178,6 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit_p.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Cores.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Cores.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -191,6 +191,18 @@
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Core.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Cores.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Communication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Communication.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Communication.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>

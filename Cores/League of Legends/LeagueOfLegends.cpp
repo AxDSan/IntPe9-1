@@ -52,8 +52,8 @@ LeagueOfLegends::LeagueOfLegends()
 void LeagueOfLegends::initialize()
 {
 	//First create buffers!!! then hook
-	sendBuf = (MessagePacket*)new uint8[MQ_MAX_SIZE];
-	recvBuf = (MessagePacket*)new uint8[MQ_MAX_SIZE];
+	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
+	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	
 	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&newWSASendTo);
 	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&newWSARecvFrom);
@@ -93,7 +93,7 @@ uint8 *reassemblePacket(ENetProtocol *command, uint32 length, uint32 *dataLength
 	//If reassembled, return data, else NULL
 	if(fragmentNumber == fragmentCount-1)
 	{
-		sprintf_s(&packet->description[0], 50, "CMD: 8, Channel: %i, Reassembled", command->header.channelID);
+		sprintf_s(&packet->description[0], 50, "CMD: 8, Channel: %i", command->header.channelID);
 		return (uint8*)packet;
 	}
 	else
@@ -136,7 +136,7 @@ int32 parseEnet(char *buffer, uint32 length, uint8 **dataPointer, uint32 *dataLe
 				break;
 		}
 
-		leagueOfLegends->DbgPrint("[RECV] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, maLen);
+		//leagueOfLegends->DbgPrint("[RECV] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, maLen);
 		sprintf_s(&packet->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
 	}
 
@@ -205,7 +205,7 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 			if(!(cmd == ENET_PROTOCOL_COMMAND_SEND_RELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED))
 				continue;
 
-			leagueOfLegends->DbgPrint("[SEND] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, lpBuffers[i+1].len);
+			//leagueOfLegends->DbgPrint("[SEND] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, lpBuffers[i+1].len);
 			sprintf_s(&sendBuf->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
 		
 			sendBuf->type = WSASENDTO;
