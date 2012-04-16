@@ -2,11 +2,15 @@
 #define COMMUNICATION_H
 
 #include <common.h>
+
 #include <QThread>
 #include <QWidget>
 #include <QBoxLayout>
 #include <QTableView>
 #include <QHeaderView>
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
 
 #include "Models/Core.h"
 #include "Models/PacketList.h"
@@ -19,13 +23,17 @@ public:
 	Sniffer(Core *core, uint32 pid);
 	~Sniffer();
 
+	//Property's
 	QWidget *getView();
 	Core *getCore();
 	bool isStopped();
 	void buildGui();
-
+	PacketList *getPacketList();
 	uint32 getPid();
 	QTableView *packetView;
+
+	//Methods
+	bool savePacketsToFile();
 
 private:
 	Core *_core;

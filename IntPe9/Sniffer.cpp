@@ -98,6 +98,44 @@ void Sniffer::buildGui()
 	packetView->setFont(font);
 }
 
+bool Sniffer::savePacketsToFile()
+{
+	try
+	{
+		QString path = QFileDialog::getSaveFileName(getView(), tr("Save all packets"), NULL, tr("Packets (*.pacs)"));
+
+		QFile file(path);
+		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		{
+			return false;
+		}
+
+		QTextStream out(&file);
+
+		for(uint32 i = 0; i < _packetList->rowCount(); i++)
+		{
+			Packet *packet = _packetList->getPacketAt(i);
+
+			//Format it
+			out << packet->strInfoHeader();
+			out << packet->strFullDump();
+			out << "\n";
+		}
+
+		file.close();
+	}
+	catch(...)
+	{
+		return false;
+	}
+	return true;
+}
+
+PacketList *Sniffer::getPacketList()
+{
+	return _packetList;
+}
+
 bool Sniffer::isStopped()
 {
 	return _isStopped;

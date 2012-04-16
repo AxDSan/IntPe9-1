@@ -63,16 +63,27 @@ MainGui::~MainGui()
 		environment.setValue("Path", paths.join(";"));
 }
 
+Sniffer *MainGui::getActiveSniffer()
+{
+	QMap<uint32, Sniffer*>::iterator it = _allSniffers.find(_mainView.tabPackets->currentIndex());
+
+	if(it == _allSniffers.end())
+		return NULL;
+	else
+		return it.value();
+}
+
 void MainGui::clearList()
 {
-	_packetList->clear();
+	getActiveSniffer()->getPacketList()->clear();
 	_hexView->setData(NULL);
 }
 
 void MainGui::registerPacketView(Sniffer *sniffer)
 {
 	sniffer->buildGui();
-	_mainView.tabPackets->addTab(sniffer->getView(), sniffer->getCore()->getExeName());
+	uint32 index = _mainView.tabPackets->addTab(sniffer->getView(), sniffer->getCore()->getExeName());
+	_allSniffers[index] = sniffer;
 
 	//Change some settings in the layout
 	connect(sniffer->packetView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(slotOnClickPacketList(const QModelIndex &, const QModelIndex &)));
@@ -81,27 +92,7 @@ void MainGui::registerPacketView(Sniffer *sniffer)
 
 void MainGui::saveAllAsText()
 {
-	QString path = QFileDialog::getSaveFileName(this, tr("Save all packets"), NULL, tr("Packets (*.pacs)"));
-
-	QFile file(path);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-	{
-		return;
-	}
-
-	QTextStream out(&file);
-
-	for(int32 i = 0; i < _packetList->rowCount(); i++)
-	{
-		Packet *packet = _packetList->getPacketAt(i);
-
-		//Format it
-		out << packet->strInfoHeader();
-		out << packet->strFullDump();
-		out << "\n";
-	}
-
-	file.close();
+	getActiveSniffer()->savePacketsToFile();
 }
 
 void MainGui::slotOnClickPacketList(const QModelIndex &current, const QModelIndex &previous)

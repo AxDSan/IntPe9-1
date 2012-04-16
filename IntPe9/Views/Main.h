@@ -27,6 +27,7 @@ public:
 	~MainGui();
 
 	Ui::mainView* getView();
+	Sniffer *getActiveSniffer();
 
 	public slots:
 		void saveAllAsText();
@@ -36,13 +37,14 @@ public:
 
 		void clearList();
 		void registerPacketView(Sniffer *sniffer);
+		
 private:
 	//Views
 	QHexEdit *_hexView;
 	AboutGui *_aboutGui;
 	Ui::mainView _mainView;
 	Cores *_cores;
-	PacketList *_packetList;
+	QMap<uint32, Sniffer*> _allSniffers;
 };
 
 extern MainGui* gui;
