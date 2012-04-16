@@ -316,6 +316,7 @@ copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)</Command>
       <AdditionalIncludeDirectories>../../IntPe9;../../;../../dep/include;..\..\IntPe9\GeneratedFiles;$(QTDIR)\include;..\..\IntPe9\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;.\..\..\IntPe9\GeneratedFiles</AdditionalIncludeDirectories>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
