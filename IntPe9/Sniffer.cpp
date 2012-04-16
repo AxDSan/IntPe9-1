@@ -90,7 +90,6 @@ void Sniffer::buildGui()
 	packetView->setCornerButtonEnabled(false);
 
 	autoScroll(true);
-	autoScroll(false);
 
 	//Set font
 	QFont font;
