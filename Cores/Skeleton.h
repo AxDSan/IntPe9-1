@@ -45,6 +45,7 @@ protected:
 	Upx *_upx;
 	virtual void initialize() = 0;
 	virtual void finalize() = 0;
+	
 
 private:
 	message_queue *_masterQue, *_packetQue;
@@ -52,15 +53,20 @@ private:
 	char *_dbg;
 
 public:
+	virtual char *getName() = 0;
 	void DbgPrint(const char* format, ...);
 	Skeleton();
 	~Skeleton();
 
-	bool isActive;
+	bool isAlive;
+	bool isRunning;
 
 	//Public functions
 	bool sendCommand();
 	bool sendPacket(MessagePacket *packet);
+	void handleCommand(CommandControll *command);
+	bool stop();
+	bool start();
 
 	//All hookable functions
 	defWSASendTo			_oldWSASendTo;

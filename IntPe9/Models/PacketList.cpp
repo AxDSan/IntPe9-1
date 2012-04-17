@@ -1,32 +1,14 @@
 #include "PacketList.h"
 #include <Windows.h>
-QMutex mutexList;
 
 PacketList::PacketList(uint32 pid, QObject *parent /* = 0 */) : QAbstractListModel(parent)
 {
-	_pid = pid;
-	_running = true;
-	_thread = new QThread;
-	moveToThread(_thread);
-	_thread->start();
 
-
-	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
-	sprintf_s(_queueName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, _pid);
-	_packetQueue = new message_queue(open_or_create, _queueName, MP_MAX_NO, MP_MAX_SIZE);
-
-	QMetaObject::invokeMethod(this, "packetPoll", Qt::QueuedConnection);
 }
 
 PacketList::~PacketList()
 {
-	_running = false;
-	_thread->exit();
-
-	delete[] recvPacket;
-	delete _packetQueue;
-	message_queue::remove(_queueName);
-	delete _thread;
+	clear();
 }
 
 void PacketList::clear()
@@ -41,25 +23,12 @@ void PacketList::clear()
 	emit layoutChanged();
 }
 
-void PacketList::packetPoll()
+void PacketList::addPacket(Packet *packet)
 {
-	uint32 recvdSize, priority;
-
-	_packetQueue->receive(recvPacket, MP_MAX_SIZE, recvdSize, priority);
-	if(recvPacket->messagePacketSize() != recvdSize)
-		throw; //Malformed packet
-	else
-	{
-		//Handle this packet
-		mutexList.lock();
-		_packets.push_back(new Packet(recvPacket));
-		emit layoutChanged();
-		mutexList.unlock();
-	}
-	//packetQueue
-
-	//Loop
-	QMetaObject::invokeMethod(this, "packetPoll", Qt::QueuedConnection);	
+	mutexList.lock();
+	_packets.push_back(packet);
+	mutexList.unlock();
+	emit layoutChanged();
 }
 
 Packet *PacketList::getPacketAt(int index)

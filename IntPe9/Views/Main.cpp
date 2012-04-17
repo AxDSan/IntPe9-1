@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include "Main.h"
 
 MainGui* gui;
@@ -5,13 +6,12 @@ MainGui* gui;
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
-//As debug i run from compiler so change the path to the output path of all bins
-#ifdef _DEBUG
-	QDir::setCurrent("../../bin/VC100_Debug");
-#endif
+	//As debug i run from compiler so change the path to the output path of all bins
+	#ifdef _DEBUG
+		QDir::setCurrent("../../bin/VC100_Debug");
+	#endif
 
 	gui = this;
-
 	_mainView.setupUi(this);
 
 	//Add this running directory to the path environment (for custom dll's, python)
@@ -19,8 +19,9 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	QStringList paths = environment.value("Path").toString().split(';');
 	if(!paths.contains(QDir::currentPath(), Qt::CaseInsensitive))
 	{
-		paths.append(QDir::currentPath());
+		paths.append(QDir::toNativeSeparators(QDir::currentPath()));
 		environment.setValue("Path", paths.join(";"));
+		SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
 	}
 
 	//Create all sub views
@@ -49,8 +50,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	connect(_mainView.actionSavePackets, SIGNAL(triggered()), this, SLOT(saveAllAsText()));
 	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
 	
-	//
-
+	//Register meta types
 	qRegisterMetaType<Sniffer*>("Sniffer*");
 }
 
@@ -59,8 +59,11 @@ MainGui::~MainGui()
 	//Delete this dir from path environment
 	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
 	QStringList paths = environment.value("Path").toString().split(';');
-	if(paths.removeAll(QDir::currentPath()) > 0)
+	if(paths.removeAll(QDir::toNativeSeparators(QDir::currentPath())) > 0)
+	{
 		environment.setValue("Path", paths.join(";"));
+		SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+	}
 }
 
 Sniffer *MainGui::getActiveSniffer()
@@ -77,6 +80,18 @@ void MainGui::clearList()
 {
 	getActiveSniffer()->getPacketList()->clear();
 	_hexView->setData(NULL);
+}
+
+void MainGui::closing()
+{
+	//Called when ever we are closing, so quick! Cleanup your shit!!!!
+
+	//So delete all sniffers and let them cleanup after themselfs
+	Sniffer *sniffer;
+	foreach(sniffer, _allSniffers)
+	{
+		sniffer->destroy();
+	}
 }
 
 void MainGui::registerPacketView(Sniffer *sniffer)

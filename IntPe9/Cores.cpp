@@ -89,6 +89,32 @@ Core *Cores::haveCore(QString name)
 	return NULL;
 }
 
+bool Cores::isInjected(uint32 pid, Core *core)
+{
+	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
+	MODULEENTRY32 me32;
+
+	hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
+	if(hModuleSnap == INVALID_HANDLE_VALUE)
+		return false;
+
+	me32.dwSize = sizeof(MODULEENTRY32);
+
+	if(!Module32First(hModuleSnap, &me32))
+	{
+		CloseHandle(hModuleSnap);
+		return false;
+	}
+
+	do
+	{
+		if(core->getBaseName() == QString::fromWCharArray(me32.szModule))
+			return true;
+	} while(Module32Next(hModuleSnap, &me32));
+
+	CloseHandle(hModuleSnap);
+	return false;
+}
 bool Cores::injectAllCores()
 {
 	HANDLE hProcessSnap;
@@ -117,17 +143,15 @@ bool Cores::injectAllCores()
 			{
 				//Nop we are not, so create new one and try to inject
 				Sniffer *sniffer = new Sniffer(core, pe32.th32ProcessID);
-				if(inject(core, pe32.th32ProcessID))                //Try to inject this core into this pid
+				if(!isInjected(pe32.th32ProcessID, core) && !inject(core, pe32.th32ProcessID))
+					delete sniffer;
+				else
 				{
+					core->addPid(pe32.th32ProcessID);
 					_communications.push_back(sniffer);
 					QMetaObject::invokeMethod(gui, "registerPacketView", Q_ARG(Sniffer*, sniffer));
-
-					//_injected[pe32.th32ProcessID] = core;       //Save the pid so we know we injected into this pid
-					core->addPid(pe32.th32ProcessID);
 					emit layoutChanged();
-				}
-				else
-					delete sniffer;
+				}			
 			}
 		}
 	}while (Process32Next(hProcessSnap, &pe32));

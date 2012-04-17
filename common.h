@@ -8,7 +8,12 @@
 #define MP_QUEUE_NAME "PacketListener_"
 #define MP_QUEUE_NAME_SIZE 30
 #define MP_MAX_SIZE 0x1500
-#define MP_MAX_NO 0x400
+#define MP_MAX_NO 0x100
+
+#define CC_QUEUE_NAME "CommandControll_"
+#define CC_QUEUE_NAME_SIZE 35
+#define CC_MAX_SIZE 0x2000
+#define CC_MAX_NO 0x100
 
 typedef long long		int64;
 typedef int			int32;
@@ -21,7 +26,7 @@ typedef unsigned char		uint8;
 
 enum PacketType : uint8
 {
-	SEND = 1,
+	SEND,
 	RECV,
 	SENDTO,
 	RECVFROM,
@@ -29,6 +34,12 @@ enum PacketType : uint8
 	WSARECV,
 	WSASENDTO,
 	WSARECVFROM,
+};
+
+enum CommandType : uint8
+{
+	START,
+	EXIT,
 };
 
 #pragma pack(push)
@@ -39,8 +50,15 @@ enum PacketType : uint8
 class CommandControll
 {
 public:
+	CommandType cmd;
 	uint32 length;
 	uint8 data;
+
+	CommandControll(CommandType cmd)
+	{
+		this->cmd = cmd;
+		length = 0;
+	}
 
 	uint8 *getData()
 	{

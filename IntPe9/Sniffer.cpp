@@ -1,11 +1,13 @@
 #include "Sniffer.h"
+#include <QMessageBox>
 
 Sniffer::Sniffer(Core *core, uint32 pid)
 {
+	//Set up some variables
 	_core = core;
 	_pid = pid;
-	_running = true;
 
+	//Gui NULLing
 	packetView = NULL;
 	_layout = NULL;
 	_view = NULL;
@@ -16,29 +18,87 @@ Sniffer::Sniffer(Core *core, uint32 pid)
 	_thread->start();
 
 	//Setup the packet list model + packet listener
-	_packetList = new PacketList(_pid);
-	
 	_isStopped = false;
+	_packetList = new PacketList(_pid);
 
 	//Start the main thread
-	QMetaObject::invokeMethod(this, "mainLoop", Qt::QueuedConnection);
+	try
+	{
+		sprintf_s(_controllName, CC_QUEUE_NAME_SIZE, "%s%i", CC_QUEUE_NAME, _pid);
+		_controllIpc = new message_queue(open_or_create, _controllName, CC_MAX_NO, CC_MAX_SIZE);
+	}
+	catch(boost::interprocess::interprocess_exception &ex)
+	{
+		QString str(ex.what());
+	}
+
+	//Create the queue
+	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
+	try
+	{
+		sprintf_s(_packetName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, _pid);
+		_packetQueue = new message_queue(open_or_create, _packetName, MP_MAX_NO, MP_MAX_SIZE);
+
+		QMetaObject::invokeMethod(this, "packetPoll", Qt::QueuedConnection);
+
+		//Start the core (or restart if it was already injected)
+		sendCommand(START);
+
+	}
+	catch(boost::interprocess::interprocess_exception &ex)
+	{
+		QString str(ex.what());
+	}
+}
+
+void Sniffer::started()
+{
+
+}
+
+void Sniffer::destroy()
+{
+	blockSignals(true);
+
+	//Stop the Core
+	sendCommand(EXIT);
+
+	//Delete the view
+	if(packetView != NULL)
+		delete packetView;
+	if(_layout != NULL)
+		delete _layout;
+	if(_view != NULL)
+		delete _view;
+
+	//Stop the packet thread
+	while(mutexLoop.tryLock(1)); //Wait for the poll to finish
+
+	//Destroy the packet queue
+	delete _packetQueue;
+	delete[] recvPacket;
+	message_queue::remove(_packetName);
+
+	//Delete others
+	delete _packetList;
+	_thread->quit();
+	_thread->deleteLater();
 }
 
 Sniffer::~Sniffer()
 {
-	_running = false;
-	_thread->exit();
 
-	//Delete the view
-	if(_view != NULL)
-		delete _view;
-	if(_layout != NULL)
-		delete _layout;
-	if(packetView != NULL)
-		delete packetView;
+}
 
-	delete _packetList;
-	delete _thread;
+void Sniffer::sendCommand(CommandType type)
+{
+	CommandControll cmd(type);
+	_controllIpc->send((char*)&cmd, cmd.totalSize(), 0);
+}
+
+void Sniffer::sendCommand(CommandControll *command)
+{
+	_controllIpc->send((char*)command, command->totalSize(), 0);
 }
 
 uint32 Sniffer::getPid()
@@ -150,8 +210,25 @@ QWidget *Sniffer::getView()
 	return _view;
 }
 
-void Sniffer::mainLoop()
+void Sniffer::packetPoll()
 {
-	wait(20);
-	QMetaObject::invokeMethod(this, "mainLoop", Qt::QueuedConnection);
+	while(_thread->isRunning())
+	{
+		mutexLoop.lock();
+		uint32 recvdSize, priority;
+
+		//Get all packets from the queue
+		while(_packetQueue->get_num_msg() > 0)
+		{
+			if(_packetQueue->try_receive(recvPacket, MP_MAX_SIZE, recvdSize, priority))
+				if(recvPacket->messagePacketSize() == recvdSize)
+				{
+					//Handle this packet
+					_packetList->addPacket(new Packet(recvPacket));
+				}
+		}
+		mutexLoop.unlock();
+		_thread->wait(20);
+	}
+	//QMetaObject::invokeMethod(this, "packetPoll", Qt::DirectConnection);
 }

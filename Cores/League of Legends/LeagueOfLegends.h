@@ -20,6 +20,7 @@ public:
 
 	void initialize();
 	void finalize();
+	char *getName();
 };
 
 extern LeagueOfLegends *leagueOfLegends;

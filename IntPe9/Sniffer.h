@@ -3,6 +3,7 @@
 
 #include <common.h>
 
+#include <QMutex>
 #include <QThread>
 #include <QWidget>
 #include <QBoxLayout>
@@ -15,7 +16,10 @@
 #include "Models/Core.h"
 #include "Models/PacketList.h"
 
-class Sniffer : public QThread
+#include <boost/interprocess/ipc/message_queue.hpp>
+using namespace boost::interprocess;
+
+class Sniffer : public QObject
 {
 	Q_OBJECT
 
@@ -38,17 +42,34 @@ public:
 private:
 	Core *_core;
 	uint32 _pid;
-	bool _running, _isStopped;
+	bool _isStopped;
+
+	//Threading
 	QThread *_thread;
-	
+	QTimer *_eventLoop;
+
 	//Interface
+	QMutex mutexLoop;
 	QWidget *_view;
 	QBoxLayout *_layout;
 	PacketList *_packetList;
 
+	//Controll IPC
+	message_queue *_controllIpc;
+	int8 _controllName[CC_QUEUE_NAME_SIZE];
+
+	//Packet IPC
+	message_queue *_packetQueue;
+	MessagePacket *recvPacket;
+	int8 _packetName[MP_QUEUE_NAME_SIZE];
+
 public slots:
-	void mainLoop();
+	void destroy();
 	void autoScroll(bool state);
+	void packetPoll();
+	void sendCommand(CommandType type);
+	void sendCommand(CommandControll *command);
+	void started();
 };
 
 #endif

@@ -21,6 +21,7 @@ public:
 	QString getFullPath();
 	QVariant getField(int column);
 	QPixmap getIcon();
+	QString getBaseName();
 	QString getExeName();
 
 	void addPid(int pid);

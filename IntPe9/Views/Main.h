@@ -1,6 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <common.h>
 #include <QMessageBox>
 #include <QtGui/QMainWindow>
 #include <QStyledItemDelegate>
@@ -37,7 +38,8 @@ public:
 
 		void clearList();
 		void registerPacketView(Sniffer *sniffer);
-		
+		void closing();
+
 private:
 	//Views
 	QHexEdit *_hexView;

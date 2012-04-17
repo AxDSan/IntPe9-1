@@ -35,6 +35,7 @@ public:
 	QVariant data(const QModelIndex &index, int role) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+	bool isInjected(uint32 pid, Core *core);
 	bool injectAllCores();
 	void cleanInjectedList();
 	Core *haveCore(QString name);

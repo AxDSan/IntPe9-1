@@ -304,6 +304,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -312,9 +313,9 @@
       <AdditionalDependencies>qtmaind.lib;QtCored4.lib;QtGuid4.lib;user32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(QTDIR)\bin\QtCored4.dll $(OutDir)
-copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)
-copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
+      <Command>IF NOT EXIST "$(OutDir)\QtCored4.dll" copy $(QTDIR)\bin\QtCored4.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\QtGuid4.dll" copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\python27.dll" copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Qt  &amp; Python runtime</Message>
@@ -327,6 +328,7 @@ copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -334,9 +336,9 @@ copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
       <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;user32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
-copy $(QTDIR)\bin\QtGui4.dll $(OutDir)
-copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
+      <Command>IF NOT EXIST "$(OutDir)\QtCore4.dll" copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\QtGui4.dll" copy $(QTDIR)\bin\QtGui4.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\python27.dll" copy ..\..\dep\lib\python27.dll $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Qt  &amp; Python runtime</Message>

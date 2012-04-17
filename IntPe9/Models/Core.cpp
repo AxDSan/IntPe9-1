@@ -22,6 +22,12 @@ void Core::deletePid(int pid)
 	_pidList.removeAll(pid);
 }
 
+QString Core::getBaseName()
+{
+	return _dll.fileName();
+
+}
+
 QString Core::getExeName()
 {
 	return _dll.baseName()+".exe";

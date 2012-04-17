@@ -5,6 +5,11 @@ MessagePacket *sendBuf;
 MessagePacket *recvBuf;
 map<uint16, MessagePacket*> reassemble;
 
+char *LeagueOfLegends::getName()
+{
+	return "League of Legends.dll";
+}
+
 LeagueOfLegends::LeagueOfLegends()
 {
 	//Blowfish key extraction
@@ -63,6 +68,10 @@ void LeagueOfLegends::initialize()
 
 void LeagueOfLegends::finalize()
 {
+	//Unhook, but we really can not risk it!
+	//_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&_oldWSASendTo);
+	//_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&_oldWSARecvFrom);
+
 	delete[]sendBuf;
 	delete[]recvBuf;
 }
@@ -193,33 +202,34 @@ int32 parseEnet(char *buffer, uint32 length, uint8 **dataPointer, uint32 *dataLe
  */
 int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, const struct sockaddr *lpTo, int iToLen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
 {
-	if(dwBufferCount >= 3)
-	{
-		//Loop if we have 2 buffers left
-		for(uint32 i = 1; i <= dwBufferCount-2; i+=2)
+	if(leagueOfLegends->isAlive)
+		if(dwBufferCount >= 3)
 		{
-			ENetProtocol *command = (ENetProtocol*)(lpBuffers[i].buf);
-			uint8 cmd = command->header.command & ENET_PROTOCOL_COMMAND_MASK;
+			//Loop if we have 2 buffers left
+			for(uint32 i = 1; i <= dwBufferCount-2; i+=2)
+			{
+				ENetProtocol *command = (ENetProtocol*)(lpBuffers[i].buf);
+				uint8 cmd = command->header.command & ENET_PROTOCOL_COMMAND_MASK;
 
-			//Skip if not a data packet
-			if(!(cmd == ENET_PROTOCOL_COMMAND_SEND_RELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED))
-				continue;
+				//Skip if not a data packet
+				if(!(cmd == ENET_PROTOCOL_COMMAND_SEND_RELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED))
+					continue;
 
-			//leagueOfLegends->DbgPrint("[SEND] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, lpBuffers[i+1].len);
-			sprintf_s(&sendBuf->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
+				//leagueOfLegends->DbgPrint("[SEND] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, lpBuffers[i+1].len);
+				sprintf_s(&sendBuf->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
 		
-			sendBuf->type = WSASENDTO;
-			sendBuf->length = lpBuffers[i+1].len;
-			memcpy(sendBuf->getData(), lpBuffers[i+1].buf, sendBuf->length);
-			if(sendBuf->length >= 8)
-				if(!doFirst)
-					leagueOfLegends->blowfish->Decrypt(sendBuf->getData(), sendBuf->length-(sendBuf->length%8));
-				else
-					doFirst = false;
-			leagueOfLegends->sendPacket(sendBuf);
-		}
+				sendBuf->type = WSASENDTO;
+				sendBuf->length = lpBuffers[i+1].len;
+				memcpy(sendBuf->getData(), lpBuffers[i+1].buf, sendBuf->length);
+				if(sendBuf->length >= 8)
+					if(!doFirst)
+						leagueOfLegends->blowfish->Decrypt(sendBuf->getData(), sendBuf->length-(sendBuf->length%8));
+					else
+						doFirst = false;
+				leagueOfLegends->sendPacket(sendBuf);
+			}
 
-	}
+		}
 	return leagueOfLegends->_oldWSASendTo(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpTo, iToLen, lpOverlapped, lpCompletionRoutine);
 }
 
@@ -227,51 +237,53 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 {
 	int returnLength = leagueOfLegends->_oldWSARecvFrom(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpFrom, lpFromlen, lpOverlapped, lpCompletionRoutine);
 
-	if(returnLength == 0)
-	{
-		uint32 totalLength = *lpNumberOfBytesRecvd;
-		char *buffer = lpBuffers[0].buf;		
-		uint32 processed;
-			
-		processed = parseHeader(buffer, totalLength);
-		//leagueOfLegends->DbgPrint("Recv, headerSize: %i", processed);
-		while(processed < totalLength)
+	if(leagueOfLegends->isAlive)
+		if(returnLength == 0)
 		{
-			uint8 *data = NULL;
-			bool isFragment = false;
-			uint32 dataLength = 0;
-			int32 parsed;
+			uint32 totalLength = *lpNumberOfBytesRecvd;
+			char *buffer = lpBuffers[0].buf;		
+			uint32 processed;
 			
-			parsed = parseEnet(&buffer[processed], totalLength, &data, &dataLength, &isFragment, recvBuf);
-			if(processed == 0 || parsed < 0)
-				break; //Not interesting packet
-
-			processed += parsed;
-			//if(processed <= totalLength)
-			//	leagueOfLegends->DbgPrint("Recv, proccessed: %i, total: %i, dataLength: %i", processed, totalLength, dataLength);
-			if(data != NULL && dataLength > 0)
+			processed = parseHeader(buffer, totalLength);
+			//leagueOfLegends->DbgPrint("Recv, headerSize: %i", processed);
+			while(processed < totalLength)
 			{
-				if(isFragment)
-				{
-					MessagePacket *total = (MessagePacket*)data;
-					total->type = WSARECVFROM;
-					if(total->length >= 8)
-						leagueOfLegends->blowfish->Decrypt(total->getData(), total->length-(total->length%8));
-					leagueOfLegends->sendPacket(total);
-				}
-				else
-				{
-					recvBuf->type = WSARECVFROM;
-					recvBuf->length = dataLength;
-					memcpy(recvBuf->getData(), data, recvBuf->length);
-					if(recvBuf->length >= 8)
-						leagueOfLegends->blowfish->Decrypt(recvBuf->getData(), recvBuf->length-(recvBuf->length%8));
-					leagueOfLegends->sendPacket(recvBuf);
-				}
-			}
+				uint8 *data = NULL;
+				bool isFragment = false;
+				uint32 dataLength = 0;
+				int32 parsed;
+			
+				parsed = parseEnet(&buffer[processed], totalLength, &data, &dataLength, &isFragment, recvBuf);
+				if(processed == 0 || parsed < 0)
+					break; //Not interesting packet
 
+				processed += parsed;
+				//if(processed <= totalLength)
+				//	leagueOfLegends->DbgPrint("Recv, proccessed: %i, total: %i, dataLength: %i", processed, totalLength, dataLength);
+				if(data != NULL && dataLength > 0)
+				{
+					if(isFragment)
+					{
+						MessagePacket *total = (MessagePacket*)data;
+						total->type = WSARECVFROM;
+						if(total->length >= 8)
+							leagueOfLegends->blowfish->Decrypt(total->getData(), total->length-(total->length%8));
+						leagueOfLegends->sendPacket(total);
+						delete []total;
+					}
+					else
+					{
+						recvBuf->type = WSARECVFROM;
+						recvBuf->length = dataLength;
+						memcpy(recvBuf->getData(), data, recvBuf->length);
+						if(recvBuf->length >= 8)
+							leagueOfLegends->blowfish->Decrypt(recvBuf->getData(), recvBuf->length-(recvBuf->length%8));
+						leagueOfLegends->sendPacket(recvBuf);
+					}
+				}
+
+			}
 		}
-	}
 
 	return returnLength;
 }
