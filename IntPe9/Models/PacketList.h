@@ -21,7 +21,7 @@ class PacketList : public QAbstractListModel
 	Q_OBJECT
 
 public:
-	PacketList(uint32 pid, QObject *parent = 0);
+	PacketList(QObject *parent = 0);
 	~PacketList();
 
 	//Reimplements
@@ -32,12 +32,14 @@ public:
 
 	//Custom
 	Packet *getPacketAt(int index);
-	void addPacket(Packet *packet);
+	
 	
 public slots:
 	void clear();
+	void addPacket(Packet *packet);
 
 private:
+	QThread *_thread;
 	QVector<Packet*> _packets;
 	QMutex mutexList;
 

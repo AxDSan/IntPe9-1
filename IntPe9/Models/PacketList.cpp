@@ -1,9 +1,11 @@
 #include "PacketList.h"
 #include <Windows.h>
 
-PacketList::PacketList(uint32 pid, QObject *parent /* = 0 */) : QAbstractListModel(parent)
+PacketList::PacketList(QObject *parent /* = 0 */) : QAbstractListModel(parent)
 {
-
+	_thread = new QThread();
+	moveToThread(_thread);
+	_thread->start();
 }
 
 PacketList::~PacketList()

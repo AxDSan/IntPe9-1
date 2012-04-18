@@ -27,6 +27,9 @@ public:
 	Sniffer(Core *core, uint32 pid);
 	~Sniffer();
 
+	void run();
+
+
 	//Property's
 	QWidget *getView();
 	Core *getCore();
@@ -49,7 +52,7 @@ private:
 	QTimer *_eventLoop;
 
 	//Interface
-	QMutex mutexLoop;
+	QMutex _mutexLoop;
 	QWidget *_view;
 	QBoxLayout *_layout;
 	PacketList *_packetList;
@@ -69,7 +72,7 @@ public slots:
 	void packetPoll();
 	void sendCommand(CommandType type);
 	void sendCommand(CommandControll *command);
-	void started();
+	void start();
 };
 
 #endif

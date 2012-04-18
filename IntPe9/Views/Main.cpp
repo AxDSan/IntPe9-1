@@ -52,6 +52,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	
 	//Register meta types
 	qRegisterMetaType<Sniffer*>("Sniffer*");
+	qRegisterMetaType<Packet*>("Packet*");
 }
 
 MainGui::~MainGui()
