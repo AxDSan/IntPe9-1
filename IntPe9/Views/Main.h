@@ -57,11 +57,15 @@ public slots:
 
 	void setPacketModel(PacketList *model);
 	void selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous);
+	void autoScroll(bool state);
 
 private:
 	bool _notConnected;
 	Manager *_manager;
 	Injector *_injector;
+
+	//Action bar
+	QAction *scrollAction;
 
 	//Views
 	QHexEdit *_hexView;

@@ -28,11 +28,24 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
 	_injector = new Injector(_manager);
 	
+	//Build the toolbar
+	QIcon scroll(QPixmap(":/Common/Resources/scrollNo.png"));
+	scroll.addPixmap(QPixmap(":/Common/Resources/scroll.png"), QIcon::Normal, QIcon::On);
+	scrollAction = new QAction(scroll, "Set auto scroll", this);
+	scrollAction->setCheckable(true);
+	_mainView.toolBar->addAction(scrollAction);
+
+	
+	
 	//Setup connections
-	connect(_manager, SIGNAL(activateModel(PacketList*)), this, SLOT(setPacketModel(PacketList*)));
+	//Toolbar
+	connect(scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
+	//File bar
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
 	connect(_mainView.actionSavePackets, SIGNAL(triggered()), this, SLOT(saveAllAsText()));
 	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
+	//Others
+	connect(_manager, SIGNAL(activateModel(PacketList*)), this, SLOT(setPacketModel(PacketList*)));
 }
 
 MainGui::~MainGui()
@@ -85,10 +98,23 @@ void MainGui::saveAllAsText()
 		sniffer->savePacketsToFile();
 }
 
+void MainGui::autoScroll(bool state)
+{
+	Sniffer *sniffer = _manager->getActiveSniffer();
+	if(sniffer != NULL)
+	{
+		sniffer->getPacketList()->autoScroll(state, _mainView.tablePackets);
+		scrollAction->setChecked(state);
+	}
+	else
+		scrollAction->setChecked(false);
+}
+
 void MainGui::setPacketModel(PacketList *model)
 {
 	_hexView->setData(NULL);
 	_mainView.tablePackets->setModel(model);
+	autoScroll(true);
 
 	//Custom GUI setup
 	_mainView.tablePackets->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
