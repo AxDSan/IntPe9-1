@@ -1,33 +1,24 @@
 #include "Packet.h"
 
-#define SUMMARY_LEN 16
-
 Packet::Packet(MessagePacket *data)
 {
-	try
-	{	
-		//Copy data
-		_length = data->length;
-		_type = data->type;
-		_data = new QByteArray((const char*)data->getData(), data->length);
-		_description = QString(data->description);
+	//Copy data
+	_length = data->length;
+	_type = data->type;
+	_data = new QByteArray((const char*)data->getData(), data->length);
+	_description = QString(data->description);
 
-		//Create list view data
-		QString temp;
-		for(uint8 i = 0; i < ((_length > SUMMARY_LEN) ? SUMMARY_LEN : _length); i++)
-		{
-			temp.sprintf("%02X ", (uint8)data->getData()[i]);
-			_summary.append(temp);
-		}
-		if(_length > SUMMARY_LEN)
-		{
-			temp.sprintf("... %02X %02X", (uint8)data->getData()[_length-2], (uint8)data->getData()[_length-1]);
-			_summary.append(temp);
-		}
-	}
-	catch(...)
+	//Create list view data
+	QString temp;
+	for(uint8 i = 0; i < ((_length > SUMMARY_LEN) ? SUMMARY_LEN : _length); i++)
 	{
-
+		temp.sprintf("%02X ", (uint8)data->getData()[i]);
+		_summary.append(temp);
+	}
+	if(_length > SUMMARY_LEN)
+	{
+		temp.sprintf("... %02X %02X", (uint8)data->getData()[_length-2], (uint8)data->getData()[_length-1]);
+		_summary.append(temp);
 	}
 }
 

@@ -68,9 +68,6 @@
     <CustomBuild Include="..\..\IntPe9\Models\PacketList.h">
       <Filter>Models</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Views\Main.h">
-      <Filter>Views</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Views\Parser.h">
       <Filter>Views</Filter>
     </CustomBuild>
@@ -80,12 +77,16 @@
     <CustomBuild Include="..\..\IntPe9\Models\Core.h">
       <Filter>Models</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Cores.h">
-      <Filter>Models</Filter>
+    <CustomBuild Include="..\..\IntPe9\Manager.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Injector.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Sniffer.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Views\Main.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\IntPe9\Resources\logo.png">
@@ -126,9 +127,6 @@
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\Models\PacketList.cpp">
       <Filter>Models</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Views\Main.cpp">
-      <Filter>Views</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\Views\Parser.cpp">
       <Filter>Views</Filter>
@@ -181,12 +179,6 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit_p.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Cores.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Cores.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\Models\Core.cpp">
       <Filter>Models</Filter>
     </ClCompile>
@@ -195,9 +187,6 @@
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Core.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Cores.cpp">
-      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\Sniffer.cpp">
       <Filter>Source Files</Filter>
@@ -208,6 +197,25 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Sniffer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Injector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Injector.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Injector.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Manager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Manager.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Views\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\IntPe9\IntPe.rc">

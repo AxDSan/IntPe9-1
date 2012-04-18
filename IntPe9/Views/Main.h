@@ -1,23 +1,40 @@
+//IntPe9 an general all purpose packet editor
+//Copyright (C) 2012  Intline9 <Intline9@gmail.com>
+//
+//This program is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #ifndef MAIN_H
 #define MAIN_H
 
 #include <common.h>
+
 #include <QMessageBox>
 #include <QtGui/QMainWindow>
 #include <QStyledItemDelegate>
 #include <QFile>
 #include <QSettings>
+#include "QHexEdit/qhexedit.h"
 
 //Ui
 #include "ui_Main.h"
 
 //Classes
-#include "Models/PacketList.h"
-#include "QHexEdit/qhexedit.h"
+#include "Manager.h"
+#include "Injector.h"
 
 //Extra views/handlers
 #include "About.h"
-#include "Cores.h"
 
 class MainGui : public QMainWindow
 {
@@ -27,28 +44,29 @@ public:
 	MainGui(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainGui();
 
+	//Methods
+	void setEnvironment(bool state);
+
+	//Property
 	Ui::mainView* getView();
-	Sniffer *getActiveSniffer();
 
-	public slots:
-		void saveAllAsText();
-		void slotOnClickPacketList(const QModelIndex &current, const QModelIndex &previous);
-		void slotShow();
-		void slotHide();
+public slots:
+	void saveAllAsText();
+	void clearList();
+	void closing();
 
-		void clearList();
-		void registerPacketView(Sniffer *sniffer);
-		void closing();
+	void setPacketModel(PacketList *model);
+	void selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous);
 
 private:
+	bool _notConnected;
+	Manager *_manager;
+	Injector *_injector;
+
 	//Views
 	QHexEdit *_hexView;
 	AboutGui *_aboutGui;
 	Ui::mainView _mainView;
-	Cores *_cores;
-	QMap<uint32, Sniffer*> _allSniffers;
 };
-
-extern MainGui* gui;
 
 #endif // MAIN_H

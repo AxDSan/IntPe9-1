@@ -14,46 +14,50 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PACKET_LIST_H
-#define PACKET_LIST_H
+#ifndef MANAGER_H
+#define MANAGER_H
 
 #include <common.h>
 
-#include <QTableView>
-#include <QAbstractListModel>
-#include <QVector>
-#include <QVariant>
-#include <QPixmap>
-#include <QMutex>
+#include <QObject>
+#include <QDir>
+#include <QFile>
+#include <QMap>
+#include <QList>
 
-#include "Packet.h"
+#include "Models/Core.h"
+#include "Sniffer.h"
 
-class PacketList : public QAbstractListModel
+
+class Manager : public QObject
 {
 	Q_OBJECT
 
 public:
-	PacketList(QObject *parent = 0);
-	~PacketList();
+	Manager(QString path);
+	~Manager();
 
-	//Standard implementations
-	int columnCount(const QModelIndex &parent) const;
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+	//Property's
+	Core *getCore(QString name);
+	Sniffer *getActiveSniffer();
 
 	//Methods
-	Packet *getPacketAt(int index);
-	void autoScroll(bool state, QTableView *view);
+	void readCores(QString path);
 	
-public slots:
-	void clear();
-	void addPacket(Packet *packet);
-
 private:
-	QVector<Packet*> _packets;
-	QMutex mutexList;
+	//Variables
+	QVector<Core*> _cores;
+	QVector<Sniffer*> _sniffers;
+	Sniffer *_activeSniffer;
 
+public slots:
+	void stop();
+	void updateSniffers();
+	void registerSniffer(Sniffer *sniffer);
+
+signals:
+	void activateModel(PacketList *);
+	
 };
 
 #endif

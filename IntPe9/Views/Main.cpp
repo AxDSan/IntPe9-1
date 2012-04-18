@@ -1,8 +1,6 @@
 #include <Windows.h>
 #include "Main.h"
 
-MainGui* gui;
-
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
@@ -11,125 +9,100 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 		QDir::setCurrent("../../bin/VC100_Debug");
 	#endif
 
-	gui = this;
+	//Init variables
 	_mainView.setupUi(this);
+	_notConnected = true;
 
-	//Add this running directory to the path environment (for custom dll's, python)
-	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
-	QStringList paths = environment.value("Path").toString().split(';');
-	if(!paths.contains(QDir::currentPath(), Qt::CaseInsensitive))
-	{
-		paths.append(QDir::toNativeSeparators(QDir::currentPath()));
-		environment.setValue("Path", paths.join(";"));
-		SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
-	}
+	//Create the hex viewer
+	_hexView = new QHexEdit(_mainView.hexWidget);
+	_hexView->setReadOnly(true);
+	_mainView.hexWidget->layout()->addWidget(_hexView);
+
+	//Set the environment
+	setEnvironment(true);
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
 
-	//Docks
-	_cores = new Cores(&_mainView);
-	_mainView.tableCores->setModel(_cores);
-	_mainView.tableCores->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
-	_mainView.tableCores->horizontalHeader()->resizeSection(0, 45);
-	_mainView.tableCores->horizontalHeader()->resizeSection(1, 50);
-	_mainView.tableCores->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-	_cores->readCores("Cores");
-
-	//Other initializing
-	//_packetList = new PacketList();
-	//_mainView.packetList->setModel(_packetList);
-
-	_hexView = new QHexEdit(_mainView.widget);
-	_hexView->setReadOnly(true);
-	_mainView.hexWidget->layout()->addWidget(_hexView);
-
-	//Custom GUI setup
-
+	//Create classesses
+	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
+	_injector = new Injector(_manager);
+	
+	//Setup connections
+	connect(_manager, SIGNAL(activateModel(PacketList*)), this, SLOT(setPacketModel(PacketList*)));
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
 	connect(_mainView.actionSavePackets, SIGNAL(triggered()), this, SLOT(saveAllAsText()));
 	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
-	
-	//Register meta types
-	qRegisterMetaType<Sniffer*>("Sniffer*");
-	qRegisterMetaType<Packet*>("Packet*");
 }
 
 MainGui::~MainGui()
 {
-	//Delete this dir from path environment
-	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
-	QStringList paths = environment.value("Path").toString().split(';');
-	if(paths.removeAll(QDir::toNativeSeparators(QDir::currentPath())) > 0)
-	{
-		environment.setValue("Path", paths.join(";"));
-		SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
-	}
+	//Disable environment
+	setEnvironment(false);
 }
 
-Sniffer *MainGui::getActiveSniffer()
-{
-	QMap<uint32, Sniffer*>::iterator it = _allSniffers.find(_mainView.tabPackets->currentIndex());
 
-	if(it == _allSniffers.end())
-		return NULL;
+void MainGui::setEnvironment(bool state)
+{
+	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
+	QStringList paths = environment.value("Path").toString().split(';');
+
+	if(state)
+	{
+		if(!paths.contains(QDir::currentPath(), Qt::CaseInsensitive))
+		{
+			paths.append(QDir::toNativeSeparators(QDir::currentPath()));
+			environment.setValue("Path", paths.join(";"));
+		}
+	}
 	else
-		return it.value();
+		if(paths.removeAll(QDir::toNativeSeparators(QDir::currentPath())) > 0)
+			environment.setValue("Path", paths.join(";"));
+
+	SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
 }
 
 void MainGui::clearList()
 {
-	getActiveSniffer()->getPacketList()->clear();
-	_hexView->setData(NULL);
+	Sniffer *sniffer = _manager->getActiveSniffer();
+	if(sniffer != NULL)
+	{
+		sniffer->getPacketList()->clear();
+		_hexView->setData(NULL);
+	}
 }
 
 void MainGui::closing()
 {
-	//Called when ever we are closing, so quick! Cleanup your shit!!!!
-
-	//So delete all sniffers and let them cleanup after themselfs
-	Sniffer *sniffer;
-	foreach(sniffer, _allSniffers)
-	{
-		sniffer->destroy();
-	}
-}
-
-void MainGui::registerPacketView(Sniffer *sniffer)
-{
-	sniffer->buildGui();
-	uint32 index = _mainView.tabPackets->addTab(sniffer->getView(), sniffer->getCore()->getExeName());
-	_allSniffers[index] = sniffer;
-
-	//Change some settings in the layout
-	connect(sniffer->packetView->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(slotOnClickPacketList(const QModelIndex &, const QModelIndex &)));
-
+	_injector->stop();
+	_manager->stop();
 }
 
 void MainGui::saveAllAsText()
 {
-	getActiveSniffer()->savePacketsToFile();
+	Sniffer *sniffer = _manager->getActiveSniffer();
+	if(sniffer != NULL)
+		sniffer->savePacketsToFile();
 }
 
-void MainGui::slotOnClickPacketList(const QModelIndex &current, const QModelIndex &previous)
+void MainGui::setPacketModel(PacketList *model)
+{
+	_hexView->setData(NULL);
+	_mainView.tablePackets->setModel(model);
+
+	//Custom GUI setup
+	_mainView.tablePackets->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+	_mainView.tablePackets->horizontalHeader()->resizeSection(0, 30);
+	_mainView.tablePackets->horizontalHeader()->resizeSection(1, 50);
+	_mainView.tablePackets->horizontalHeader()->resizeSection(2, 420);
+
+	if(_notConnected)
+		_notConnected = connect(_mainView.tablePackets->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(selectedPacketChanged(const QModelIndex &, const QModelIndex &)));
+}
+
+void MainGui::selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous)
 {
 	PacketList *model = (PacketList*)current.model();
 	Packet *packet = model->getPacketAt(current.row());
-
 	_hexView->setData(*packet->getData());
-}
-
-void MainGui::slotShow()
-{
-	show();
-}
-
-void MainGui::slotHide()
-{
-	hide();
-}
-
-Ui::mainView *MainGui::getView()
-{
-	return &_mainView;
 }

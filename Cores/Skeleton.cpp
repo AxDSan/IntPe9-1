@@ -67,7 +67,7 @@ DWORD WINAPI commandListener(LPVOID lpParam)
 	message_queue *queue;
 	try
 	{
-		queue = new message_queue(open_only, queueName);
+		queue = new message_queue(open_or_create, queueName, CC_MAX_NO, CC_MAX_SIZE);
 	}
 	catch(...)
 	{
@@ -106,7 +106,7 @@ bool Skeleton::start()
 	sprintf_s(queueName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, GetCurrentProcessId());
 	try
 	{
-		_packetQue = new message_queue(open_only, queueName);
+		_packetQue = new message_queue(open_or_create, queueName, MP_MAX_NO, MP_MAX_SIZE);
 		DbgPrint("Opened queue: %s", queueName);
 	}
 	catch(...)

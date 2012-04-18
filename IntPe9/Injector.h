@@ -14,46 +14,56 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PACKET_LIST_H
-#define PACKET_LIST_H
+#ifndef INJECTOR_H
+#define INJECTOR_H
 
 #include <common.h>
+#include <QSet>
+#include <QThread>
+#include <QTimer>
 
-#include <QTableView>
-#include <QAbstractListModel>
-#include <QVector>
-#include <QVariant>
-#include <QPixmap>
-#include <QMutex>
+#include "Models/Core.h"
+#include "Sniffer.h"
+#include "Manager.h"
 
-#include "Packet.h"
-
-class PacketList : public QAbstractListModel
+/**
+ * @class	Injector
+ * @brief	A threaded class that manages injection and registration of cores and sniffer instances
+ * @author	Intline9
+ * @date	18-4-2012
+ */
+class Injector : QObject
 {
 	Q_OBJECT
 
 public:
-	PacketList(QObject *parent = 0);
-	~PacketList();
-
-	//Standard implementations
-	int columnCount(const QModelIndex &parent) const;
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+	Injector(Manager *manager);
 
 	//Methods
-	Packet *getPacketAt(int index);
-	void autoScroll(bool state, QTableView *view);
-	
+	bool injectAll();
+	bool inject(uint32 pid, Core *core);
+	bool isInjected(uint32 pid, Core *core);
+
+	//Constants
+	uint32 getTimeout();
+
 public slots:
-	void clear();
-	void addPacket(Packet *packet);
+	void start();
+	void stop();
+	void eventLoop();
 
+signals:
+	void finished();
+	void sniffersChanged();
+	
 private:
-	QVector<Packet*> _packets;
-	QMutex mutexList;
-
+	//Threading
+	QTimer *_eventTimer;
+	QThread *_thread;
+	
+	//Variables
+	Manager *_manager;
+	QSet<uint32> _injected;
 };
 
 #endif

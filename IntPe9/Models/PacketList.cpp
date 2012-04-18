@@ -1,11 +1,8 @@
 #include "PacketList.h"
-#include <Windows.h>
 
 PacketList::PacketList(QObject *parent /* = 0 */) : QAbstractListModel(parent)
 {
-	_thread = new QThread();
-	moveToThread(_thread);
-	_thread->start();
+
 }
 
 PacketList::~PacketList()
@@ -31,6 +28,14 @@ void PacketList::addPacket(Packet *packet)
 	_packets.push_back(packet);
 	mutexList.unlock();
 	emit layoutChanged();
+}
+
+void PacketList::autoScroll(bool state, QTableView *view)
+{
+	if(state)
+		connect(this, SIGNAL(layoutChanged()), view, SLOT(scrollToBottom()));
+	else
+		disconnect(this, SIGNAL(layoutChanged()), view, SLOT(scrollToBottom()));
 }
 
 Packet *PacketList::getPacketAt(int index)

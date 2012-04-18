@@ -1,175 +1,134 @@
 #include "Sniffer.h"
-#include <QMessageBox>
+#include <Windows.h>
 
-Sniffer::Sniffer(Core *core, uint32 pid)
+//Constants
+uint32 Sniffer::getTimeout()
+{
+	return 100;
+}
+
+Sniffer::Sniffer(uint32 pid, Core *core)
 {
 	//Set up some variables
 	_core = core;
 	_pid = pid;
-	_isStopped = false;
+	isDead = false;
 
-	//Gui
-	packetView = NULL;
-	_layout = NULL;
-	_view = NULL;
-
-
-	try
-	{
-		sprintf_s(_controllName, CC_QUEUE_NAME_SIZE, "%s%i", CC_QUEUE_NAME, _pid);
-		_controllIpc = new message_queue(open_or_create, _controllName, CC_MAX_NO, CC_MAX_SIZE);
-	}
-	catch(boost::interprocess::interprocess_exception &ex)
-	{
-		QString str(ex.what());
-	}
-
-	try
-	{
-		sprintf_s(_packetName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, _pid);
-		_packetQueue = new message_queue(open_or_create, _packetName, MP_MAX_NO, MP_MAX_SIZE);
-	}
-	catch(boost::interprocess::interprocess_exception &ex)
-	{
-		QString str(ex.what());
-	}
-
-	
-
-	//Setup this thread
-	_thread = new QThread;
+	//Move to thread
+	_thread = new QThread();
 	moveToThread(_thread);
 
-	//All connections
+	//Setup the connection to manage this thread
 	connect(_thread, SIGNAL(started()), this, SLOT(start()));
+	connect(this, SIGNAL(finished()), _thread, SLOT(quit()));
+	connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+	connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
+
+	//Start the thread and let the this->start() handle the real initial work
 	_thread->start();
-
-}
-
-void Sniffer::start()
-{
-	//Create event loop
-	_eventLoop = new QTimer();
-	connect(_eventLoop, SIGNAL(timeout()), this, SLOT(packetPoll()));
-	
-	_packetList = new PacketList();
-
-	//Create the queue
-	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
-
-	//Start the core (or restart if it was already injected)
-	sendCommand(START);
-
-	_eventLoop->start(50);
-}
-
-void Sniffer::destroy()
-{
-	blockSignals(true);
-
-	//Stop the Core
-	sendCommand(EXIT);
-
-	//Delete the view
-	if(packetView != NULL)
-		delete packetView;
-	if(_layout != NULL)
-		delete _layout;
-	if(_view != NULL)
-		delete _view;
-
-	//Stop the packet thread
-	_mutexLoop.lock(); //Wait for the poll thread to finish its last execute
-
-	//Destroy the packet queue
-	delete _packetQueue;
-	delete[] recvPacket;
-	message_queue::remove(_packetName);
-
-	//Delete others
-	delete _packetList;
-	_thread->quit();
-	_thread->deleteLater();
 }
 
 Sniffer::~Sniffer()
 {
-
+	//Destroy the queue's and buffers
+	delete _packetIpc;
+	delete _controlIpc;
+	delete[] recvPacket;
+	delete _packetList;
 }
 
+void Sniffer::start()
+{
+	//Create some stuff
+	_packetList = new PacketList();
+	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
+
+	//Open the queue's
+	sprintf_s(_controlName, CC_QUEUE_NAME_SIZE, "%s%i", CC_QUEUE_NAME, _pid);
+	sprintf_s(_packetName, MP_QUEUE_NAME_SIZE, "%s%i", MP_QUEUE_NAME, _pid);
+	_controlIpc = new message_queue(open_or_create, _controlName, CC_MAX_NO, CC_MAX_SIZE);
+	_packetIpc = new message_queue(open_or_create, _packetName, MP_MAX_NO, MP_MAX_SIZE);
+
+	//Create event loop
+	_eventTimer = new QTimer();
+	connect(_eventTimer, SIGNAL(timeout()), this, SLOT(eventLoop()));
+	
+	//Start the core (or restart if it was already injected)
+	sendCommand(START);
+
+	//Start the eventLoop
+	_eventTimer->start(getTimeout());
+
+	//Done loading so notify
+	emit doneLoading(this);
+}
+
+void Sniffer::stop()
+{
+	_eventTimer->blockSignals(true);  //Stop further processing of the eventLoop
+	sendCommand(EXIT);                //Stop the core
+	emit finished();                  //Send the stop signal to thread and myself
+}
+
+void Sniffer::eventLoop()
+{
+	if(isDead) return;
+	if(_ticks > 50) //Check every 5 seconds
+	{
+		_ticks = 0;
+		if(!isProcessRunning())
+		{
+			_eventTimer->blockSignals(true);
+			isDead = true;
+
+			//Delete queue's as no one is going to reopen them (pid based)
+			message_queue::remove(_packetName);
+			message_queue::remove(_controlName);
+
+			return;
+		}
+	}
+
+	uint32 recvdSize, priority;
+	while(_packetIpc->get_num_msg() > 0)                                                //Get all packets from the queue
+		if(_packetIpc->try_receive(recvPacket, MP_MAX_SIZE, recvdSize, priority))   //Try to receive a packet
+			if(recvPacket->messagePacketSize() == recvdSize)                    //If it is all good
+				_packetList->addPacket(new Packet(recvPacket));             //Create the packet (in my thread) and add it to the model
+
+	_ticks++;
+}
+
+/************************************************************************/
+/*                           Methods                                    */
+/************************************************************************/
 void Sniffer::sendCommand(CommandType type)
 {
+	if(isDead) return;
 	CommandControll cmd(type);
-	_controllIpc->send((char*)&cmd, cmd.totalSize(), 0);
+	_controlIpc->send((char*)&cmd, cmd.totalSize(), 0);
 }
 
 void Sniffer::sendCommand(CommandControll *command)
 {
-	_controllIpc->send((char*)command, command->totalSize(), 0);
+	if(isDead) return;
+	_controlIpc->send((char*)command, command->totalSize(), 0);
 }
 
-uint32 Sniffer::getPid()
+bool Sniffer::isProcessRunning()
 {
-	return _pid;
-}
+	DWORD code;
+	HANDLE check = OpenProcess(PROCESS_QUERY_INFORMATION, false, _pid);
+	GetExitCodeProcess(check, &code);
+	CloseHandle(check);
 
-void Sniffer::autoScroll(bool state)
-{
-	if(state)
-		connect(_packetList, SIGNAL(layoutChanged()), packetView, SLOT(scrollToBottom()));
-	else
-		disconnect(_packetList, SIGNAL(layoutChanged()), packetView, SLOT(scrollToBottom()));
-}
-
-void Sniffer::buildGui()
-{
-	//Build the layout
-	_view = new QWidget();
-	_layout = new QBoxLayout(QBoxLayout::TopToBottom);
-	_view->setLayout(_layout);
-	packetView = new QTableView(_view);
-	_layout->setContentsMargins(0,0,0,0);
-	_layout->addWidget(packetView);
-	packetView->setModel(_packetList);
-	//autoScroll(true);
-
-	//Set headers
-	packetView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-	packetView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
-	packetView->horizontalHeader()->resizeSection(0, 30);
-	packetView->horizontalHeader()->resizeSection(1, 45);
-	packetView->horizontalHeader()->resizeSection(2, 420);
-	packetView->horizontalHeader()->setStretchLastSection(true);
-	packetView->horizontalHeader()->setHighlightSections(false);
-	packetView->verticalHeader()->setDefaultSectionSize(17);
-	packetView->verticalHeader()->setVisible(false);
-	packetView->setIconSize(QSize(0, 0));
-	packetView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-	
-	//Set options
-	packetView->setAlternatingRowColors(true);
-	packetView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	packetView->setSelectionMode(QAbstractItemView::SingleSelection);
-	packetView->setDragDropOverwriteMode(false);
-	packetView->setDragDropMode(QAbstractItemView::NoDragDrop);
-	packetView->setAlternatingRowColors(true);
-	packetView->setSelectionBehavior(QAbstractItemView::SelectRows);
-	packetView->setWordWrap(false);
-	packetView->setCornerButtonEnabled(false);
-
-	
-
-	//Set font
-	QFont font;
-	font.setFamily(QString::fromUtf8("Consolas"));
-	packetView->setFont(font);
+	return (code == STILL_ACTIVE);
 }
 
 bool Sniffer::savePacketsToFile()
 {
 	try
 	{
-		QString path = QFileDialog::getSaveFileName(getView(), tr("Save all packets"), NULL, tr("Packets (*.pacs)"));
+		QString path = QFileDialog::getSaveFileName(NULL, tr("Save all packets"), NULL, tr("Packets (*.pacs)"));
 
 		QFile file(path);
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -198,14 +157,13 @@ bool Sniffer::savePacketsToFile()
 	return true;
 }
 
-PacketList *Sniffer::getPacketList()
-{
-	return _packetList;
-}
 
-bool Sniffer::isStopped()
+/************************************************************************/
+/*                           Property's                                 */
+/************************************************************************/
+uint32 Sniffer::getPid()
 {
-	return _isStopped;
+	return _pid;
 }
 
 Core *Sniffer::getCore()
@@ -213,26 +171,7 @@ Core *Sniffer::getCore()
 	return _core;
 }
 
-QWidget *Sniffer::getView()
+PacketList *Sniffer::getPacketList()
 {
-	return _view;
-}
-
-void Sniffer::packetPoll()
-{
-	_mutexLoop.lock();
-	uint32 recvdSize, priority;
-
-	//Get all packets from the queue
-	while(_packetQueue->get_num_msg() > 0)
-	{
-		if(_packetQueue->try_receive(recvPacket, MP_MAX_SIZE, recvdSize, priority))
-			if(recvPacket->messagePacketSize() == recvdSize)
-			{
-				//Handle this packet
-				QMetaObject::invokeMethod(_packetList, "addPacket", Q_ARG(Packet*, new Packet(recvPacket)));
-				//_packetList->addPacket();
-			}
-	}
-	_mutexLoop.unlock();
+	return _packetList;
 }
