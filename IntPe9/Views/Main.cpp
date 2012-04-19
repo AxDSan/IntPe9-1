@@ -43,12 +43,12 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.tableCores->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
 	//Build the toolbar
-	QIcon scroll(QPixmap(":/Common/Resources/scrollNo.png"));
-	scroll.addPixmap(QPixmap(":/Common/Resources/scroll.png"), QIcon::Normal, QIcon::On);
+	QIcon scroll(QPixmap(":/Common/scrollNo.png"));
+	scroll.addPixmap(QPixmap(":/Common/scroll.png"), QIcon::Normal, QIcon::On);
 	scrollAction = new QAction(scroll, tr("Set auto scroll"), this);
 	scrollAction->setCheckable(true);
 
-	eraseAction = new QAction(QPixmap(":/Common/Resources/eraser.png"), tr("Clear packet list"), this);
+	eraseAction = new QAction(QPixmap(":/Common/eraser.png"), tr("Clear packet list"), this);
 	//Add actions to the scrollbar
 	_mainView.toolBar->addAction(scrollAction);
 	_mainView.toolBar->addAction(eraseAction);

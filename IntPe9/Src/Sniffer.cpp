@@ -183,7 +183,7 @@ QVariant Sniffer::getField(uint32 index)
 	switch(index)
 	{
 		case 0:
-			return (isDead) ? QPixmap(":/Common/Resources/no.png") : QPixmap(":/Common/Resources/ok.png");
+			return (isDead) ? QPixmap(":/Common/no.png") : QPixmap(":/Common/ok.png");
 		case 1:
 			return getPid();
 		case 2:

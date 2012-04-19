@@ -11,7 +11,10 @@ BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 		break;
 		case DLL_PROCESS_DETACH:
 			if(leagueOfLegends != NULL)
+			{
 				leagueOfLegends->finalize();
+				delete leagueOfLegends;
+			}
 		break;
 	}
 	return true;

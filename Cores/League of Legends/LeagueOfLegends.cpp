@@ -31,6 +31,14 @@ LeagueOfLegends::LeagueOfLegends()
 			if(cmd[i] == '"')
 				q++;
 	}
+	//Test if we where able to parse the command line
+	_wrongCommandLine = (!sStart || !sEnd);
+	if(_wrongCommandLine)
+	{
+		DbgPrint("We where not able to parse the commandline: %s", cmd);
+		return;
+	}
+
 	_keySize = sEnd-sStart;
 	_key = (uint8*)malloc(_keySize+1);
 	uint8 *_keyDecrypted = (uint8*)malloc(_keySize*2);
@@ -38,7 +46,7 @@ LeagueOfLegends::LeagueOfLegends()
 
 	//Create blowfish
 	_key[_keySize] = 0x00;
-	DbgPrint("The base64 key they use is: %s", _key);
+	DbgPrint("The base64 key is: %s", _key);
 
 	uint32 size = decode_base64(_keyDecrypted, (const char*)_key);
 
@@ -46,7 +54,7 @@ LeagueOfLegends::LeagueOfLegends()
 	for(int i = 0; i < 8; i++)
 		sprintf_s(&hexKey[i*3], 25-(i*3), "%02X ", (uint8)_keyDecrypted[i]);
 	hexKey[24] = 0x00;
-	DbgPrint("The hex key the use: %s", hexKey);
+	DbgPrint("The hex key: %s", hexKey);
 
 	blowfish = new Blowfish(_keyDecrypted, size);
 
@@ -56,6 +64,9 @@ LeagueOfLegends::LeagueOfLegends()
 
 void LeagueOfLegends::initialize()
 {
+	if(_wrongCommandLine)
+		return;
+
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
@@ -68,6 +79,9 @@ void LeagueOfLegends::initialize()
 
 void LeagueOfLegends::finalize()
 {
+	if(_wrongCommandLine)
+		return;
+
 	//Unhook, but we really can not risk it!
 	//_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&_oldWSASendTo);
 	//_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&_oldWSARecvFrom);
@@ -171,7 +185,7 @@ int32 parseEnet(char *buffer, uint32 length, uint8 **dataPointer, uint32 *dataLe
 		break;
 
 
-		//All enet specefic stuff, so ignore it
+		//All enet specific stuff, so ignore it
 		case ENET_PROTOCOL_COMMAND_ACKNOWLEDGE:
 		case ENET_PROTOCOL_COMMAND_CONNECT:
 		case ENET_PROTOCOL_COMMAND_VERIFY_CONNECT:
@@ -195,7 +209,7 @@ int32 parseEnet(char *buffer, uint32 length, uint8 **dataPointer, uint32 *dataLe
 }
 
 /** IMPORTANT
- * Enet sends all headers and buff seperated, lucky for us!
+ * Enet sends all headers and buff separated, lucky for us!
  * lpBuffer[0] = ENetProtocolHeader
  * lpBuffer[1,3,5...] = ENetProtocol
  * lpBuffer[2,4,6...] = Packet data
@@ -215,7 +229,6 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 				if(!(cmd == ENET_PROTOCOL_COMMAND_SEND_RELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED))
 					continue;
 
-				//leagueOfLegends->DbgPrint("[SEND] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, lpBuffers[i+1].len);
 				sprintf_s(&sendBuf->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
 		
 				sendBuf->type = WSASENDTO;
@@ -245,7 +258,6 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 			uint32 processed;
 			
 			processed = parseHeader(buffer, totalLength);
-			//leagueOfLegends->DbgPrint("Recv, headerSize: %i", processed);
 			while(processed < totalLength)
 			{
 				uint8 *data = NULL;
@@ -258,8 +270,6 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 					break; //Not interesting packet
 
 				processed += parsed;
-				//if(processed <= totalLength)
-				//	leagueOfLegends->DbgPrint("Recv, proccessed: %i, total: %i, dataLength: %i", processed, totalLength, dataLength);
 				if(data != NULL && dataLength > 0)
 				{
 					if(isFragment)

@@ -14,6 +14,7 @@ class LeagueOfLegends : public Skeleton
 private:
 	uint16 _keySize;
 	uint8 *_key;
+	bool _wrongCommandLine;
 public:
 	Blowfish *blowfish;
 	LeagueOfLegends();
