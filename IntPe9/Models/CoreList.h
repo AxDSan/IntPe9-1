@@ -17,7 +17,7 @@
 #ifndef CORE_LIST_H
 #define CORE_LIST_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QTableView>
 #include <QAbstractListModel>

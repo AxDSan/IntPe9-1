@@ -17,7 +17,7 @@
 #ifndef PACKET_LIST_H
 #define PACKET_LIST_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QTableView>
 #include <QAbstractListModel>

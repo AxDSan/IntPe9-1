@@ -17,7 +17,7 @@
 #ifndef SNIFFER_LIST_H
 #define SNIFFER_LIST_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QTableView>
 #include <QAbstractListModel>

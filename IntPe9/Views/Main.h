@@ -17,7 +17,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QMessageBox>
 #include <QtGui/QMainWindow>

@@ -17,7 +17,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QObject>
 #include <QDir>

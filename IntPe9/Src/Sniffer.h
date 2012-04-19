@@ -17,7 +17,7 @@
 #ifndef SNIFFER_H
 #define SNIFFER_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QThread>
 #include <QFileDialog>

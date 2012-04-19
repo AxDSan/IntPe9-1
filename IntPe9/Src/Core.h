@@ -1,7 +1,7 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QVariant>
 #include <QAbstractListModel>

@@ -17,7 +17,7 @@
 #ifndef INJECTOR_H
 #define INJECTOR_H
 
-#include <common.h>
+#include <Common.h>
 #include <QSet>
 #include <QThread>
 #include <QTimer>

@@ -17,7 +17,7 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include <common.h>
+#include <Common.h>
 
 #include <QVariant>
 #include <QPixmap>
