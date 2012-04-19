@@ -89,6 +89,12 @@
     <CustomBuild Include="..\..\IntPe9\Src\Sniffer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Models\SnifferList.h">
+      <Filter>Models</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Models\CoreList.h">
+      <Filter>Models</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\IntPe9\QHexEdit\license.txt">
@@ -229,6 +235,24 @@
     <ClCompile Include="..\..\IntPe9\Views\Main.cpp">
       <Filter>Views</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Models\SnifferList.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_SnifferList.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_SnifferList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Models\CoreList.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_CoreList.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_CoreList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h">
@@ -246,6 +270,7 @@
     <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_Parser.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\IntPe9\Resources\IntPe.rc">

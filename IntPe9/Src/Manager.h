@@ -28,7 +28,8 @@
 #include "Core.h"
 #include "Sniffer.h"
 
-class SnifferList;
+#include "Models/SnifferList.h"
+#include "Models/CoreList.h"
 
 class Manager : public QObject
 {
@@ -41,21 +42,23 @@ public:
 	//Property's
 	Core *getCore(QString name);
 	Sniffer *getActiveSniffer();
-	QVector<Sniffer*> *getSniffers();
-	QVector<Core*> *getCores();
+	Sniffers *getSniffers();
+	Cores *getCores();
 	SnifferList *getSnifferModel();
+	CoreList *getCoreModel();
 
 	//Methods
 	void readCores(QString path);
 	
 private:
 	//Variables
-	QVector<Core*> _cores;
-	QVector<Sniffer*> _sniffers;
+	Cores _cores;
+	Sniffers _sniffers;
 	Sniffer *_activeSniffer;
 
 	//Models
 	SnifferList *_snifferList;
+	CoreList *_coreList;
 
 public slots:
 	void stop();
@@ -68,49 +71,6 @@ public slots:
 
 signals:
 	void activateModel(PacketList *);
-
-};
-
-class SnifferList : public QAbstractListModel
-{
-	Q_OBJECT
-
-public:
-	SnifferList(Manager *manager)
-	{
-		_manager = manager;
-		_header << "S" << "R" << "Pid" << "Packets" << "Process";
-	}
-
-	//Standard implementations
-	int columnCount(const QModelIndex &parent) const{return _header.count();}
-	int rowCount(const QModelIndex &parent = QModelIndex()) const {return _manager->getSniffers()->count();}
-	QVariant data(const QModelIndex &index, int role) const
-	{
-		if (!index.isValid() || index.row() >= _manager->getSniffers()->count() || index.column() > _header.count() || (role != Qt::DisplayRole && role != Qt::DecorationRole) )
-			return QVariant();
-		if(index.column() == 0)
-		{
-			if(_manager->getActiveSniffer() == _manager->getSniffers()->at(index.row()))
-				return ">";
-			else
-				return QVariant();
-		}
-		return _manager->getSniffers()->at(index.row())->getField(index.column()-1);
-	}
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
-	{
-		if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
-			return QVariant();
-		return _header.at(section);
-	}
-public slots:
-	void refresh() {emit layoutChanged();}
-
-
-private:
-	QStringList _header;
-	Manager *_manager;
 
 };
 

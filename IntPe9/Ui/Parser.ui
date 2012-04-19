@@ -29,6 +29,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../Resources/IntPe.qrc"/>
+ </resources>
  <connections/>
 </ui>

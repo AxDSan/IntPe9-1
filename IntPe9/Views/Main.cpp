@@ -34,12 +34,14 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 	//Set models
 	_mainView.tableSniffers->setModel(_manager->getSnifferModel());
-	_mainView.tableSniffers->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 	_mainView.tableSniffers->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(0, 25);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(1, 25);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(2, 40);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(3, 50);
+	_mainView.tableCores->setModel(_manager->getCoreModel());
+	_mainView.tableCores->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+
 	//Build the toolbar
 	QIcon scroll(QPixmap(":/Common/Resources/scrollNo.png"));
 	scroll.addPixmap(QPixmap(":/Common/Resources/scroll.png"), QIcon::Normal, QIcon::On);

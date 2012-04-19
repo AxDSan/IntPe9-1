@@ -4,12 +4,14 @@ Manager::Manager(QString path)
 {
 	readCores(path);
 	_activeSniffer = NULL;
-	_snifferList = new SnifferList(this);
+	_snifferList = new SnifferList(&_sniffers, &_activeSniffer);
+	_coreList = new CoreList(&_cores);
 }
 
 Manager::~Manager()
 {
 	delete _snifferList;
+	delete _coreList;
 }
 
 void Manager::updateSniffers()
@@ -95,4 +97,9 @@ Core *Manager::getCore(QString name)
 SnifferList *Manager::getSnifferModel()
 {
 	return _snifferList;
+}
+
+CoreList *Manager::getCoreModel()
+{
+	return _coreList;
 }

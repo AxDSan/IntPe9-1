@@ -106,7 +106,7 @@ p, li { white-space: pre-wrap; }
       <enum>Qt::PlainText</enum>
      </property>
      <property name="pixmap">
-      <pixmap resource="../IntPe.qrc">:/Common/Resources/logo.png</pixmap>
+      <pixmap resource="../Resources/IntPe.qrc">:/Common/logo.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>false</bool>
@@ -122,9 +122,10 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../IntPe.qrc"/>
-  <include location="../IntPe.qrc"/>
-  <include location="../IntPe.qrc"/>
+  <include location="../Resources/IntPe.qrc"/>
+  <include location="../Resources/IntPe.qrc"/>
+  <include location="../Resources/IntPe.qrc"/>
+  <include location="../Resources/IntPe.qrc"/>
   <include location="../IntPe.qrc"/>
  </resources>
  <connections>
