@@ -150,7 +150,15 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>Windows</string>
+    </property>
+    <addaction name="actionShowCores"/>
+    <addaction name="actionShowSniffers"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -234,7 +242,7 @@
   </widget>
   <widget class="QDockWidget" name="dockSniffer">
    <property name="windowTitle">
-    <string>Active sniffers</string>
+    <string>Sniffers</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -289,6 +297,16 @@
   <action name="actionClear_packet_list">
    <property name="text">
     <string>Clear packet list</string>
+   </property>
+  </action>
+  <action name="actionShowCores">
+   <property name="text">
+    <string>Show Cores</string>
+   </property>
+  </action>
+  <action name="actionShowSniffers">
+   <property name="text">
+    <string>Show Sniffers</string>
    </property>
   </action>
  </widget>

@@ -45,10 +45,12 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	connect(scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
 	connect(eraseAction, SIGNAL(triggered()), this, SLOT(clearList()));
 	
-	//File bar
+	//Action menu
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
 	connect(_mainView.actionSavePackets, SIGNAL(triggered()), _manager, SLOT(activeSaveAll()));
 	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
+	connect(_mainView.actionShowCores, SIGNAL(triggered()), _mainView.dockCores, SLOT(show()));
+	connect(_mainView.actionShowSniffers, SIGNAL(triggered()), _mainView.dockSniffer, SLOT(show()));
 	//Others
 	connect(_manager, SIGNAL(activateModel(PacketList*)), this, SLOT(setPacketModel(PacketList*)));
 }
