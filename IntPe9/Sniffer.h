@@ -36,12 +36,13 @@ class Sniffer : public QObject
 	Q_OBJECT
 
 public:
-	Sniffer(uint32 pid, Core *core);
+	Sniffer(uint32 pid, QString processName, Core *core);
 	
 	//Property's
 	Core *getCore();
 	uint32 getPid();
 	PacketList *getPacketList();
+	QVariant getField(uint32 index);
 
 	//Methods (run from own thread)
 	bool savePacketsToFile();
@@ -54,6 +55,7 @@ private:
 	~Sniffer();
 
 	//Variables
+	QString _processName;
 	bool isDead;
 	uint32 _ticks;
 	Core *_core;

@@ -7,12 +7,13 @@ uint32 Sniffer::getTimeout()
 	return 100;
 }
 
-Sniffer::Sniffer(uint32 pid, Core *core)
+Sniffer::Sniffer(uint32 pid, QString processName, Core *core)
 {
 	//Set up some variables
 	_core = core;
 	_pid = pid;
 	isDead = false;
+	_processName = processName;
 
 	//Move to thread
 	_thread = new QThread();
@@ -80,6 +81,7 @@ void Sniffer::eventLoop()
 		{
 			_eventTimer->blockSignals(true);
 			isDead = true;
+			_packetList->refresh();
 
 			//Delete queue's as no one is going to reopen them (pid based)
 			message_queue::remove(_packetName);
@@ -174,4 +176,20 @@ Core *Sniffer::getCore()
 PacketList *Sniffer::getPacketList()
 {
 	return _packetList;
+}
+
+QVariant Sniffer::getField(uint32 index)
+{
+	switch(index)
+	{
+		case 0:
+			return (isDead) ? QPixmap(":/Common/Resources/no.png") : QPixmap(":/Common/Resources/ok.png");
+		case 1:
+			return getPid();
+		case 2:
+			return _packetList->rowCount();
+		case 3:
+			return _processName;
+	}
+	return QVariant();
 }

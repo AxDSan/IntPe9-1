@@ -30,6 +30,11 @@ void PacketList::addPacket(Packet *packet)
 	emit layoutChanged();
 }
 
+void PacketList::refresh()
+{
+	emit layoutChanged();
+}
+
 void PacketList::autoScroll(bool state, QTableView *view)
 {
 	if(state)

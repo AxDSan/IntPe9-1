@@ -27,7 +27,17 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	//Create classesses
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
 	_injector = new Injector(_manager);
-	
+
+	connect(_mainView.tableSniffers, SIGNAL(doubleClicked(const QModelIndex &)), _manager, SLOT(setActiveSniffer(const QModelIndex &)));
+
+	//Set models
+	_mainView.tableSniffers->setModel(_manager->getSnifferModel());
+	_mainView.tableSniffers->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+	_mainView.tableSniffers->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+	_mainView.tableSniffers->horizontalHeader()->resizeSection(0, 25);
+	_mainView.tableSniffers->horizontalHeader()->resizeSection(1, 25);
+	_mainView.tableSniffers->horizontalHeader()->resizeSection(2, 40);
+	_mainView.tableSniffers->horizontalHeader()->resizeSection(3, 50);
 	//Build the toolbar
 	QIcon scroll(QPixmap(":/Common/Resources/scrollNo.png"));
 	scroll.addPixmap(QPixmap(":/Common/Resources/scroll.png"), QIcon::Normal, QIcon::On);

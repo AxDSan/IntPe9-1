@@ -28,6 +28,7 @@
 #include "Models/Core.h"
 #include "Sniffer.h"
 
+class SnifferList;
 
 class Manager : public QObject
 {
@@ -40,6 +41,9 @@ public:
 	//Property's
 	Core *getCore(QString name);
 	Sniffer *getActiveSniffer();
+	QVector<Sniffer*> *getSniffers();
+	QVector<Core*> *getCores();
+	SnifferList *getSnifferModel();
 
 	//Methods
 	void readCores(QString path);
@@ -50,17 +54,64 @@ private:
 	QVector<Sniffer*> _sniffers;
 	Sniffer *_activeSniffer;
 
+	//Models
+	SnifferList *_snifferList;
+
 public slots:
 	void stop();
 	void updateSniffers();
 	void registerSniffer(Sniffer *sniffer);
+	void setActiveSniffer(const QModelIndex &index);
 
 	//Current active sniffer slots
 	void activeSaveAll();
 
 signals:
 	void activateModel(PacketList *);
-	
+
+};
+
+class SnifferList : public QAbstractListModel
+{
+	Q_OBJECT
+
+public:
+	SnifferList(Manager *manager)
+	{
+		_manager = manager;
+		_header << "S" << "R" << "Pid" << "Packets" << "Process";
+	}
+
+	//Standard implementations
+	int columnCount(const QModelIndex &parent) const{return _header.count();}
+	int rowCount(const QModelIndex &parent = QModelIndex()) const {return _manager->getSniffers()->count();}
+	QVariant data(const QModelIndex &index, int role) const
+	{
+		if (!index.isValid() || index.row() >= _manager->getSniffers()->count() || index.column() > _header.count() || (role != Qt::DisplayRole && role != Qt::DecorationRole) )
+			return QVariant();
+		if(index.column() == 0)
+		{
+			if(_manager->getActiveSniffer() == _manager->getSniffers()->at(index.row()))
+				return ">";
+			else
+				return QVariant();
+		}
+		return _manager->getSniffers()->at(index.row())->getField(index.column()-1);
+	}
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
+	{
+		if (role != Qt::DisplayRole || orientation != Qt::Horizontal)
+			return QVariant();
+		return _header.at(section);
+	}
+public slots:
+	void refresh() {emit layoutChanged();}
+
+
+private:
+	QStringList _header;
+	Manager *_manager;
+
 };
 
 #endif

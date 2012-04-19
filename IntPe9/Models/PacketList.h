@@ -49,6 +49,7 @@ public:
 public slots:
 	void clear();
 	void addPacket(Packet *packet);
+	void refresh();
 
 private:
 	QVector<Packet*> _packets;

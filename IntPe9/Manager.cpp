@@ -4,11 +4,12 @@ Manager::Manager(QString path)
 {
 	readCores(path);
 	_activeSniffer = NULL;
+	_snifferList = new SnifferList(this);
 }
 
 Manager::~Manager()
 {
-
+	delete _snifferList;
 }
 
 void Manager::updateSniffers()
@@ -33,6 +34,12 @@ void Manager::registerSniffer(Sniffer *sniffer)
 {
 	_activeSniffer = sniffer;
 	_sniffers.push_back(sniffer);
+
+	//Connect the models
+	connect(sniffer->getPacketList(), SIGNAL(layoutChanged()), _snifferList, SLOT(refresh()));
+	_snifferList->refresh();
+
+
 	emit activateModel(sniffer->getPacketList());
 }
 
@@ -54,9 +61,26 @@ void Manager::readCores(QString path)
 /************************************************************************/
 /*                           Property's                                 */
 /************************************************************************/
+QVector<Sniffer*> *Manager::getSniffers()
+{
+	return &_sniffers;
+}
+
+QVector<Core*> *Manager::getCores()
+{
+	return &_cores;
+}
+
 Sniffer *Manager::getActiveSniffer()
 {
 	return _activeSniffer;
+}
+
+void Manager::setActiveSniffer(const QModelIndex &index)
+{
+	_activeSniffer = _sniffers.at(index.row());
+	_snifferList->refresh();
+	emit activateModel(_activeSniffer->getPacketList());
 }
 
 Core *Manager::getCore(QString name)
@@ -66,4 +90,9 @@ Core *Manager::getCore(QString name)
 		if(core->getExeName() == name)
 			return core;
 	return NULL;
+}
+
+SnifferList *Manager::getSnifferModel()
+{
+	return _snifferList;
 }
