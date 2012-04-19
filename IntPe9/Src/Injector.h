@@ -22,7 +22,7 @@
 #include <QThread>
 #include <QTimer>
 
-#include "Models/Core.h"
+#include "Core.h"
 #include "Sniffer.h"
 #include "Manager.h"
 

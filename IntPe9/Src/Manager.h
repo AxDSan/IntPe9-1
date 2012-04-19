@@ -25,7 +25,7 @@
 #include <QMap>
 #include <QList>
 
-#include "Models/Core.h"
+#include "Core.h"
 #include "Sniffer.h"
 
 class SnifferList;

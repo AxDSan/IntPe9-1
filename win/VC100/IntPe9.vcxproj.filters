@@ -44,9 +44,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\IntPe9\IntPe.qrc">
-      <Filter>Resource Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Ui\About.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -62,9 +59,6 @@
     <CustomBuild Include="..\..\IntPe9\QHexEdit\qhexedit_p.h">
       <Filter>QHexEdit</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Models\Packet.h">
-      <Filter>Models</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\IntPe9\Models\PacketList.h">
       <Filter>Models</Filter>
     </CustomBuild>
@@ -74,37 +68,54 @@
     <CustomBuild Include="..\..\IntPe9\Views\About.h">
       <Filter>Views</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Models\Core.h">
-      <Filter>Models</Filter>
+    <CustomBuild Include="..\..\IntPe9\Resources\IntPe.qrc">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Manager.h">
+    <CustomBuild Include="..\..\IntPe9\Views\Main.h">
+      <Filter>Views</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Src\Core.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Injector.h">
+    <CustomBuild Include="..\..\IntPe9\Src\Injector.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Sniffer.h">
+    <CustomBuild Include="..\..\IntPe9\Src\Manager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\IntPe9\Views\Main.h" />
+    <CustomBuild Include="..\..\IntPe9\Src\Packet.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Src\Sniffer.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\IntPe9\Resources\logo.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\IntPe9\QHexEdit\license.txt">
       <Filter>QHexEdit</Filter>
     </None>
-    <None Include="..\..\IntPe9\Resources\no.png">
+    <None Include="..\..\IntPe9\Resources\Resources\eraser.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\IntPe9\Resources\ok.png">
+    <None Include="..\..\IntPe9\Resources\Resources\scroll.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\IntPe9\Resources\in.png">
+    <None Include="..\..\IntPe9\Resources\Resources\scrollNo.png">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\IntPe9\Resources\out.png">
+    <None Include="..\..\IntPe9\Resources\Resources\logo.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\Resources\in.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\Resources\out.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\Resources\ok.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\Resources\no.png">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -122,9 +133,6 @@
     <ClCompile Include="..\..\IntPe9\QHexEdit\xbytearray.cpp">
       <Filter>QHexEdit</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Models\Packet.cpp">
-      <Filter>Models</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\Models\PacketList.cpp">
       <Filter>Models</Filter>
     </ClCompile>
@@ -134,16 +142,10 @@
     <ClCompile Include="..\..\IntPe9\Views\About.cpp">
       <Filter>Views</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\qrc_IntPe.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_About.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Main.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Packet.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_PacketList.cpp">
@@ -164,9 +166,6 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Main.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Packet.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_PacketList.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -179,8 +178,11 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_qhexedit_p.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Models\Core.cpp">
-      <Filter>Models</Filter>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\qrc_IntPe.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Src\Core.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Core.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -188,16 +190,7 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Core.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Sniffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Sniffer.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Sniffer.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Injector.cpp">
+    <ClCompile Include="..\..\IntPe9\Src\Injector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Injector.cpp">
@@ -206,7 +199,7 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Injector.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Manager.cpp">
+    <ClCompile Include="..\..\IntPe9\Src\Manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Manager.cpp">
@@ -215,12 +208,27 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Manager.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\IntPe9\Views\Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\..\IntPe9\IntPe.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <ClCompile Include="..\..\IntPe9\Src\Packet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Packet.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Packet.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Src\Sniffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_Sniffer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Sniffer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Views\Main.cpp">
+      <Filter>Views</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h">
@@ -238,5 +246,10 @@
     <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_Parser.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\IntPe9\Resources\IntPe.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@
 #include <QTextStream>
 #include <QTimer>
 
-#include "Models/Core.h"
+#include "Core.h"
 #include "Models/PacketList.h"
 
 #include <boost/interprocess/ipc/message_queue.hpp>

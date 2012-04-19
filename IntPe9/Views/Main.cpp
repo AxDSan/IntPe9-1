@@ -4,9 +4,11 @@
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
-	//As debug i run from compiler so change the path to the output path of all bins
+	//In debug we can run from VS that will change the run dir, so fix that! (if needed)
 	#ifdef _DEBUG
-		QDir::setCurrent("../../bin/VC100_Debug");
+		QDir corePath("Cores");
+		if(!corePath.exists())
+			QDir::setCurrent("../../bin/VC100_Debug");
 	#endif
 
 	//Init variables
