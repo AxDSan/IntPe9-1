@@ -117,7 +117,6 @@ bool Injector::inject(uint32 pid, Core *core)
 		return false;
 
 	//Cleanup
-	//VirtualFreeEx(process, allocatedMemory, 0,  MEM_RELEASE);
 	CloseHandle(thread);
 	CloseHandle(process);
 
@@ -157,18 +156,14 @@ bool Injector::injectAll()
 			if(core)
 			{
 				if(!isInjected(pe32.th32ProcessID, core))                         //Check if we already injected
-				{
 					if(!inject(pe32.th32ProcessID, core))                     //Not yet injected so try now
 						continue;                                         //We failed to inject so skip this injection (and try again later)
-				}
-				else
-				{
-					_injected.insert(pe32.th32ProcessID);                     //Remember that we injected to this process
-					Sniffer *sniffer = new Sniffer(pe32.th32ProcessID, core); //Create new sniffer thread
 
-					//Set up default connections
-					connect(sniffer, SIGNAL(doneLoading(Sniffer*)), _manager, SLOT(registerSniffer(Sniffer*)));
-				}
+				_injected.insert(pe32.th32ProcessID);                             //Remember that we injected to this process
+				Sniffer *sniffer = new Sniffer(pe32.th32ProcessID, core);         //Create new sniffer thread
+
+				//Set up default connections
+				connect(sniffer, SIGNAL(doneLoading(Sniffer*)), _manager, SLOT(registerSniffer(Sniffer*)));
 			}
 		}
 	}while (Process32Next(hProcessSnap, &pe32));

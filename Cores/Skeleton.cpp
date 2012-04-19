@@ -1,9 +1,7 @@
 #include "Skeleton.h"
 #include <Windows.h>
-#include <Dbghelp.h>
 
 Skeleton *me;
-
 void Skeleton::DbgPrint(const char* format, ...)
 {
 	#ifdef _DEBUG
