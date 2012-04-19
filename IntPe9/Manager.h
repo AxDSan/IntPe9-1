@@ -55,6 +55,9 @@ public slots:
 	void updateSniffers();
 	void registerSniffer(Sniffer *sniffer);
 
+	//Current active sniffer slots
+	void activeSaveAll();
+
 signals:
 	void activateModel(PacketList *);
 	

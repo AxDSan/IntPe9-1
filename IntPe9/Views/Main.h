@@ -51,7 +51,6 @@ public:
 	Ui::mainView* getView();
 
 public slots:
-	void saveAllAsText();
 	void clearList();
 	void closing();
 
@@ -60,12 +59,13 @@ public slots:
 	void autoScroll(bool state);
 
 private:
-	bool _notConnected;
+	bool _firstModel;
 	Manager *_manager;
 	Injector *_injector;
 
 	//Action bar
 	QAction *scrollAction;
+	QAction *eraseAction;
 
 	//Views
 	QHexEdit *_hexView;

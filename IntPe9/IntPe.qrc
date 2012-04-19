@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Common">
+    <file>Resources/eraser.png</file>
     <file>Resources/scroll.png</file>
     <file>Resources/scrollNo.png</file>
     <file>Resources/logo.png</file>

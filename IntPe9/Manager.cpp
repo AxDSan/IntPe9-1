@@ -23,6 +23,12 @@ void Manager::stop()
 		sniffer->stop();
 }
 
+void Manager::activeSaveAll()
+{
+	if(_activeSniffer != NULL)
+		_activeSniffer->savePacketsToFile();
+}
+
 void Manager::registerSniffer(Sniffer *sniffer)
 {
 	_activeSniffer = sniffer;

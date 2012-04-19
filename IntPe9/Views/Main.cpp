@@ -11,7 +11,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 	//Init variables
 	_mainView.setupUi(this);
-	_notConnected = true;
+	_firstModel = true;
 
 	//Create the hex viewer
 	_hexView = new QHexEdit(_mainView.hexWidget);
@@ -31,18 +31,23 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	//Build the toolbar
 	QIcon scroll(QPixmap(":/Common/Resources/scrollNo.png"));
 	scroll.addPixmap(QPixmap(":/Common/Resources/scroll.png"), QIcon::Normal, QIcon::On);
-	scrollAction = new QAction(scroll, "Set auto scroll", this);
+	scrollAction = new QAction(scroll, tr("Set auto scroll"), this);
 	scrollAction->setCheckable(true);
-	_mainView.toolBar->addAction(scrollAction);
 
-	
+	eraseAction = new QAction(QPixmap(":/Common/Resources/eraser.png"), tr("Clear packet list"), this);
+	//Add actions to the scrollbar
+	_mainView.toolBar->addAction(scrollAction);
+	_mainView.toolBar->addAction(eraseAction);
+
 	
 	//Setup connections
 	//Toolbar
 	connect(scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
+	connect(eraseAction, SIGNAL(triggered()), this, SLOT(clearList()));
+	
 	//File bar
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
-	connect(_mainView.actionSavePackets, SIGNAL(triggered()), this, SLOT(saveAllAsText()));
+	connect(_mainView.actionSavePackets, SIGNAL(triggered()), _manager, SLOT(activeSaveAll()));
 	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
 	//Others
 	connect(_manager, SIGNAL(activateModel(PacketList*)), this, SLOT(setPacketModel(PacketList*)));
@@ -91,13 +96,6 @@ void MainGui::closing()
 	_manager->stop();
 }
 
-void MainGui::saveAllAsText()
-{
-	Sniffer *sniffer = _manager->getActiveSniffer();
-	if(sniffer != NULL)
-		sniffer->savePacketsToFile();
-}
-
 void MainGui::autoScroll(bool state)
 {
 	Sniffer *sniffer = _manager->getActiveSniffer();
@@ -116,14 +114,17 @@ void MainGui::setPacketModel(PacketList *model)
 	_mainView.tablePackets->setModel(model);
 	autoScroll(true);
 
-	//Custom GUI setup
-	_mainView.tablePackets->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
-	_mainView.tablePackets->horizontalHeader()->resizeSection(0, 30);
-	_mainView.tablePackets->horizontalHeader()->resizeSection(1, 50);
-	_mainView.tablePackets->horizontalHeader()->resizeSection(2, 420);
+	if(_firstModel)
+	{
+		//Header setup
+		_mainView.tablePackets->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+		_mainView.tablePackets->horizontalHeader()->resizeSection(0, 25);
+		_mainView.tablePackets->horizontalHeader()->resizeSection(1, 45);
+		_mainView.tablePackets->horizontalHeader()->resizeSection(2, 420);
 
-	if(_notConnected)
-		_notConnected = connect(_mainView.tablePackets->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(selectedPacketChanged(const QModelIndex &, const QModelIndex &)));
+		//Selection model connect
+		_firstModel = connect(_mainView.tablePackets->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(selectedPacketChanged(const QModelIndex &, const QModelIndex &)));
+	}
 }
 
 void MainGui::selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous)
