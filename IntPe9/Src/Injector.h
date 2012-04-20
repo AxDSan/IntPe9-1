@@ -18,32 +18,44 @@
 #define INJECTOR_H
 
 #include <Common.h>
+
+#include <QDialog>
 #include <QSet>
 #include <QThread>
 #include <QTimer>
-
+#include <QFileIconProvider>
 #include "Core.h"
 #include "Sniffer.h"
 #include "Manager.h"
 
+//Models
+#include "Models/CoreList.h"
+
+//Views
+#include "ui_ProcessList.h"
+
+typedef QMap<uint32, QString> ProcessList;
 /**
  * @class	Injector
  * @brief	A threaded class that manages injection and registration of cores and sniffer instances
  * @author	Intline9
  * @date	18-4-2012
  */
-class Injector : QObject
+class Injector : public QObject
 {
 	Q_OBJECT
 
 public:
-	Injector(Manager *manager);
+	Injector(Manager *manager, QWidget *parent = NULL);
+	~Injector();
 
 	//Methods
 	bool injectAll();
 	bool inject(uint32 pid, Core *core);
 	bool isInjected(uint32 pid, Core *core);
-
+	ProcessList getProcesses();
+	QPixmap getIcon(uint32 pid);
+		
 	//Constants
 	uint32 getTimeout();
 
@@ -51,6 +63,9 @@ public slots:
 	void start();
 	void stop();
 	void eventLoop();
+	void refreshProcessList();
+	void selectProcess(const QModelIndex &index);
+	void selectedProcess(const QModelIndex &index);
 
 signals:
 	void finished();
@@ -64,6 +79,12 @@ private:
 	//Variables
 	Manager *_manager;
 	QSet<uint32> _injected;
+	Core *_selectedCore;
+
+	//View
+	QWidget *_parent;
+	QDialog *_processGui;
+	Ui::processView _processView;
 };
 
 #endif

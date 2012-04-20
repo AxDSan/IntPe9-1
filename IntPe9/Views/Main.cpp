@@ -28,9 +28,10 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 	//Create classesses
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
-	_injector = new Injector(_manager);
+	_injector = new Injector(_manager, this);
 
 	connect(_mainView.tableSniffers, SIGNAL(doubleClicked(const QModelIndex &)), _manager, SLOT(setActiveSniffer(const QModelIndex &)));
+	connect(_mainView.tableCores, SIGNAL(doubleClicked(const QModelIndex &)), _injector, SLOT(selectProcess(const QModelIndex &)), Qt::DirectConnection);
 
 	//Set models
 	_mainView.tableSniffers->setModel(_manager->getSnifferModel());

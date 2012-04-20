@@ -95,6 +95,9 @@
     <CustomBuild Include="..\..\IntPe9\Models\CoreList.h">
       <Filter>Models</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\Ui\ProcessList.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\IntPe9\QHexEdit\license.txt">

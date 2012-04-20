@@ -31,6 +31,11 @@ QVariant CoreList::headerData(int section, Qt::Orientation orientation, int role
 	return _header.at(section);
 }
 
+Core *CoreList::getCoreAt(int row)
+{
+	return _cores->at(row);
+}
+
 void CoreList::refresh()
 {
 	emit layoutChanged();

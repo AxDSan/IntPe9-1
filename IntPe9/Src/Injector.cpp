@@ -2,6 +2,7 @@
 
 //Needed for process injection
 #include <Windows.h>
+#include <Psapi.h>
 #include <tlhelp32.h>
 
 //Constants
@@ -11,8 +12,14 @@ uint32 Injector::getTimeout()
 }
 
 
-Injector::Injector(Manager *manager)
+Injector::Injector(Manager *manager, QWidget *parent)
 {
+	//Build processList gui
+	_parent = parent;
+	_processGui = new QDialog(_parent, Qt::Dialog);
+	_processView.setupUi(_processGui);
+	connect(_processView.buttonRefresh, SIGNAL(clicked()), this, SLOT(refreshProcessList()), Qt::DirectConnection);
+
 	//Set some defaults
 	_manager = manager;
 	
@@ -28,6 +35,11 @@ Injector::Injector(Manager *manager)
 	
 	//Start the thread and let the this->start() handle the real initial work
 	_thread->start();
+}
+
+Injector::~Injector()
+{
+	delete _processGui;
 }
 
 void Injector::start()
@@ -48,6 +60,63 @@ void Injector::eventLoop()
 	injectAll();     //Inject cores into new processes
 }
 
+QPixmap Injector::getIcon(uint32 pid)
+{
+	wchar_t filePath[MAX_PATH];
+	HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+	if(process != INVALID_HANDLE_VALUE && process != 0)
+	{
+		DWORD size = MAX_PATH*sizeof(wchar_t);
+		QueryFullProcessImageName(process, 0, filePath, &size);
+		HICON icoHandle = ExtractIcon((HINSTANCE)process, filePath, 0);
+		CloseHandle(process);
+
+		if((int)icoHandle > 1)
+		{
+			QPixmap img = QPixmap::fromWinHICON(icoHandle);
+			DestroyIcon(icoHandle);
+			return img;
+		}
+	}
+	QPixmap img(16, 1);
+	img.fill(QColor(0,0,0,0));
+	return img;
+}
+
+void Injector::refreshProcessList()
+{
+	ProcessList list = getProcesses();
+	
+	//Delete all items in it
+	for(uint32 i = 0; i < _processView.listProcess->count(); i++)
+		delete _processView.listProcess->item(i);
+	_processView.listProcess->clear();
+
+	//Make the new list
+	QString name;
+	ProcessList::iterator it = list.begin();
+	while(it != list.end())
+	{
+		QListWidgetItem *item = new QListWidgetItem(QIcon(getIcon(it.key())), name.sprintf("%08X %s", it.key(), it.value().toStdString().c_str()));
+		item->setData(Qt::WhatsThisRole, it.key());
+		_processView.listProcess->addItem(item);
+		++it;
+	}
+}
+
+void Injector::selectProcess(const QModelIndex &index)
+{
+	CoreList *model = (CoreList*)index.model();
+	_selectedCore =  model->getCoreAt(index.row());
+	refreshProcessList();
+	_processGui->show();
+}
+
+void Injector::selectedProcess(const QModelIndex &index)
+{
+
+}
+
 /**
  * @brief	Query if the core is injected into the specific process id.
  * @author	Intline9
@@ -66,15 +135,12 @@ bool Injector::isInjected(uint32 pid, Core *core)
 		return false;
 
 	me32.dwSize = sizeof(MODULEENTRY32);
-
 	if(!Module32First(hModuleSnap, &me32))
 	{
 		CloseHandle(hModuleSnap);
 		return false;
 	}
-
-	do
-	{
+	do{
 		if(core->getBaseName() == QString::fromWCharArray(me32.szModule))
 			return true;
 	} while(Module32Next(hModuleSnap, &me32));
@@ -123,8 +189,35 @@ bool Injector::inject(uint32 pid, Core *core)
 	return true;
 }
 
+ProcessList Injector::getProcesses()
+{
+	HANDLE hProcessSnap;
+	PROCESSENTRY32 pe32;
+	DWORD dwPriorityClass;
+	ProcessList processList;
+
+	hProcessSnap = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
+	if(hProcessSnap != INVALID_HANDLE_VALUE)
+	{
+		pe32.dwSize = sizeof(PROCESSENTRY32);
+		if(Process32First(hProcessSnap, &pe32))
+		{
+			do{
+				if(pe32.th32ProcessID == GetCurrentProcessId())
+					continue;
+				QString name(QString::fromWCharArray(pe32.szExeFile));
+				if(!name.startsWith('['))
+					processList.insert(pe32.th32ProcessID, name);
+			}while (Process32Next(hProcessSnap, &pe32));
+			CloseHandle(hProcessSnap);
+		}
+	}
+	return processList;
+}
+
 /**
  * @brief	Injects the cores into the required processes.
+ * @note	I did not use getProcesses(), as that will make the complexity of injectAll twice as big
  * @author	Intline9
  * @date	18-4-2012
  * @return	true if it succeeds, false if it fails.
