@@ -48,13 +48,6 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QPushButton" name="buttonInject">
-        <property name="text">
-         <string>Inject</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="buttonCancel">
         <property name="text">
          <string>Cancel</string>

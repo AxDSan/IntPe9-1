@@ -66,6 +66,7 @@ public slots:
 	void refreshProcessList();
 	void selectProcess(const QModelIndex &index);
 	void selectedProcess(const QModelIndex &index);
+	
 
 signals:
 	void finished();

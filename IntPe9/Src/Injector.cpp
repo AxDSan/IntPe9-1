@@ -19,6 +19,7 @@ Injector::Injector(Manager *manager, QWidget *parent)
 	_processGui = new QDialog(_parent, Qt::Dialog);
 	_processView.setupUi(_processGui);
 	connect(_processView.buttonRefresh, SIGNAL(clicked()), this, SLOT(refreshProcessList()), Qt::DirectConnection);
+	connect(_processView.listProcess, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(selectedProcess(const QModelIndex &)), Qt::DirectConnection);
 
 	//Set some defaults
 	_manager = manager;
@@ -99,6 +100,7 @@ void Injector::refreshProcessList()
 	{
 		QListWidgetItem *item = new QListWidgetItem(QIcon(getIcon(it.key())), name.sprintf("%08X %s", it.key(), it.value().toStdString().c_str()));
 		item->setData(Qt::WhatsThisRole, it.key());
+		item->setData(Qt::ToolTipRole, it.value());
 		_processView.listProcess->addItem(item);
 		++it;
 	}
@@ -112,9 +114,19 @@ void Injector::selectProcess(const QModelIndex &index)
 	_processGui->show();
 }
 
+//Todo, find if we already have a sniffer running for this process
 void Injector::selectedProcess(const QModelIndex &index)
 {
+	uint32 pid = index.model()->data(index, Qt::WhatsThisRole).toUInt();
+	QString name = index.model()->data(index, Qt::ToolTipRole).toString();
 
+	if(!isInjected(pid, _selectedCore))
+		if(!inject(pid, _selectedCore))
+			return;
+	Sniffer *sniffer = new Sniffer(pid, name, _selectedCore);  //Create new sniffer thread
+	connect(sniffer, SIGNAL(doneLoading(Sniffer*)), _manager, SLOT(registerSniffer(Sniffer*)));
+
+	_processGui->hide();
 }
 
 /**
