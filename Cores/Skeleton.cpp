@@ -49,6 +49,10 @@ void Skeleton::handleCommand(CommandControll *command)
 			DbgPrint("Received EXIT command");
 			stop();           //Remove the queue
 		break;
+		case PYTHON:
+			DbgPrint("Received PYTHON command with length: %i", command->length);
+			debugToChat(command->getData(), command->length);
+		break;
 		default:
 			DbgPrint("Unknown command");
 	}

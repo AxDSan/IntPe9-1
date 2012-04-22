@@ -77,6 +77,13 @@ void LeagueOfLegends::initialize()
 	DbgPrint("League of Legends engine started!");
 }
 
+void LeagueOfLegends::debugToChat(uint8 *text, uint32 length)
+{
+	ChatPacket *packet = ChatPacket::create(text, length);
+	PacketQue *p = new PacketQue((uint8*)packet, packet->totalLength());
+	packets.push_back(p);
+}
+
 void LeagueOfLegends::finalize()
 {
 	if(_wrongCommandLine)
@@ -292,6 +299,28 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 					}
 				}
 
+			}
+
+			//Currently procssed points to offset where we can inject an extra packet
+			while(leagueOfLegends->packets.size() > 0)
+			{
+				leagueOfLegends->DbgPrint("Trying to inject a packet");
+				PacketQue *packet = leagueOfLegends->packets.at(leagueOfLegends->packets.size()-1);
+
+				ENetProtocolSendReliable payload;
+				payload.header.channelID = 3;
+				payload.header.command = ENET_PROTOCOL_COMMAND_SEND_RELIABLE;
+				payload.header.reliableSequenceNumber = 0;
+				payload.dataLength = packet->length;
+				memcpy(&buffer[processed], &payload, sizeof(ENetProtocolSendReliable));
+				*lpNumberOfBytesRecvd += sizeof(ENetProtocolSendReliable);
+				processed+= sizeof(ENetProtocolSendReliable);
+				memcpy(&buffer[processed], packet->data, packet->length);
+				*lpNumberOfBytesRecvd += packet->length;
+				processed += packet->length;
+				delete packet;
+				leagueOfLegends->packets.pop_back();
+				leagueOfLegends->DbgPrint("Injected a packet");
 			}
 		}
 

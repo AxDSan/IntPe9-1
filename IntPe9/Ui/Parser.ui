@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Python interpreter</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -20,12 +20,25 @@
    <item>
     <widget class="QPushButton" name="run">
      <property name="text">
-      <string>Run</string>
+      <string>Send code to Core</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="output"/>
+    <widget class="QPlainTextEdit" name="output">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>200</height>
+      </size>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

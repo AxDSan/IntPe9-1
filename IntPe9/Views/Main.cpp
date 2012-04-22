@@ -25,6 +25,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
+	_parserGui = new ParserGui(this);
 
 	//Create classesses
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
@@ -50,15 +51,18 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	scrollAction->setCheckable(true);
 
 	eraseAction = new QAction(QPixmap(":/Common/eraser.png"), tr("Clear packet list"), this);
+	pythonAction = new QAction(QPixmap(":/Common/python.png"), tr("Start python interpreter"), this);
 	//Add actions to the scrollbar
 	_mainView.toolBar->addAction(scrollAction);
 	_mainView.toolBar->addAction(eraseAction);
+	_mainView.toolBar->addAction(pythonAction);
 
 	
 	//Setup connections
 	//Toolbar
 	connect(scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
 	connect(eraseAction, SIGNAL(triggered()), this, SLOT(clearList()));
+	connect(pythonAction, SIGNAL(triggered()), this, SLOT(startPython()));
 	
 	//Action menu
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
@@ -95,6 +99,15 @@ void MainGui::setEnvironment(bool state)
 			environment.setValue("Path", paths.join(";"));
 
 	SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+}
+
+void MainGui::startPython()
+{
+	Sniffer *sniffer = _manager->getActiveSniffer();
+	if(sniffer != NULL)
+	{
+		_parserGui->showAndActivate(sniffer);
+	}
 }
 
 void MainGui::clearList()

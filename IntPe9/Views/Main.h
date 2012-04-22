@@ -34,6 +34,7 @@
 #include "Injector.h"
 
 //Extra views/handlers
+#include "Parser.h"
 #include "About.h"
 
 class MainGui : public QMainWindow
@@ -53,6 +54,7 @@ public:
 public slots:
 	void clearList();
 	void closing();
+	void startPython();
 
 	void setPacketModel(PacketList *model);
 	void selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous);
@@ -66,9 +68,11 @@ private:
 	//Action bar
 	QAction *scrollAction;
 	QAction *eraseAction;
+	QAction *pythonAction;
 
 	//Views
 	QHexEdit *_hexView;
+	ParserGui *_parserGui;
 	AboutGui *_aboutGui;
 	Ui::mainView _mainView;
 };

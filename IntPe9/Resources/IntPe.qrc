@@ -8,5 +8,6 @@
     <file>out.png</file>
     <file>ok.png</file>
     <file>no.png</file>
+    <file>python.png</file>
   </qresource>
 </RCC>

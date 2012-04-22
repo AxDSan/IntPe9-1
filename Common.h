@@ -40,6 +40,7 @@ enum CommandType : uint8
 {
 	START,
 	EXIT,
+	PYTHON,
 };
 
 #pragma pack(push)

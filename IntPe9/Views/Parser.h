@@ -1,8 +1,12 @@
 #ifndef PYTHON_H
 #define PYTHON_H
 
-
 #include <QtGui/QDialog>
+
+//Classes
+#include "Sniffer.h"
+
+//Ui
 #include "ui_Parser.h"
 
 class ParserGui : public QDialog
@@ -13,13 +17,13 @@ public:
 	ParserGui(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~ParserGui();
 
-	Ui::parserView *getView();
 
 public slots:
-	void slotShow();
-	void slotHide();
+	void sendCode();
+	void showAndActivate(Sniffer *sniffer);
 
 private:
+	Sniffer *_activeSniffer;
 	Ui::parserView _parserView;
 };
 
