@@ -36,7 +36,7 @@ struct ChatPacket
 
 	static ChatPacket *create(uint8 *text, uint32 length)
 	{
-		ChatPacket *packet = (ChatPacket*)new uint8[sizeof(ChatPacket)+length];
+		ChatPacket *packet = (ChatPacket*)malloc(sizeof(ChatPacket)+length);
 		packet->cmd = 0;
 		packet->type = 0;
 		packet->size = length;
@@ -44,9 +44,10 @@ struct ChatPacket
 		return packet;
 	}
 
+	/* This will be done by LoL code */
 	void destroy()
 	{
-		delete [](uint8*)this;
+		free((void*)this);
 	}
 
 	uint32 totalLength()

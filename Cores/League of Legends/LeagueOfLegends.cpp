@@ -131,7 +131,7 @@ void lolRecv(unsigned char* data, unsigned int length, uint8 channel, ENetPacket
 
 	serverPacket->data = data;
 	serverPacket->dataLength = length;
-	serverPacket->flags = type;
+	serverPacket->flags = ENET_PACKET_FLAG_NO_ALLOCATE;
 	serverPacket->freeCallback = NULL;
 	serverPacket->referenceCount = 0;
 
@@ -164,16 +164,29 @@ Naked void ASMOnSendPacket()
 		RET
 	}
 }
+typedef void* (__cdecl *tEnetMalloc)(size_t Size);
+tEnetMalloc enetMalloc;
 
 void __stdcall injectEvent(ENetEvent *t)
 {
 	if(packetNo > 0)
 	{
+		//ChatPacket *pChat = ChatPacket::create((uint8*)"Hello", 5);
+		
+		///uint32 len = pChat->totalLength();
+		//leagueOfLegends->blowfish->Encrypt((uint8*)pChat, len-(len%8));
+		
+
+		ENetPacket *packet = (ENetPacket*)enetMalloc(sizeof(ENetPacket));
+		leagueOfLegends->DbgPrint("Used enet_malloc from lol: %08X", packet);
+		memcpy(packet, event.packet, sizeof(ENetPacket));
+		
+
 		leagueOfLegends->DbgPrint("Injected a packet");
 		t->channelID = event.channelID;
 		t->type = event.type;
 		t->data = NULL;
-		t->packet = event.packet;
+		t->packet = packet;
 		t->peer = event.peer;
 		packetNo--;
 	}
@@ -257,6 +270,7 @@ void LeagueOfLegends::initialize()
 
 	unsigned char* adress = MemoryManager::SearchCodeAdress(section,sendpacket, sizeof(sendpacket));
 	lolSendPacket = (tSendPacket)adress;
+	enetMalloc = (tEnetMalloc)((uint8*)0x0076BD90);
 	if(adress)
 	{
 		DbgPrint("sendpacket found at %p\n",adress + 0x7);
