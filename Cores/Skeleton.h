@@ -47,7 +47,7 @@ protected:
 	Upx *_upx;
 	virtual void initialize() = 0;
 	virtual void finalize() = 0;
-	virtual void debugToChat(uint8 *text, uint32 length) = 0;
+	virtual void parsePython(uint8 *script, uint32 length) = 0;
 
 private:
 	message_queue *_masterQue, *_packetQue;

@@ -22,12 +22,12 @@ struct PacketQue
 	uint8 *data;
 	uint32 length;
 };
-
+#pragma pack(push,1)
 struct ChatPacket
 {
-	uint8 cmd;
-	uint8 type;
-	uint8 size;
+	uint32 cmd;
+	uint32 type;
+	uint32 size;
 	uint8 text;
 	uint8 *getText()
 	{
@@ -40,7 +40,7 @@ struct ChatPacket
 		packet->cmd = 0;
 		packet->type = 0;
 		packet->size = length;
-		memcpy(packet->getText(), text, length);
+		memcpy(packet->getText(), text, length+1); //including the 0 byte copy
 		return packet;
 	}
 
@@ -54,7 +54,7 @@ struct ChatPacket
 		return sizeof(ChatPacket)+size;
 	}
 };
-
+#pragma pack(pop)
 class LeagueOfLegends : public Skeleton
 {
 private:
@@ -69,7 +69,7 @@ public:
 	void initialize();
 	void finalize();
 	char *getName();
-
+	void parsePython(uint8 *script, uint32 length);
 	void debugToChat(uint8 *text, uint32 length);
 
 	vector<PacketQue*> packets;
