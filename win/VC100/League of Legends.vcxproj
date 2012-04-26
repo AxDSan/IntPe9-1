@@ -68,7 +68,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>../../Cores;../../;../../dep/include;../../dep/include/python;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;BOOST_NO_LINK;BOOST_DATE_TIME_NO_LIB;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;BOOST_NO_LINK;BOOST_DATE_TIME_NO_LIB;BOOST_PYTHON_STATIC_LIB</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
     </ClCompile>

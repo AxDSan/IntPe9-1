@@ -416,7 +416,7 @@ IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)<
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;user32.lib</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;user32.lib;Shell32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(OutDir)\QtCore4.dll" copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
