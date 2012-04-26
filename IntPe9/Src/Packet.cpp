@@ -27,6 +27,37 @@ Packet::~Packet()
 	delete _data;
 }
 
+
+QString Packet::toC()
+{
+	if(_data->size() <= 0)
+		return "{}";
+	QString out, format;
+	uint8 hex;
+
+	out += format.sprintf("{0x%02X", (uint8)_data->at(0));
+	for(uint32 i = 1; i < _data->size(); i++)
+		out += format.sprintf(", 0x%02X", (uint8)_data->at(i));
+	out += "};";
+
+	return out;
+}
+
+QString Packet::toPython()
+{
+	if(_data->size() <= 0)
+		return "[]";
+	QString out, format;
+	uint8 hex;
+
+	out += format.sprintf("[0x%02X", (uint8)_data->at(0));
+	for(uint32 i = 1; i < _data->size(); i++)
+		out += format.sprintf(", 0x%02X", (uint8)_data->at(i));
+	out += "]";
+
+	return out;
+}
+
 QString Packet::strInfoHeader()
 {
 	QString out;

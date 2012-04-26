@@ -27,8 +27,20 @@ extern AddEvent lolAddEvent;
 #pragma pack(push,1)
 struct ChatPacket
 {
-	uint32 cmd;
-	uint32 type;
+	enum : uint32
+	{
+		MYSELF = 0,
+		NONAME = 100,
+	};
+
+	enum Type : uint32
+	{
+		ALL = 0,
+		LOCAL = 1,
+	};
+
+	uint32 playerId;
+	Type type;
 	uint32 size;
 	uint8 text;
 	uint8 *getText()
@@ -39,17 +51,22 @@ struct ChatPacket
 	static ChatPacket *create(uint8 *text, uint32 length)
 	{
 		ChatPacket *packet = (ChatPacket*)malloc(sizeof(ChatPacket)+length);
-		packet->cmd = 0;
-		packet->type = 0;
+		packet->playerId = MYSELF;
+		packet->type = ALL;
 		packet->size = length;
 		memcpy(packet->getText(), text, length+1); //including the 0 byte copy
 		return packet;
 	}
 
-	/* This will be done by LoL code */
+	//Done by LoL code
 	void destroy()
 	{
 		free((void*)this);
+	}
+
+	static uint8 getChannel()
+	{
+		return 5;
 	}
 
 	uint32 totalLength()

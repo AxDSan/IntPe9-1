@@ -62,8 +62,8 @@ void PythonWrapper::recvPacket(boost::python::list &bytes, uint8 channel, uint32
 void PythonWrapper::sendChat(uint32 type, std::string const&msg)
 {
 	ChatPacket *packet = ChatPacket::create((uint8*)msg.c_str(), msg.length());
-	packet->type = type;
-	leagueOfLegends->sendPacket((uint8*)packet, packet->totalLength(), 5);
+	packet->type = (ChatPacket::Type)type;
+	leagueOfLegends->sendPacket((uint8*)packet, packet->totalLength(), ChatPacket::getChannel());
 	packet->destroy();
 }
 

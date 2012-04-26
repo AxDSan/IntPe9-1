@@ -355,6 +355,56 @@
     <string>Show Sniffers</string>
    </property>
   </action>
+  <action name="eraseAction">
+   <property name="icon">
+    <iconset resource="../Resources/IntPe.qrc">
+     <normaloff>:/Common/eraser.png</normaloff>:/Common/eraser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear packet list</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
+   </property>
+  </action>
+  <action name="scrollAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/IntPe.qrc">
+     <normaloff>:/Common/scrollNo.png</normaloff>
+     <normalon>:/Common/scroll.png</normalon>:/Common/scrollNo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set auto scroll</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="pythonAction">
+   <property name="icon">
+    <iconset resource="../Resources/IntPe.qrc">
+     <normaloff>:/Common/python.png</normaloff>:/Common/python.png</iconset>
+   </property>
+   <property name="text">
+    <string>Python interpreter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="copyPython">
+   <property name="text">
+    <string>Copy as python</string>
+   </property>
+  </action>
+  <action name="copyC">
+   <property name="text">
+    <string>Copy as C</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

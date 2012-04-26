@@ -42,6 +42,9 @@ public:
 	PacketType getType();
 	QByteArray *getData();
 
+	QString toC();
+	QString toPython();
+
 	QString strInfoHeader();
 	QString strFullDump();
 

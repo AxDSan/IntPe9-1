@@ -295,8 +295,9 @@ void LeagueOfLegends::debugToChat(uint8 *text)
 {
 	ChatPacket *packet = ChatPacket::create(text, strlen((const char*)text));
 	DbgPrint("Debug chat: %s", text);
-	packet->type = 1;
-	recvPacket((uint8*)packet, packet->totalLength(), 5, true);
+	packet->playerId = ChatPacket::NONAME;
+	packet->type = ChatPacket::LOCAL;
+	recvPacket((uint8*)packet, packet->totalLength(), ChatPacket::getChannel(), true);
 }
 
 BOOST_PYTHON_MODULE(lol)

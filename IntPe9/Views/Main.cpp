@@ -21,15 +21,17 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_hexView = new QHexEdit(_mainView.hexWidget);
 	_hexView->setReadOnly(true);
 	_mainView.hexWidget->layout()->addWidget(_hexView);
+	_hexView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	//Install my python version (if they dident have it yet)
+
+	//Install my python version (if they did not have it yet)
 	installPython();
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
 	_parserGui = new ParserGui(this);
 
-	//Create classesses
+	//Create classes
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
 	_injector = new Injector(_manager, this);
 
@@ -46,25 +48,21 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.tableCores->setModel(_manager->getCoreModel());
 	_mainView.tableCores->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-	//Build the toolbar
-	QIcon scroll(QPixmap(":/Common/scrollNo.png"));
-	scroll.addPixmap(QPixmap(":/Common/scroll.png"), QIcon::Normal, QIcon::On);
-	scrollAction = new QAction(scroll, tr("Set auto scroll"), this);
-	scrollAction->setCheckable(true);
-
-	eraseAction = new QAction(QPixmap(":/Common/eraser.png"), tr("Clear packet list"), this);
-	pythonAction = new QAction(QPixmap(":/Common/python.png"), tr("Start python interpreter"), this);
 	//Add actions to the scrollbar
-	_mainView.toolBar->addAction(scrollAction);
-	_mainView.toolBar->addAction(eraseAction);
-	_mainView.toolBar->addAction(pythonAction);
-
+	_mainView.toolBar->addAction(_mainView.scrollAction);
+	_mainView.toolBar->addAction(_mainView.eraseAction);
+	_mainView.toolBar->addAction(_mainView.pythonAction);
 	
 	//Setup connections
+	//Menu
+	connect(_hexView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(ShowHexContextMenu(const QPoint&)));
+	connect(_mainView.copyPython, SIGNAL(triggered()), this, SLOT(copyAsPython()));
+	connect(_mainView.copyC, SIGNAL(triggered()), this, SLOT(copyAsC()));
+
 	//Toolbar
-	connect(scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
-	connect(eraseAction, SIGNAL(triggered()), this, SLOT(clearList()));
-	connect(pythonAction, SIGNAL(triggered()), this, SLOT(startPython()));
+	connect(_mainView.scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
+	connect(_mainView.eraseAction, SIGNAL(triggered()), this, SLOT(clearList()));
+	connect(_mainView.pythonAction, SIGNAL(triggered()), this, SLOT(startPython()));
 	
 	//Action menu
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
@@ -97,6 +95,44 @@ void MainGui::startPython()
 	}
 }
 
+void MainGui::copyAsC()
+{
+	Sniffer *sniffer = _manager->getActiveSniffer();
+	if(sniffer == NULL)
+		return;
+
+	Packet *packet = sniffer->getPacketList()->getPacketAt(_mainView.tablePackets->currentIndex().row());
+	if(packet != NULL)
+	{
+		QClipboard *cb = QApplication::clipboard();
+		cb->setText(packet->toC());
+	}
+}
+
+void MainGui::copyAsPython()
+{
+	Sniffer *sniffer = _manager->getActiveSniffer();
+	if(sniffer == NULL)
+		return;
+
+	Packet *packet = sniffer->getPacketList()->getPacketAt(_mainView.tablePackets->currentIndex().row());
+	if(packet != NULL)
+	{
+		QClipboard *cb = QApplication::clipboard();
+		cb->setText(packet->toPython());
+	}
+}
+
+void MainGui::ShowHexContextMenu(const QPoint &point)
+{
+	QPoint globalPos = _hexView->mapToGlobal(point);
+
+	QMenu menu;
+	menu.addAction(_mainView.copyPython);
+	menu.addAction(_mainView.copyC);
+	menu.exec(globalPos);
+}
+
 void MainGui::clearList()
 {
 	Sniffer *sniffer = _manager->getActiveSniffer();
@@ -119,10 +155,10 @@ void MainGui::autoScroll(bool state)
 	if(sniffer != NULL)
 	{
 		sniffer->getPacketList()->autoScroll(state, _mainView.tablePackets);
-		scrollAction->setChecked(state);
+		_mainView.scrollAction->setChecked(state);
 	}
 	else
-		scrollAction->setChecked(false);
+		_mainView.scrollAction->setChecked(false);
 }
 
 void MainGui::setPacketModel(PacketList *model)

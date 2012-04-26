@@ -61,15 +61,17 @@ public slots:
 	void autoScroll(bool state);
 	void installPython();
 
+	//Copy actions
+	void copyAsC();
+	void copyAsPython();
+
+	//Menu	
+	void ShowHexContextMenu(const QPoint &point);
+
 private:
 	bool _firstModel;
 	Manager *_manager;
 	Injector *_injector;
-
-	//Action bar
-	QAction *scrollAction;
-	QAction *eraseAction;
-	QAction *pythonAction;
 
 	//Views
 	QHexEdit *_hexView;
