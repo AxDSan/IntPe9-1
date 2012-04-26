@@ -4,6 +4,7 @@
 #include <Skeleton.h>
 #include <Crypto/Blowfish.h>
 #include <General/General.h>
+#include <General/Memory.h>
 #include <enet/enet.h>
 
 #include <map>

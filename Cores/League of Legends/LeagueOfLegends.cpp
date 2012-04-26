@@ -147,7 +147,7 @@ void lolRecv(unsigned char* data, unsigned int length, uint8 channel, ENetPacket
 	//lolRecvPacket((uint32)recvThis, &event);
 }
 
-Naked void ASMOnSendPacket()
+static Naked void ASMOnSendPacket()
 {
 	__asm
 	{
@@ -260,28 +260,40 @@ void LeagueOfLegends::initialize()
 	if(_wrongCommandLine)
 		return;
 
-	//Make hook
-	char execname[MAX_PATH];
-	GetModuleFileNameA(NULL,execname,MAX_PATH);
+	//Search section size/code
+	MemorySection section = Memory::searchSection(".text");
+	DbgPrint(".text section : adress %p, end %p\n", section.adress, section.adress + section.length);
 
-	DbgPrint("Executable path: %s\n",execname);
-	MemoryManager::MemorySection section = MemoryManager::SearchSection(execname, ".text");
-	DbgPrint(".text section : adress %p, end %p\n",section.adress,section.adress + section.length);
+	//Search for all signatures
+	uint8* addressSendPacket = Memory::searchAddress(section, sendpacket, sizeof(sendpacket));
+	uint8 *addressAddEvent = Memory::searchAddress(section, addEventSignature, sizeof(addEventSignature));
+	uint8* addressEnet = Memory::searchAddress(section, injectSig, sizeof(injectSig));
+	uint8 *deadbeef = Memory::searchAddress((uint8*)injectRecv, 100, placeSig, sizeof(placeSig));
 
-	unsigned char* adress = MemoryManager::SearchCodeAdress(section,sendpacket, sizeof(sendpacket));
-	lolSendPacket = (tSendPacket)adress;
+	//Create hooks and stuff
+	lolRecvPacket = (tRecvPacket)addressAddEvent;
+	lolSendPacket = (tSendPacket)addressSendPacket;
 	enetMalloc = (tEnetMalloc)((uint8*)0x0076BD90);
-	if(adress)
+
+	if(addressSendPacket)
 	{
-		DbgPrint("sendpacket found at %p\n",adress + 0x7);
-		MemoryManager::ApplyCallHook(reinterpret_cast<unsigned char*>(adress + 0x7),reinterpret_cast<unsigned char*>(ASMOnSendPacket),1);
+		DbgPrint("sendpacket found at %p\n", addressSendPacket+7);
+		Memory::writeCall(addressSendPacket+7, (uint8*)ASMOnSendPacket, 1);
 	}
-	else
+
+	if(addressAddEvent)
 	{
-		DbgPrint("encrypt_packet_pattern not found");
-	} 
+		DbgPrint("Add event found at %p\n", addressAddEvent);
+		Memory::writeCall(addressAddEvent, (uint8*)hookAddEvent, 1);
+	}
 
-
+	if(addressEnet)
+	{
+		Memory::writeJump(deadbeef, addressEnet+14); //Make a jump from our hook function to the enet function
+		Memory::writeJump(addressEnet+9, (uint8*)injectRecv);
+		DbgPrint("Found enet on: %08X", addressEnet);
+	}
+	
 
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
@@ -290,25 +302,7 @@ void LeagueOfLegends::initialize()
 	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&newWSASendTo);
 	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&newWSARecvFrom);
 
-	DbgPrint("League of Legends engine started!");
-
-	adress = MemoryManager::SearchCodeAdress(section, addEventSignature, sizeof(addEventSignature));
-	lolRecvPacket = (tRecvPacket)adress;
-	MemoryManager::ApplyCallHook(reinterpret_cast<unsigned char*>(adress),reinterpret_cast<unsigned char*>(hookAddEvent),1);
-
-
-	//Inject hook
-	uint8* enet = MemoryManager::SearchCodeAdress(section, injectSig, sizeof(injectSig));
-
-	adress = MemoryManager::SearchCodeAdress((uint8*)injectRecv, ((uint8*)injectRecv)+100, placeSig, sizeof(placeSig));
-
-	MemoryManager::ApplyJumpHook(adress, reinterpret_cast<unsigned char*>(enet+14), 0);
-
-	MemoryManager::ApplyJumpHook(reinterpret_cast<unsigned char*>(enet+9),reinterpret_cast<unsigned char*>(injectRecv),0);
-	DbgPrint("Found enet on: %08X", enet);
-
-
-	
+	DbgPrint("League of Legends engine started!");	
 }
 
 void LeagueOfLegends::debugToChat(uint8 *text, uint32 length)

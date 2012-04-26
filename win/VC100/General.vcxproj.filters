@@ -5,15 +5,24 @@
     <ClInclude Include="..\..\dep\include\General\Base64.h">
       <Filter>Base64</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\dep\include\General\Memory.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base64">
       <UniqueIdentifier>{a0cf29e0-bf87-4899-b36f-174a853344f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{75b4ac4c-28c4-4495-b28b-94d7f399936a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dep\src\General\Base64.cpp">
       <Filter>Base64</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\General\Memory.cpp">
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
