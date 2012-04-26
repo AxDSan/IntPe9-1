@@ -1,5 +1,4 @@
 #include "LeagueOfLegends.h"
-#include "MemoryManager.h"
 
 bool doFirst = true;
 MessagePacket *sendBuf;
@@ -147,7 +146,7 @@ void lolRecv(unsigned char* data, unsigned int length, uint8 channel, ENetPacket
 	//lolRecvPacket((uint32)recvThis, &event);
 }
 
-static Naked void ASMOnSendPacket()
+static NAKED void ASMOnSendPacket()
 {
 	__asm
 	{
@@ -194,7 +193,7 @@ void __stdcall injectEvent(ENetEvent *t)
 
 uint8 placeSig[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
 uint8 injectSig[] = {0x55, 0x8B, 0xEC, 0x83, 0xE4, 0xF8, 0x83, 0xEC, 0x0C, 0x53, 0x8B, 0x5D, 0x08, 0x56, 0x8B, 0x75, 0x0C, 0x33, 0xC0, 0x3B, 0xF0, 0x57};
-static Naked void injectRecv()
+static NAKED void injectRecv()
 {
 	__asm
 	{
@@ -236,7 +235,7 @@ void __stdcall doAddEvent(void *p, ENetEvent *event)
 }
 
 uint8 addEventSignature[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x53, 0x8B, 0x5C, 0x24, 0x08};
-static Naked void hookAddEvent()
+static NAKED void hookAddEvent()
 {
 	__asm
 	{
@@ -255,6 +254,33 @@ static Naked void hookAddEvent()
 	}
 }
 
+void OnExit()
+{
+	leagueOfLegends->DbgPrint("League of Legends engine stopping");
+	leagueOfLegends->isRunning = false;
+}
+
+static NAKED void AsmMaestroCleanup()
+{
+	//Hooked +18
+	__asm
+	{
+		pushad
+		call OnExit
+		popad
+		mov edx,[eax+0xB4]
+		ret
+	}
+}
+
+//Custom enet malloc function, its thread safe! (void *__cdecl enetMalloc(size_t Size))
+uint8 maskEnetMalloc[] = "x????xx????x????xxxxxxx";
+uint8 signatureEnetMalloc[] = {0x68, 0, 0, 0, 0, 0xFF, 0x15, 0, 0, 0, 0, 0xA1, 0, 0, 0, 0, 0xB9, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0D};
+
+//Meastro cleanup, always called when you kill LoL or shutdown (int __thiscall maestroCleanup(void *this)) (51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 B4 00 00 00 FF)
+uint8 maskMaestroCleanup[] = "xxx????xxxxxxxxx";
+uint8 signatureMaestroCleanup[] = {0x51, 0x8B, 0x0D, 0, 0, 0, 0, 0x8B, 0x01, 0x8B, 0x90, 0xB4, 0x00, 0x00, 0x00, 0xFF};
+
 void LeagueOfLegends::initialize()
 {
 	if(_wrongCommandLine)
@@ -267,13 +293,21 @@ void LeagueOfLegends::initialize()
 	//Search for all signatures
 	uint8* addressSendPacket = Memory::searchAddress(section, sendpacket, sizeof(sendpacket));
 	uint8 *addressAddEvent = Memory::searchAddress(section, addEventSignature, sizeof(addEventSignature));
-	uint8* addressEnet = Memory::searchAddress(section, injectSig, sizeof(injectSig));
+	uint8 *addressEnet = Memory::searchAddress(section, injectSig, sizeof(injectSig));
 	uint8 *deadbeef = Memory::searchAddress((uint8*)injectRecv, 100, placeSig, sizeof(placeSig));
+	uint8 *addressEnetMalloc = Memory::searchAddress(section, signatureEnetMalloc, maskEnetMalloc);
+	uint8 *addressMaestroCleanup = Memory::searchAddress(section, signatureMaestroCleanup, maskMaestroCleanup);
 
 	//Create hooks and stuff
 	lolRecvPacket = (tRecvPacket)addressAddEvent;
 	lolSendPacket = (tSendPacket)addressSendPacket;
-	enetMalloc = (tEnetMalloc)((uint8*)0x0076BD90);
+	enetMalloc = (tEnetMalloc)addressEnetMalloc;
+
+	if(addressMaestroCleanup)
+	{
+		DbgPrint("MaestroCleanup found at: %p", addressMaestroCleanup);
+		Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
+	}
 
 	if(addressSendPacket)
 	{

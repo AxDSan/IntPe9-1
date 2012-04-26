@@ -84,7 +84,6 @@
     <ClCompile Include="..\..\Cores\League of Legends\LeagueOfLegends.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Cores\League of Legends\MemoryManager.h" />
     <ClInclude Include="..\..\Cores\Skeleton.h" />
     <ClInclude Include="..\..\Cores\League of Legends\LeagueOfLegends.h" />
   </ItemGroup>

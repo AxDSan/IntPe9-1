@@ -16,9 +16,6 @@
     <ClInclude Include="..\..\Cores\League of Legends\LeagueOfLegends.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Cores\League of Legends\MemoryManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Skeleton">

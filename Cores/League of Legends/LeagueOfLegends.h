@@ -9,6 +9,9 @@
 
 #include <map>
 #include <vector>
+
+#define NAKED __declspec(naked)
+
 using std::map;
 using std::vector;
 

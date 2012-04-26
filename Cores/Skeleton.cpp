@@ -85,6 +85,7 @@ DWORD WINAPI commandListener(LPVOID lpParam)
 			me->handleCommand(command); //Handle it
 		Sleep(100);
 	}
+	me->DbgPrint("Done running command listener!");
 	return 0;
 } 
 
