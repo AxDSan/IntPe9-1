@@ -4,9 +4,35 @@ bool doFirst = true;
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
 map<uint16, MessagePacket*> reassemble;
-void lolSend(unsigned char* data, unsigned int length, uint8 channel, ENetPacketFlag type);
-void lolRecv(unsigned char* data, unsigned int length, uint8 channel, ENetPacketFlag type);
 
+//Initial setting and functions
+ENetPeer *LeagueOfLegends::addEventPeer = NULL;
+void *LeagueOfLegends::pointerAddEvent = NULL;
+void *LeagueOfLegends::pointerSendPacket = NULL;
+
+EnetMalloc enetMalloc;
+SendPacket lolSendPacket;
+AddEvent lolAddEvent;
+
+//All signatures
+//Deadbeef search place holder signature (B8 EF BE AD DE)
+uint8 signatureDeadbeef[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
+
+//SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8 51 8B 45 14 83 E8 00)
+uint8 signatureSendPacket[] = {0x55,0x8B,0xEC,0x83,0xE4,0xF8,0x51,0x8B,0x45,0x14,0x83,0xE8,0x00};
+
+//AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 53 8B 5C 24 08)
+uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x53, 0x8B, 0x5C, 0x24, 0x08};
+
+//Custom enet malloc function, its thread safe! (void *__cdecl enetMalloc(size_t Size)) (68 ?? ?? ?? ?? FF 15 ?? ?? ?? ?? A1 ?? ?? ?? ?? B9 01 00 00 00 01 0D)
+uint8 maskEnetMalloc[] = "x????xx????x????xxxxxxx";
+uint8 signatureEnetMalloc[] = {0x68, 0, 0, 0, 0, 0xFF, 0x15, 0, 0, 0, 0, 0xA1, 0, 0, 0, 0, 0xB9, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0D};
+
+//Meastro cleanup, always called when you kill LoL or shutdown (int __thiscall maestroCleanup(void *this)) (51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 B4 00 00 00 FF)
+uint8 maskMaestroCleanup[] = "xxx????xxxxxxxxx";
+uint8 signatureMaestroCleanup[] = {0x51, 0x8B, 0x0D, 0, 0, 0, 0, 0x8B, 0x01, 0x8B, 0x90, 0xB4, 0x00, 0x00, 0x00, 0xFF};
+
+//Start of LeagueOfLegends.cpp
 char *LeagueOfLegends::getName()
 {
 	return "League of Legends.dll";
@@ -37,7 +63,7 @@ LeagueOfLegends::LeagueOfLegends()
 	_wrongCommandLine = (!sStart || !sEnd);
 	if(_wrongCommandLine)
 	{
-		DbgPrint("We where not able to parse the commandline: %s", cmd);
+		DbgPrint("We where not able to parse the command line: %s", cmd);
 		return;
 	}
 
@@ -64,201 +90,127 @@ LeagueOfLegends::LeagueOfLegends()
 	free(_keyDecrypted);
 }
 
-unsigned char sendpacket[] = {0x55,0x8B,0xEC,0x83,0xE4,0xF8,0x51,0x8B,0x45,0x14,0x83,0xE8,0x00};
-unsigned char recvpacket[] = {0x50, 0x0F, 0xB6, 0x45, 0x0C, 0x64, 0x89, 0x25, 0x00, 0x00, 0x00, 0x00, 0x83, 0xEC, 0x40, 0x53, 0x83, 0xC0, 0xFE, 0x83, 0xF8, 0x03, 0x56, 0x57, 0x8B, 0xD9};
 
-unsigned char injectPacket[] = {0x83, 0x7B, 0xD8, 0x00, 0x0F, 0x95, 0xC0, 0x84, 0xC0, 0x88, 0x44, 0x24, 0x17};
-unsigned char jmpPlace[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
-typedef char		(__thiscall *tSendPacket)(void *p, size_t length, const void *data, uint8 channel, ENetPacketFlag type);
-typedef ENetEvent*	(__thiscall *tRecvPacket)(int p, ENetEvent *event);
-tSendPacket lolSendPacket;
-tRecvPacket lolRecvPacket;
-
-
-uint32 continueRecv;
-
-ENetEvent event;
-ENetPacket *serverPacket = new ENetPacket();
-int packetNo = 0;
-bool done = false;
-void *recvThis = NULL;
-ENetPeer *serverPeer = NULL;
-void *p = NULL;
-char *criticalSection;
 void LeagueOfLegends::parsePython(uint8 *script, uint32 length)
 {
 	DbgPrint("Creating ChatPacket: %s, (%i)", script, length);
 	ChatPacket *packet = ChatPacket::create(script, length);
 	packet->type = 0;
-	//lolSend((uint8*)packet, packet->totalLength(), 5, ENET_PACKET_FLAG_RELIABLE);
 
-	lolRecv((uint8*)packet, packet->totalLength(), 5, ENET_PACKET_FLAG_RELIABLE);
+	sendPacket((uint8*)packet, packet->totalLength(), 5);
+	recvPacket((uint8*)packet, packet->totalLength(), 5);
 
 	DbgPrint("Done");
-
 }
 
-void __stdcall OnSendPacket(void *lolP, unsigned char* data, unsigned int length, int channel, int flag)
+void LeagueOfLegends::sendPacket(uint8* data, uint32 length, uint8 channel, ENetPacketFlag type)
 {
-	if(p == NULL)
-	{
-		p = lolP;
-		leagueOfLegends->DbgPrint("WARNING I'VE SET THE THIS POINTER TO: %08X, (%08X)", lolP, p);
-	}
-
-	leagueOfLegends->DbgPrint("Sendhook, this: %08X, data: %08X, length: %08X, channel: %i, a5: %i", lolP, data, length, channel, flag);
-}
-
-
-void lolSend(unsigned char* data, unsigned int length, uint8 channel, ENetPacketFlag type)
-{
-	if(p == NULL)
+	if(pointerSendPacket == NULL)
 		return;
-
-	leagueOfLegends->DbgPrint("SEND: Calling code of LoL: %08X", p);
-	lolSendPacket(p, length, data, channel, type);
+	lolSendPacket(pointerSendPacket, length, data, channel, type);
 }
 
-void lolRecv(unsigned char* data, unsigned int length, uint8 channel, ENetPacketFlag type)
+void LeagueOfLegends::recvPacket(uint8 *data, uint32 length, uint8 channel, ENetPacketFlag type)
 {
-	if(recvThis == NULL)
+	if(pointerAddEvent == NULL || addEventPeer == NULL)
 		return;
-
-	leagueOfLegends->DbgPrint("RECV: Calling code of LoL: %08X", recvThis);
 
 	leagueOfLegends->blowfish->Encrypt(data, length-(length%8));
 
-	serverPacket->data = data;
-	serverPacket->dataLength = length;
-	serverPacket->flags = ENET_PACKET_FLAG_NO_ALLOCATE;
-	serverPacket->freeCallback = NULL;
-	serverPacket->referenceCount = 0;
-
+	ENetPacket *packet = (ENetPacket*)enetMalloc(sizeof(ENetPacket));
+	ENetEvent event;
 	
+	packet->data = data;
+	packet->dataLength = length;
+	packet->flags = type;
+	packet->freeCallback = NULL;
+	packet->referenceCount = 0;
+
 	event.channelID = channel;
 	event.type = ENET_EVENT_TYPE_RECEIVE;
 	event.data = NULL;
-	event.packet = serverPacket;
-	event.peer = serverPeer;
+	event.packet = packet;
+	event.peer = addEventPeer;
 
-	packetNo++;
-	//uint32 tmp = (uint32)&event;
-	//lolRecvPacket((uint32)recvThis, &event);
+	addEvent(pointerAddEvent, &event);
 }
 
-static NAKED void ASMOnSendPacket()
+void LeagueOfLegends::addEvent(void *pointer, ENetEvent *event)
 {
 	__asm
 	{
-		PUSHAD
-		PUSH DWORD PTR [EBP + 0x14] //a5
-		PUSH DWORD PTR [EBP + 0x10] //CHANNEL
-		PUSH DWORD PTR [EBP + 0x8] //SIZE
-		PUSH DWORD PTR [EBP + 0x0C] //DATA
-		PUSH ecx //this pointer
-		CALL OnSendPacket
-		POPAD
-		MOV EAX,DWORD PTR SS:[EBP + 0x14]
-		SUB EAX,0
-		RET
+		push event
+		mov esi, pointer
+		call lolAddEvent
 	}
 }
-typedef void* (__cdecl *tEnetMalloc)(size_t Size);
-tEnetMalloc enetMalloc;
 
-void __stdcall injectEvent(ENetEvent *t)
+void LeagueOfLegends::onExit()
 {
-	if(packetNo > 0)
-	{
-		//ChatPacket *pChat = ChatPacket::create((uint8*)"Hello", 5);
-		
-		///uint32 len = pChat->totalLength();
-		//leagueOfLegends->blowfish->Encrypt((uint8*)pChat, len-(len%8));
-		
-
-		ENetPacket *packet = (ENetPacket*)enetMalloc(sizeof(ENetPacket));
-		leagueOfLegends->DbgPrint("Used enet_malloc from lol: %08X", packet);
-		memcpy(packet, event.packet, sizeof(ENetPacket));
-		
-
-		leagueOfLegends->DbgPrint("Injected a packet");
-		t->channelID = event.channelID;
-		t->type = event.type;
-		t->data = NULL;
-		t->packet = packet;
-		t->peer = event.peer;
-		packetNo--;
-	}
+	leagueOfLegends->DbgPrint("League of Legends engine stopping");
+	leagueOfLegends->isRunning = false;
 }
 
-uint8 placeSig[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
-uint8 injectSig[] = {0x55, 0x8B, 0xEC, 0x83, 0xE4, 0xF8, 0x83, 0xEC, 0x0C, 0x53, 0x8B, 0x5D, 0x08, 0x56, 0x8B, 0x75, 0x0C, 0x33, 0xC0, 0x3B, 0xF0, 0x57};
-static NAKED void injectRecv()
+//Steal functions
+void LeagueOfLegends::stealAddEvent(void *pointer, ENetEvent *event)
 {
-	__asm
+	if(pointerAddEvent == NULL && pointer != NULL)
 	{
-		//push ebp
-		cmp packetNo, 0
-		je NORMAL
-		
-		PUSH DWORD PTR [EBP + 0x0C] //ENetEvent
-		call injectEvent
-		mov     eax, 1
-		mov     esp, ebp
-		pop     ebp
-		retn
-
-		//Jmp back system
-		NORMAL:
-
-		push ebx
-		mov ebx,[ebp+0x08]
-		push esi
-		mov eax, 0xDEADBEEF
+		pointerAddEvent = pointer;
+		addEventPeer = event->peer;
+		leagueOfLegends->DbgPrint("Stolen the addEvent arguments, ready to inject custom ENetEvents (%08X, %08X).", pointer, event->peer);
 	}
 }
 
-void __stdcall doAddEvent(void *p, ENetEvent *event)
+
+void LeagueOfLegends::stealSendPacket(void *pointer, uint8* data, uint32 length, uint8 channel, ENetPacketFlag flag)
 {
-	if(recvThis == NULL && p != NULL)
+	if(pointerSendPacket == NULL)
 	{
-		recvThis = p;
-		serverPeer = event->peer;
-		leagueOfLegends->DbgPrint("STOLEN THE ADD EVENT STUFF, this: %08X, peer: %08X", p, event);
-
+		pointerSendPacket = pointer;
+		leagueOfLegends->DbgPrint("Stolen the sendPacket argument, ready to send custom packets (%08X).", pointer);
 	}
 
-	leagueOfLegends->DbgPrint("(%08X)EVENT! event, type: %i, on channel: %i, with peer: %08X, data: %08X, packet: %08X", p, event->type, event->channelID, event->peer, event->data, event->packet);
-	if(event->packet != NULL)
-		leagueOfLegends->DbgPrint("      PACKET, data: %08X (%i),  flags: %X, refCount: %i, callBack: %08X", event->packet->data, event->packet->dataLength, event->packet->flags, event->packet->referenceCount, event->packet->freeCallback);
-
+	leagueOfLegends->DbgPrint("Sendhook, this: %08X, data: %08X, length: %i, channel: %i, flags: %i", pointer, data, length, channel, flag);
 }
 
-uint8 addEventSignature[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x53, 0x8B, 0x5C, 0x24, 0x08};
-static NAKED void hookAddEvent()
+//Asm functions
+static NAKED void AsmAddEvent()
 {
 	__asm
 	{
 		push ebp
 		mov ebp, esp
 		pushad
-		PUSH DWORD PTR [ebp+0x0C] //ENetEvent
-		PUSH esi //this pointer
-		CALL doAddEvent
+		PUSH DWORD PTR [ebp+0x0C]  //ENetEvent*
+		PUSH esi                   //this pointer
+		CALL LeagueOfLegends::stealAddEvent
 		popad
 		pop ebp
-
 		mov eax,[esi+0x10]
 		add eax,1
 		RET
 	}
 }
 
-void OnExit()
+static NAKED void ASMSendPacket()
 {
-	leagueOfLegends->DbgPrint("League of Legends engine stopping");
-	leagueOfLegends->isRunning = false;
+	__asm
+	{
+		PUSHAD
+		PUSH DWORD PTR [EBP + 0x14]  //a5
+		PUSH DWORD PTR [EBP + 0x10]  //CHANNEL
+		PUSH DWORD PTR [EBP + 0x8]   //SIZE
+		PUSH DWORD PTR [EBP + 0x0C]  //DATA
+		PUSH ecx                     //this pointer
+		CALL LeagueOfLegends::stealSendPacket
+		POPAD
+		MOV EAX,DWORD PTR SS:[EBP + 0x14]
+		SUB EAX,0
+		RET
+	}
 }
+
 
 static NAKED void AsmMaestroCleanup()
 {
@@ -266,20 +218,12 @@ static NAKED void AsmMaestroCleanup()
 	__asm
 	{
 		pushad
-		call OnExit
+		call LeagueOfLegends::onExit
 		popad
 		mov edx,[eax+0xB4]
 		ret
 	}
 }
-
-//Custom enet malloc function, its thread safe! (void *__cdecl enetMalloc(size_t Size))
-uint8 maskEnetMalloc[] = "x????xx????x????xxxxxxx";
-uint8 signatureEnetMalloc[] = {0x68, 0, 0, 0, 0, 0xFF, 0x15, 0, 0, 0, 0, 0xA1, 0, 0, 0, 0, 0xB9, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0D};
-
-//Meastro cleanup, always called when you kill LoL or shutdown (int __thiscall maestroCleanup(void *this)) (51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 B4 00 00 00 FF)
-uint8 maskMaestroCleanup[] = "xxx????xxxxxxxxx";
-uint8 signatureMaestroCleanup[] = {0x51, 0x8B, 0x0D, 0, 0, 0, 0, 0x8B, 0x01, 0x8B, 0x90, 0xB4, 0x00, 0x00, 0x00, 0xFF};
 
 void LeagueOfLegends::initialize()
 {
@@ -291,43 +235,28 @@ void LeagueOfLegends::initialize()
 	DbgPrint(".text section : adress %p, end %p\n", section.adress, section.adress + section.length);
 
 	//Search for all signatures
-	uint8* addressSendPacket = Memory::searchAddress(section, sendpacket, sizeof(sendpacket));
-	uint8 *addressAddEvent = Memory::searchAddress(section, addEventSignature, sizeof(addEventSignature));
-	uint8 *addressEnet = Memory::searchAddress(section, injectSig, sizeof(injectSig));
-	uint8 *deadbeef = Memory::searchAddress((uint8*)injectRecv, 100, placeSig, sizeof(placeSig));
+	uint8 *deadbeef;
+	uint8* addressSendPacket = Memory::searchAddress(section, signatureSendPacket, sizeof(signatureSendPacket));
+	uint8 *addressAddEvent = Memory::searchAddress(section, signatureAddEvent, sizeof(signatureAddEvent));
 	uint8 *addressEnetMalloc = Memory::searchAddress(section, signatureEnetMalloc, maskEnetMalloc);
 	uint8 *addressMaestroCleanup = Memory::searchAddress(section, signatureMaestroCleanup, maskMaestroCleanup);
 
-	//Create hooks and stuff
-	lolRecvPacket = (tRecvPacket)addressAddEvent;
-	lolSendPacket = (tSendPacket)addressSendPacket;
-	enetMalloc = (tEnetMalloc)addressEnetMalloc;
+	if(addressSendPacket == NULL || addressAddEvent == NULL || addressEnetMalloc == NULL || addressMaestroCleanup == NULL)
+		DbgPrint("WARNING: I did not found all signatures so carefull!!");
 
-	if(addressMaestroCleanup)
-	{
-		DbgPrint("MaestroCleanup found at: %p", addressMaestroCleanup);
-		Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
-	}
+	//Build custom pointer functions
+	lolAddEvent = (AddEvent)addressAddEvent;
+	lolSendPacket = (SendPacket)addressSendPacket;
+	enetMalloc = (EnetMalloc)addressEnetMalloc;
 
-	if(addressSendPacket)
-	{
-		DbgPrint("sendpacket found at %p\n", addressSendPacket+7);
-		Memory::writeCall(addressSendPacket+7, (uint8*)ASMOnSendPacket, 1);
-	}
-
-	if(addressAddEvent)
-	{
-		DbgPrint("Add event found at %p\n", addressAddEvent);
-		Memory::writeCall(addressAddEvent, (uint8*)hookAddEvent, 1);
-	}
-
-	if(addressEnet)
-	{
-		Memory::writeJump(deadbeef, addressEnet+14); //Make a jump from our hook function to the enet function
-		Memory::writeJump(addressEnet+9, (uint8*)injectRecv);
-		DbgPrint("Found enet on: %08X", addressEnet);
-	}
+	DbgPrint("MaestroCleanup found at: %p", addressMaestroCleanup);
+	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
 	
+	DbgPrint("SendPacket found at %p\n", addressSendPacket+7);
+	Memory::writeCall(addressSendPacket+7, (uint8*)ASMSendPacket, 1);
+
+	DbgPrint("Add event found at %p\n", addressAddEvent);
+	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
 
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
@@ -342,8 +271,8 @@ void LeagueOfLegends::initialize()
 void LeagueOfLegends::debugToChat(uint8 *text, uint32 length)
 {
 	ChatPacket *packet = ChatPacket::create(text, length);
-	PacketQue *p = new PacketQue((uint8*)packet, packet->totalLength());
-	packets.push_back(p);
+	packet->type = 1;
+	recvPacket((uint8*)packet, packet->totalLength(), 5);
 }
 
 void LeagueOfLegends::finalize()
@@ -508,7 +437,7 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 						leagueOfLegends->blowfish->Decrypt(sendBuf->getData(), sendBuf->length-(sendBuf->length%8));
 					else
 						doFirst = false;
-				leagueOfLegends->sendPacket(sendBuf);
+				leagueOfLegends->sendMessagePacket(sendBuf);
 			}
 
 		}
@@ -547,7 +476,7 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 						total->type = WSARECVFROM;
 						if(total->length >= 8)
 							leagueOfLegends->blowfish->Decrypt(total->getData(), total->length-(total->length%8));
-						leagueOfLegends->sendPacket(total);
+						leagueOfLegends->sendMessagePacket(total);
 						delete []total;
 					}
 					else
@@ -557,32 +486,10 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 						memcpy(recvBuf->getData(), data, recvBuf->length);
 						if(recvBuf->length >= 8)
 							leagueOfLegends->blowfish->Decrypt(recvBuf->getData(), recvBuf->length-(recvBuf->length%8));
-						leagueOfLegends->sendPacket(recvBuf);
+						leagueOfLegends->sendMessagePacket(recvBuf);
 					}
 				}
 
-			}
-
-			//Currently procssed points to offset where we can inject an extra packet
-			while(leagueOfLegends->packets.size() > 0)
-			{
-				leagueOfLegends->DbgPrint("Trying to inject a packet");
-				PacketQue *packet = leagueOfLegends->packets.at(leagueOfLegends->packets.size()-1);
-
-				ENetProtocolSendReliable payload;
-				payload.header.channelID = 3;
-				payload.header.command = ENET_PROTOCOL_COMMAND_SEND_RELIABLE;
-				payload.header.reliableSequenceNumber = 0;
-				payload.dataLength = packet->length;
-				memcpy(&buffer[processed], &payload, sizeof(ENetProtocolSendReliable));
-				*lpNumberOfBytesRecvd += sizeof(ENetProtocolSendReliable);
-				processed+= sizeof(ENetProtocolSendReliable);
-				memcpy(&buffer[processed], packet->data, packet->length);
-				*lpNumberOfBytesRecvd += packet->length;
-				processed += packet->length;
-				delete packet;
-				leagueOfLegends->packets.pop_back();
-				leagueOfLegends->DbgPrint("Injected a packet");
 			}
 		}
 

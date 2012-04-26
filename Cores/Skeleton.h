@@ -65,7 +65,7 @@ public:
 
 	//Public functions
 	bool sendCommand();
-	bool sendPacket(MessagePacket *packet);
+	bool sendMessagePacket(MessagePacket *packet);
 	void handleCommand(CommandControll *command);
 	bool stop();
 	bool start();

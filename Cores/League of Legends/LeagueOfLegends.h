@@ -15,17 +15,16 @@
 using std::map;
 using std::vector;
 
-struct PacketQue
-{
-	PacketQue(uint8* d, uint32 l)
-	{
-		data = d;
-		length = l;
-	}
 
-	uint8 *data;
-	uint32 length;
-};
+//LoL typedefs
+typedef char         (__thiscall *SendPacket)(void *p, size_t length, const void *data, uint8 channel, ENetPacketFlag type);
+typedef ENetEvent*   (__thiscall *AddEvent)(void *p, ENetEvent *event);
+typedef void*        (__cdecl *EnetMalloc)(size_t Size);
+
+extern EnetMalloc enetMalloc;
+extern SendPacket lolSendPacket;
+extern AddEvent lolAddEvent;
+
 #pragma pack(push,1)
 struct ChatPacket
 {
@@ -77,7 +76,22 @@ public:
 	void parsePython(uint8 *script, uint32 length);
 	void debugToChat(uint8 *text, uint32 length);
 
-	vector<PacketQue*> packets;
+//Static part
+	//Custom functions/callbacks
+	static void onExit();
+	static void addEvent(void *pointer, ENetEvent *event);
+	static void recvPacket(uint8 *data, uint32 length, uint8 channel, ENetPacketFlag type = ENET_PACKET_FLAG_NO_ALLOCATE);
+	static void sendPacket(uint8* data, uint32 length, uint8 channel, ENetPacketFlag type = ENET_PACKET_FLAG_RELIABLE);
+
+
+	//Lol steal functions
+	static void __stdcall stealAddEvent(void *pointer, ENetEvent *event);
+	static void __stdcall stealSendPacket(void *pointer, uint8* data, uint32 length, uint8 channel, ENetPacketFlag flag);
+
+	//Lol variables
+	static ENetPeer *addEventPeer;
+	static void *pointerAddEvent;
+	static void *pointerSendPacket;
 };
 
 extern LeagueOfLegends *leagueOfLegends;

@@ -22,7 +22,7 @@ bool Skeleton::sendCommand()
 	return false;
 }
 
-bool Skeleton::sendPacket(MessagePacket *packet)
+bool Skeleton::sendMessagePacket(MessagePacket *packet)
 {
 	if(!isAlive)
 		return false;
