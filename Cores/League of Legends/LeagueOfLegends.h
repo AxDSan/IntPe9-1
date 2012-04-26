@@ -74,7 +74,7 @@ public:
 	void finalize();
 	char *getName();
 	void parsePython(uint8 *script, uint32 length);
-	void debugToChat(uint8 *text, uint32 length);
+	void debugToChat(uint8 *text);
 
 //Static part
 	//Custom functions/callbacks
@@ -85,6 +85,7 @@ public:
 
 
 	//Lol steal functions
+	static void __stdcall stealRecvPacket(ENetEvent *event);
 	static void __stdcall stealAddEvent(void *pointer, ENetEvent *event);
 	static void __stdcall stealSendPacket(void *pointer, uint8* data, uint32 length, uint8 channel, ENetPacketFlag flag);
 
@@ -92,6 +93,7 @@ public:
 	static ENetPeer *addEventPeer;
 	static void *pointerAddEvent;
 	static void *pointerSendPacket;
+	static bool isInjected;
 };
 
 extern LeagueOfLegends *leagueOfLegends;

@@ -1,13 +1,15 @@
 <RCC>
   <qresource prefix="/Common">
-    <file>eraser.png</file>
-    <file>scroll.png</file>
-    <file>scrollNo.png</file>
-    <file>logo.png</file>
-    <file>in.png</file>
-    <file>out.png</file>
-    <file>ok.png</file>
-    <file>no.png</file>
-    <file>python.png</file>
+	<file>eraser.png</file>
+	<file>scroll.png</file>
+	<file>scrollNo.png</file>
+	<file>logo.png</file>
+	<file>in.png</file>
+	<file>out.png</file>
+	<file>ok.png</file>
+	<file>no.png</file>
+	<file>python.png</file>
+	<file>customIn.png</file>
+	<file>customOut.png</file>
   </qresource>
 </RCC>

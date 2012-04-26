@@ -24,7 +24,7 @@ typedef unsigned int		uint32;
 typedef unsigned short		uint16;
 typedef unsigned char		uint8;
 
-enum PacketType : uint8
+enum PacketType : uint32
 {
 	SEND,
 	RECV,
@@ -34,6 +34,8 @@ enum PacketType : uint8
 	WSARECV,
 	WSASENDTO,
 	WSARECVFROM,
+	INJECT_SEND = 0xBEEF,
+	INJECT_RECV = 0xDEAD
 };
 
 enum CommandType : uint8

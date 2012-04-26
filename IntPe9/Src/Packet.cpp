@@ -91,10 +91,14 @@ QVariant Packet::getField(int column)
 
 QPixmap Packet::getIcon()
 {
-	if(_type == WSASENDTO)
+	if(_type == WSASENDTO || _type == WSASEND)
 		return QPixmap(":/Common/out.png");
-	else if(_type == WSARECVFROM)
+	else if(_type == WSARECVFROM || _type == WSARECV)
 		return QPixmap(":/Common/in.png");
+	else if(_type == INJECT_RECV)
+		return QPixmap(":/Common/customIn.png");
+	else if(_type == INJECT_SEND)
+		return QPixmap(":/Common/customOut.png");
 	else
 		return QPixmap();
 }	

@@ -1,11 +1,10 @@
 #include "LeagueOfLegends.h"
 
-bool doFirst = true;
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
-map<uint16, MessagePacket*> reassemble;
 
 //Initial setting and functions
+bool LeagueOfLegends::isInjected = false;
 ENetPeer *LeagueOfLegends::addEventPeer = NULL;
 void *LeagueOfLegends::pointerAddEvent = NULL;
 void *LeagueOfLegends::pointerSendPacket = NULL;
@@ -20,6 +19,10 @@ uint8 signatureDeadbeef[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
 
 //SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8 51 8B 45 14 83 E8 00)
 uint8 signatureSendPacket[] = {0x55,0x8B,0xEC,0x83,0xE4,0xF8,0x51,0x8B,0x45,0x14,0x83,0xE8,0x00};
+
+//RecvPacket ESP+1C = ENetEvent* (8B 7C 24 2C 85 FF ?? ?? ?? ?? ?? ?? 8B)
+uint8 maskRecvPacket[] = "xxxxxx??????x";
+uint8 signatureRecvPacket[] = {0x8B, 0x7C, 0x24, 0x2C, 0x85, 0xFF, 0, 0, 0, 0, 0, 0, 0x8B};
 
 //AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 53 8B 5C 24 08)
 uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x53, 0x8B, 0x5C, 0x24, 0x08};
@@ -107,6 +110,8 @@ void LeagueOfLegends::sendPacket(uint8* data, uint32 length, uint8 channel, ENet
 {
 	if(pointerSendPacket == NULL)
 		return;
+
+	isInjected = true;
 	lolSendPacket(pointerSendPacket, length, data, channel, type);
 }
 
@@ -128,7 +133,7 @@ void LeagueOfLegends::recvPacket(uint8 *data, uint32 length, uint8 channel, ENet
 
 	event.channelID = channel;
 	event.type = ENET_EVENT_TYPE_RECEIVE;
-	event.data = NULL;
+	event.data = INJECT_RECV;
 	event.packet = packet;
 	event.peer = addEventPeer;
 
@@ -160,8 +165,32 @@ void LeagueOfLegends::stealAddEvent(void *pointer, ENetEvent *event)
 		addEventPeer = event->peer;
 		leagueOfLegends->DbgPrint("Stolen the addEvent arguments, ready to inject custom ENetEvents (%08X, %08X).", pointer, event->peer);
 	}
+	//leagueOfLegends->DbgPrint("Send event, type: %i, channel: %i, peer: %08X, data: %08X, packet: %08X", event->type, event->channelID, event->peer, event->data, event->packet);
 }
 
+void LeagueOfLegends::stealRecvPacket(ENetEvent *event)
+{	
+	leagueOfLegends->DbgPrint("Recv event, type: %i, channel: %i, peer: %08X, data: %08X, packet: %08X", event->type, event->channelID, event->peer, event->data, event->packet);
+
+	//Skip all non receive events
+	if(event->type != ENET_EVENT_TYPE_RECEIVE)
+		return;
+
+	//Copy the data and send it to front end
+	ENetPacket *packet = event->packet;
+	if(event->data == INJECT_RECV)
+	{
+		recvBuf->type = INJECT_RECV;
+		event->data = NULL;
+	}
+	else
+		recvBuf->type = WSARECVFROM;
+
+	recvBuf->length = packet->dataLength;
+	memcpy(recvBuf->getData(), packet->data, recvBuf->length);
+	sprintf_s(&recvBuf->description[0], 50, "Channel: %i, Flag: %i", event->channelID, packet->flags);
+	leagueOfLegends->sendMessagePacket(recvBuf);
+}
 
 void LeagueOfLegends::stealSendPacket(void *pointer, uint8* data, uint32 length, uint8 channel, ENetPacketFlag flag)
 {
@@ -171,10 +200,37 @@ void LeagueOfLegends::stealSendPacket(void *pointer, uint8* data, uint32 length,
 		leagueOfLegends->DbgPrint("Stolen the sendPacket argument, ready to send custom packets (%08X).", pointer);
 	}
 
-	leagueOfLegends->DbgPrint("Sendhook, this: %08X, data: %08X, length: %i, channel: %i, flags: %i", pointer, data, length, channel, flag);
+	//Copy the data and send it to front end
+	if(isInjected)
+	{
+		sendBuf->type = INJECT_SEND;
+		isInjected = false;
+	}
+	else
+		sendBuf->type = WSASENDTO;
+
+	sendBuf->length = length;
+	memcpy(sendBuf->getData(), data, sendBuf->length);
+	sprintf_s(&sendBuf->description[0], 50, "Channel: %i, Flag: %i", channel, flag);
+	leagueOfLegends->sendMessagePacket(sendBuf);
 }
 
 //Asm functions
+static NAKED void AsmRecvPacket()
+{
+	__asm
+	{
+		mov eax, esp
+		add eax, 0x20
+		push eax //ENetEvent*
+		//PUSH DWORD PTR [ESP+0x20]  //ENetEvent*
+		call LeagueOfLegends::stealRecvPacket
+		mov edi,[esp+0x30]
+		test edi,edi
+		RET
+	}
+}
+
 static NAKED void AsmAddEvent()
 {
 	__asm
@@ -221,8 +277,16 @@ static NAKED void AsmMaestroCleanup()
 		call LeagueOfLegends::onExit
 		popad
 		mov edx,[eax+0xB4]
-		ret
+		RET
 	}
+}
+
+
+void LeagueOfLegends::debugToChat(uint8 *text)
+{
+	ChatPacket *packet = ChatPacket::create(text, strlen((const char*)text));
+	packet->type = 1;
+	recvPacket((uint8*)packet, packet->totalLength(), 5);
 }
 
 void LeagueOfLegends::initialize()
@@ -237,42 +301,30 @@ void LeagueOfLegends::initialize()
 	//Search for all signatures
 	uint8 *deadbeef;
 	uint8* addressSendPacket = Memory::searchAddress(section, signatureSendPacket, sizeof(signatureSendPacket));
+	uint8* addressRecvPacket = Memory::searchAddress(section, signatureRecvPacket, maskRecvPacket);
 	uint8 *addressAddEvent = Memory::searchAddress(section, signatureAddEvent, sizeof(signatureAddEvent));
 	uint8 *addressEnetMalloc = Memory::searchAddress(section, signatureEnetMalloc, maskEnetMalloc);
 	uint8 *addressMaestroCleanup = Memory::searchAddress(section, signatureMaestroCleanup, maskMaestroCleanup);
 
-	if(addressSendPacket == NULL || addressAddEvent == NULL || addressEnetMalloc == NULL || addressMaestroCleanup == NULL)
+	if(addressSendPacket == NULL || addressAddEvent == NULL || addressEnetMalloc == NULL || addressMaestroCleanup == NULL || addressRecvPacket == NULL)
 		DbgPrint("WARNING: I did not found all signatures so carefull!!");
-
-	//Build custom pointer functions
-	lolAddEvent = (AddEvent)addressAddEvent;
-	lolSendPacket = (SendPacket)addressSendPacket;
-	enetMalloc = (EnetMalloc)addressEnetMalloc;
-
-	DbgPrint("MaestroCleanup found at: %p", addressMaestroCleanup);
-	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
-	
-	DbgPrint("SendPacket found at %p\n", addressSendPacket+7);
-	Memory::writeCall(addressSendPacket+7, (uint8*)ASMSendPacket, 1);
-
-	DbgPrint("Add event found at %p\n", addressAddEvent);
-	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
 
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
+
+	//Set function
+	lolAddEvent = (AddEvent)addressAddEvent;
+	lolSendPacket = (SendPacket)addressSendPacket;
+	enetMalloc = (EnetMalloc)addressEnetMalloc;
+
+	//Set hooks
+	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 1);
+	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
+	Memory::writeCall(addressSendPacket+7, (uint8*)ASMSendPacket, 1);
+	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
 	
-	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&newWSASendTo);
-	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&newWSARecvFrom);
-
 	DbgPrint("League of Legends engine started!");	
-}
-
-void LeagueOfLegends::debugToChat(uint8 *text, uint32 length)
-{
-	ChatPacket *packet = ChatPacket::create(text, length);
-	packet->type = 1;
-	recvPacket((uint8*)packet, packet->totalLength(), 5);
 }
 
 void LeagueOfLegends::finalize()
@@ -280,218 +332,7 @@ void LeagueOfLegends::finalize()
 	if(_wrongCommandLine)
 		return;
 
-	//Unhook, but we really can not risk it!
-	//_upx->hookIatFunction(NULL, "WSASendTo", (unsigned long)&_oldWSASendTo);
-	//_upx->hookIatFunction(NULL, "WSARecvFrom", (unsigned long)&_oldWSARecvFrom);
-
 	delete[]sendBuf;
 	delete[]recvBuf;
 }
 
-uint8 *reassemblePacket(ENetProtocol *command, uint32 length, uint32 *dataLength)
-{
-	uint32 fragmentNumber, fragmentCount, fragmentOffset, totalLength, startSequenceNumber, fragmentLength;
-
-	fragmentLength = ENET_NET_TO_HOST_16(command->sendFragment.dataLength);
-	startSequenceNumber = ENET_NET_TO_HOST_16(command->sendFragment.startSequenceNumber);
-	fragmentNumber = ENET_NET_TO_HOST_32(command->sendFragment.fragmentNumber);
-	fragmentCount = ENET_NET_TO_HOST_32(command->sendFragment.fragmentCount);
-	fragmentOffset = ENET_NET_TO_HOST_32(command->sendFragment.fragmentOffset);
-	totalLength = ENET_NET_TO_HOST_32(command->sendFragment.totalLength);
-
-	//As i have no idea if these packets are getting correctly sequenced, but i hope so... else my code would crash so hard
-	*dataLength = fragmentLength;
-	if(fragmentNumber == 0)
-	{
-		MessagePacket *packet = (MessagePacket*)new uint8[totalLength+sizeof(MessagePacket)];
-		packet->length = totalLength;
-		reassemble[startSequenceNumber] = packet;	
-	}
-
-	MessagePacket *packet = reassemble[startSequenceNumber];
-	memcpy(&packet->getData()[fragmentOffset], (uint8*)command+sizeof(ENetProtocolSendFragment), fragmentLength);
-
-	//If reassembled, return data, else NULL
-	if(fragmentNumber == fragmentCount-1)
-	{
-		sprintf_s(&packet->description[0], 50, "CMD: 8, Channel: %i", command->header.channelID);
-		return (uint8*)packet;
-	}
-	else
-		return NULL;
-}
-
-uint32 parseHeader(char *buffer, uint32 length)
-{
-	uint16 peerId, flags, headerSize;
-	ENetProtocolHeader* header = (ENetProtocolHeader*)buffer;
-	peerId = ENET_NET_TO_HOST_16 (header->peerID);
-	flags = peerId & ENET_PROTOCOL_HEADER_FLAG_MASK;
-	peerId &= ~ ENET_PROTOCOL_HEADER_FLAG_MASK;
-	headerSize = (flags & ENET_PROTOCOL_HEADER_FLAG_SENT_TIME ? sizeof (ENetProtocolHeader) : (size_t) & ((ENetProtocolHeader *) 0) -> sentTime);
-
-	return headerSize;
-}
-
-int32 parseEnet(char *buffer, uint32 length, uint8 **dataPointer, uint32 *dataLength, bool *isFragment, MessagePacket *packet)
-{
-
-	uint32 headerSize = 0;
-	ENetProtocol *command = (ENetProtocol*)buffer;
-	uint8 cmd = command->header.command & ENET_PROTOCOL_COMMAND_MASK;
-
-
-	if((cmd == ENET_PROTOCOL_COMMAND_SEND_RELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED))
-	{
-		uint32 maLen = 0;
-		switch (cmd)
-		{
-			case ENET_PROTOCOL_COMMAND_SEND_RELIABLE:
-				maLen = ENET_NET_TO_HOST_16(command->sendReliable.dataLength);
-				break;
-			case ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE:
-				maLen = ENET_NET_TO_HOST_16(command->sendUnreliable.dataLength);
-				break;
-			case ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED:
-				maLen = ENET_NET_TO_HOST_16(command->sendUnsequenced.dataLength);
-				break;
-		}
-
-		//leagueOfLegends->DbgPrint("[RECV] Parse, cmd: %i, channel: %i, size: %i", cmd, command->header.channelID, maLen);
-		sprintf_s(&packet->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
-	}
-
-	switch (command->header.command & ENET_PROTOCOL_COMMAND_MASK)
-	{
-		case ENET_PROTOCOL_COMMAND_SEND_RELIABLE:
-			*dataLength = ENET_NET_TO_HOST_16(command->sendReliable.dataLength);
-			headerSize = sizeof(ENetProtocolSendReliable);
-		break;
-		case ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE:
-			*dataLength = ENET_NET_TO_HOST_16(command->sendUnreliable.dataLength);
-			headerSize = sizeof(ENetProtocolSendUnreliable);
-		break;
-		case ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED:
-			*dataLength = ENET_NET_TO_HOST_16(command->sendUnsequenced.dataLength);
-			headerSize = sizeof(ENetProtocolSendUnsequenced);
-		break;
-		case ENET_PROTOCOL_COMMAND_SEND_FRAGMENT:
-			*isFragment = true;
-			*dataLength = ENET_NET_TO_HOST_16(command->sendFragment.dataLength);
-			headerSize = sizeof(ENetProtocolSendFragment);
-			*dataPointer = reassemblePacket(command, length, dataLength);
-		break;
-
-
-		//All enet specific stuff, so ignore it
-		case ENET_PROTOCOL_COMMAND_ACKNOWLEDGE:
-		case ENET_PROTOCOL_COMMAND_CONNECT:
-		case ENET_PROTOCOL_COMMAND_VERIFY_CONNECT:
-		case ENET_PROTOCOL_COMMAND_DISCONNECT:
-		case ENET_PROTOCOL_COMMAND_PING:
-		case ENET_PROTOCOL_COMMAND_BANDWIDTH_LIMIT:
-		case ENET_PROTOCOL_COMMAND_THROTTLE_CONFIGURE:
-		default:
-			return -1;
-	}
-	if(headerSize > 0 && !(*isFragment))
-	{
-		*dataPointer = (uint8*)buffer + headerSize;
-		return headerSize + *dataLength;
-	}
-	if((*isFragment) && dataPointer != NULL)
-	{
-		return headerSize + *dataLength;
-	}
-	return -1;
-}
-
-/** IMPORTANT
- * Enet sends all headers and buff separated, lucky for us!
- * lpBuffer[0] = ENetProtocolHeader
- * lpBuffer[1,3,5...] = ENetProtocol
- * lpBuffer[2,4,6...] = Packet data
- */
-int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, const struct sockaddr *lpTo, int iToLen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
-{
-	if(leagueOfLegends->isAlive)
-		if(dwBufferCount >= 3)
-		{
-			//Loop if we have 2 buffers left
-			for(uint32 i = 1; i <= dwBufferCount-2; i+=2)
-			{
-				ENetProtocol *command = (ENetProtocol*)(lpBuffers[i].buf);
-				uint8 cmd = command->header.command & ENET_PROTOCOL_COMMAND_MASK;
-
-				//Skip if not a data packet
-				if(!(cmd == ENET_PROTOCOL_COMMAND_SEND_RELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNRELIABLE || cmd == ENET_PROTOCOL_COMMAND_SEND_UNSEQUENCED))
-					continue;
-
-				sprintf_s(&sendBuf->description[0], 50, "CMD: %i, Channel: %i", cmd, command->header.channelID);
-		
-				sendBuf->type = WSASENDTO;
-				sendBuf->length = lpBuffers[i+1].len;
-				memcpy(sendBuf->getData(), lpBuffers[i+1].buf, sendBuf->length);
-				if(sendBuf->length >= 8)
-					if(!doFirst)
-						leagueOfLegends->blowfish->Decrypt(sendBuf->getData(), sendBuf->length-(sendBuf->length%8));
-					else
-						doFirst = false;
-				leagueOfLegends->sendMessagePacket(sendBuf);
-			}
-
-		}
-	return leagueOfLegends->_oldWSASendTo(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpTo, iToLen, lpOverlapped, lpCompletionRoutine);
-}
-
-int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, struct sockaddr *lpFrom, LPINT lpFromlen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
-{
-	int returnLength = leagueOfLegends->_oldWSARecvFrom(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpFrom, lpFromlen, lpOverlapped, lpCompletionRoutine);
-
-	if(leagueOfLegends->isAlive)
-		if(returnLength == 0)
-		{
-			uint32 totalLength = *lpNumberOfBytesRecvd;
-			char *buffer = lpBuffers[0].buf;		
-			uint32 processed;
-			
-			processed = parseHeader(buffer, totalLength);
-			while(processed < totalLength)
-			{
-				uint8 *data = NULL;
-				bool isFragment = false;
-				uint32 dataLength = 0;
-				int32 parsed;
-			
-				parsed = parseEnet(&buffer[processed], totalLength, &data, &dataLength, &isFragment, recvBuf);
-				if(processed == 0 || parsed < 0)
-					break; //Not interesting packet
-
-				processed += parsed;
-				if(data != NULL && dataLength > 0)
-				{
-					if(isFragment)
-					{
-						MessagePacket *total = (MessagePacket*)data;
-						total->type = WSARECVFROM;
-						if(total->length >= 8)
-							leagueOfLegends->blowfish->Decrypt(total->getData(), total->length-(total->length%8));
-						leagueOfLegends->sendMessagePacket(total);
-						delete []total;
-					}
-					else
-					{
-						recvBuf->type = WSARECVFROM;
-						recvBuf->length = dataLength;
-						memcpy(recvBuf->getData(), data, recvBuf->length);
-						if(recvBuf->length >= 8)
-							leagueOfLegends->blowfish->Decrypt(recvBuf->getData(), recvBuf->length-(recvBuf->length%8));
-						leagueOfLegends->sendMessagePacket(recvBuf);
-					}
-				}
-
-			}
-		}
-
-	return returnLength;
-}
