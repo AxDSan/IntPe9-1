@@ -1,4 +1,5 @@
 #include "LeagueOfLegends.h"
+#include "PythonWrapper.h"
 
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
@@ -94,16 +95,21 @@ LeagueOfLegends::LeagueOfLegends()
 }
 
 
-void LeagueOfLegends::parsePython(uint8 *script, uint32 length)
+void LeagueOfLegends::parsePython(const char *script)
 {
-	DbgPrint("Creating ChatPacket: %s, (%i)", script, length);
-	ChatPacket *packet = ChatPacket::create(script, length);
-	packet->type = 0;
-
-	sendPacket((uint8*)packet, packet->totalLength(), 5);
-	recvPacket((uint8*)packet, packet->totalLength(), 5);
-
-	DbgPrint("Done");
+	try
+	{
+		exec(script, pythonNamespace);
+	}
+	catch(boost::python::error_already_set const &)
+	{
+		PyErr_Print();
+		boost::python::object sys(boost::python::handle<>(PyImport_ImportModule("sys")));
+		boost::python::object err = sys.attr("stderr");
+		std::string errorText = boost::python::extract<std::string>(err.attr("getvalue")());
+		debugToChat((uint8*)errorText.c_str());
+		PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
+	}
 }
 
 void LeagueOfLegends::sendPacket(uint8* data, uint32 length, uint8 channel, ENetPacketFlag type)
@@ -115,12 +121,13 @@ void LeagueOfLegends::sendPacket(uint8* data, uint32 length, uint8 channel, ENet
 	lolSendPacket(pointerSendPacket, length, data, channel, type);
 }
 
-void LeagueOfLegends::recvPacket(uint8 *data, uint32 length, uint8 channel, ENetPacketFlag type)
+void LeagueOfLegends::recvPacket(uint8 *data, uint32 length, uint8 channel, bool ignore, ENetPacketFlag type)
 {
 	if(pointerAddEvent == NULL || addEventPeer == NULL)
 		return;
 
-	leagueOfLegends->blowfish->Encrypt(data, length-(length%8));
+	if(length >= 8)
+		leagueOfLegends->blowfish->Encrypt(data, length-(length%8));
 
 	ENetPacket *packet = (ENetPacket*)enetMalloc(sizeof(ENetPacket));
 	ENetEvent event;
@@ -133,7 +140,7 @@ void LeagueOfLegends::recvPacket(uint8 *data, uint32 length, uint8 channel, ENet
 
 	event.channelID = channel;
 	event.type = ENET_EVENT_TYPE_RECEIVE;
-	event.data = INJECT_RECV;
+	event.data = (ignore) ? INJECT_IGNORE : INJECT_RECV;
 	event.packet = packet;
 	event.peer = addEventPeer;
 
@@ -175,6 +182,12 @@ void LeagueOfLegends::stealRecvPacket(ENetEvent *event)
 	//Skip all non receive events
 	if(event->type != ENET_EVENT_TYPE_RECEIVE)
 		return;
+
+	//Skip ignore packets
+	if(event->data == INJECT_IGNORE)
+		return;
+
+	//event->packet = NULL; to block a packet
 
 	//Copy the data and send it to front end
 	ENetPacket *packet = event->packet;
@@ -223,7 +236,6 @@ static NAKED void AsmRecvPacket()
 		mov eax, esp
 		add eax, 0x20
 		push eax //ENetEvent*
-		//PUSH DWORD PTR [ESP+0x20]  //ENetEvent*
 		call LeagueOfLegends::stealRecvPacket
 		mov edi,[esp+0x30]
 		test edi,edi
@@ -285,8 +297,20 @@ static NAKED void AsmMaestroCleanup()
 void LeagueOfLegends::debugToChat(uint8 *text)
 {
 	ChatPacket *packet = ChatPacket::create(text, strlen((const char*)text));
+	DbgPrint("Debug chat: %s", text);
 	packet->type = 1;
-	recvPacket((uint8*)packet, packet->totalLength(), 5);
+	recvPacket((uint8*)packet, packet->totalLength(), 5, true);
+}
+
+BOOST_PYTHON_MODULE(lol)
+{
+	boost::python::class_<PythonWrapper>("Pe")
+		.def("recvPacket", &PythonWrapper::recvPacket)
+		.def("sendPacket", &PythonWrapper::sendPacket)
+		.def("sendChat", &PythonWrapper::sendChat)
+		.def("write", &PythonWrapper::write);
+
+	def("getInstance", &PythonWrapper::getInstance, boost::python::return_value_policy<boost::python::reference_existing_object>());
 }
 
 void LeagueOfLegends::initialize()
@@ -323,8 +347,20 @@ void LeagueOfLegends::initialize()
 	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
 	Memory::writeCall(addressSendPacket+7, (uint8*)ASMSendPacket, 1);
 	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
-	
-	DbgPrint("League of Legends engine started!");	
+	DbgPrint("League of Legends hooks applied!");
+
+	//Start python extending
+	initlol();
+	boost::python::object mainModule = boost::python::import("__main__");
+	pythonNamespace = mainModule.attr("__dict__");
+
+	PyRun_SimpleString("import cStringIO");
+	PyRun_SimpleString("import sys");
+	PyRun_SimpleString("import lol");
+	PyRun_SimpleString("pe = lol.getInstance()");
+	PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
+	PyRun_SimpleString("sys.stdout = pe");
+	DbgPrint("League of Legends engine started!");
 }
 
 void LeagueOfLegends::finalize()

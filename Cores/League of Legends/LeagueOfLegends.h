@@ -15,7 +15,6 @@
 using std::map;
 using std::vector;
 
-
 //LoL typedefs
 typedef char         (__thiscall *SendPacket)(void *p, size_t length, const void *data, uint8 channel, ENetPacketFlag type);
 typedef ENetEvent*   (__thiscall *AddEvent)(void *p, ENetEvent *event);
@@ -73,14 +72,14 @@ public:
 	void initialize();
 	void finalize();
 	char *getName();
-	void parsePython(uint8 *script, uint32 length);
+	void parsePython(const char *script);
 	void debugToChat(uint8 *text);
 
 //Static part
 	//Custom functions/callbacks
 	static void onExit();
 	static void addEvent(void *pointer, ENetEvent *event);
-	static void recvPacket(uint8 *data, uint32 length, uint8 channel, ENetPacketFlag type = ENET_PACKET_FLAG_NO_ALLOCATE);
+	static void recvPacket(uint8 *data, uint32 length, uint8 channel, bool ignore = false, ENetPacketFlag type = ENET_PACKET_FLAG_NO_ALLOCATE);
 	static void sendPacket(uint8* data, uint32 length, uint8 channel, ENetPacketFlag type = ENET_PACKET_FLAG_RELIABLE);
 
 

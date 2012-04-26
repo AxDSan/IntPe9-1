@@ -8,12 +8,18 @@
     <ClCompile Include="..\..\Cores\League of Legends\LeagueOfLegends.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Cores\League of Legends\PythonWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Cores\Skeleton.h">
       <Filter>Skeleton</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Cores\League of Legends\LeagueOfLegends.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cores\League of Legends\PythonWrapper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

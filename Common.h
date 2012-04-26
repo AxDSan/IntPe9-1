@@ -35,7 +35,8 @@ enum PacketType : uint32
 	WSASENDTO,
 	WSARECVFROM,
 	INJECT_SEND = 0xBEEF,
-	INJECT_RECV = 0xDEAD
+	INJECT_RECV = 0xDEAD,
+	INJECT_IGNORE = 0xFAFA,
 };
 
 enum CommandType : uint8

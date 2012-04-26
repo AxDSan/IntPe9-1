@@ -6,12 +6,12 @@ void Skeleton::DbgPrint(const char* format, ...)
 {
 	#ifdef _DEBUG
 	//Reset the buffer
-	memset(_dbgPrint, 0x0, 512);
+	memset(_dbgPrint, 0x0, DBG_SIZE);
 
 	//Logic
 	va_list args;
 	va_start(args, format);
-	vsprintf_s(_dbgPrint, 512, format, args);
+	vsprintf_s(_dbgPrint, DBG_SIZE, format, args);
 	va_end(args);
 	OutputDebugStringA(_dbg);
 	#endif
@@ -51,7 +51,7 @@ void Skeleton::handleCommand(CommandControll *command)
 		break;
 		case PYTHON:
 			DbgPrint("Received PYTHON command with length: %i", command->length);
-			parsePython(command->getData(), command->length);
+			parsePython((const char*)command->getData());
 		break;
 		default:
 			DbgPrint("Unknown command");
@@ -125,7 +125,7 @@ bool Skeleton::start()
 Skeleton::Skeleton()
 {
 #ifdef _DEBUG
-	_dbg = (char*)malloc(521);
+	_dbg = (char*)malloc(DBG_SIZE+9);
 	memcpy(_dbg, "[IntPe9] ", 9);
 	_dbgPrint = &_dbg[9];
 #endif
@@ -135,6 +135,9 @@ Skeleton::Skeleton()
 	isRunning = true;
 	me = this;
 	_upx = new Upx();
+
+	//Initialize python
+	Py_Initialize();
 
 	//Start the packet queue and start command queue thread
 	start();

@@ -3,7 +3,6 @@
 
 //Boost
 #include <boost/python.hpp>
-#include <boost/python/stl_iterator.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 
 //Default system
@@ -16,11 +15,12 @@
 //Custom library's
 #include <UpxLoader/Upx.h>
 
+#define DBG_SIZE 2048
+
 using std::map;
 using std::list;
 using std::string;
 
-using namespace boost::python;
 using namespace boost::interprocess;
 
 typedef int	(WSAAPI *defWSASendTo)(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, const struct sockaddr *lpTo, int iToLen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine);
@@ -47,7 +47,8 @@ protected:
 	Upx *_upx;
 	virtual void initialize() = 0;
 	virtual void finalize() = 0;
-	virtual void parsePython(uint8 *script, uint32 length) = 0;
+	virtual void parsePython(const char *script) = 0;
+	boost::python::object pythonNamespace;
 
 private:
 	message_queue *_masterQue, *_packetQue;
@@ -70,7 +71,7 @@ public:
 	bool stop();
 	bool start();
 
-	//All hookable functions
+	//All hookable functions with IAT
 	defWSASendTo			_oldWSASendTo;
 	defWSARecvFrom			_oldWSARecvFrom;
 	defWSAGetOverlappedResult	_oldWSAGetOverlappedResult;

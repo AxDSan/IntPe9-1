@@ -51,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>../../Cores;../../;../../dep/include;../../dep/include/python;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;BOOST_NO_LINK;BOOST_DATE_TIME_NO_LIB;_DEBUG;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;BOOST_NO_LINK;BOOST_DATE_TIME_NO_LIB;BOOST_PYTHON_STATIC_LIB;_DEBUG;</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
@@ -79,11 +79,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Cores\League of Legends\PythonWrapper.cpp" />
     <ClCompile Include="..\..\Cores\Skeleton.cpp" />
     <ClCompile Include="..\..\Cores\League of Legends\DllMain.cpp" />
     <ClCompile Include="..\..\Cores\League of Legends\LeagueOfLegends.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Cores\League of Legends\PythonWrapper.h" />
     <ClInclude Include="..\..\Cores\Skeleton.h" />
     <ClInclude Include="..\..\Cores\League of Legends\LeagueOfLegends.h" />
   </ItemGroup>

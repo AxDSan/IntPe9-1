@@ -15,28 +15,24 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QPlainTextEdit" name="input"/>
+    <widget class="QPlainTextEdit" name="input">
+     <property name="lineWrapMode">
+      <enum>QPlainTextEdit::NoWrap</enum>
+     </property>
+     <property name="plainText">
+      <string>bytes = [0x49, 0x19, 0x00, 0x00, 0x40, 0x03]
+pe.sendPacket(bytes, 5, 1)
+pe.recvPacket(bytes, 5, 1)</string>
+     </property>
+     <property name="tabStopWidth">
+      <number>15</number>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QPushButton" name="run">
      <property name="text">
       <string>Send code to Core</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPlainTextEdit" name="output">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>200</height>
-      </size>
      </property>
     </widget>
    </item>
