@@ -1,5 +1,7 @@
 #include <Windows.h>
+#include <Shlobj.h>
 #include "Main.h"
+
 
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
@@ -20,8 +22,8 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_hexView->setReadOnly(true);
 	_mainView.hexWidget->layout()->addWidget(_hexView);
 
-	//Set the environment
-	setEnvironment(true);
+	//Install my python version (if they dident have it yet)
+	installPython();
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
@@ -77,30 +79,15 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 MainGui::~MainGui()
 {
 	//Disable environment
-	setEnvironment(false);
 }
 
-
-void MainGui::setEnvironment(bool state)
+void MainGui::installPython()
 {
-	QSettings environment("HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", QSettings::NativeFormat);
-	QStringList paths = environment.value("Path").toString().split(';');
-
-	if(state)
-	{
-		if(!paths.contains(QDir::currentPath(), Qt::CaseInsensitive))
-		{
-			paths.append(QDir::toNativeSeparators(QDir::currentPath()));
-			environment.setValue("Path", paths.join(";"));
-		}
-	}
-	else
-		if(paths.removeAll(QDir::toNativeSeparators(QDir::currentPath())) > 0)
-			environment.setValue("Path", paths.join(";"));
-
-	SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 5000, NULL);
+	wchar_t system32[MAX_PATH];
+	SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_DEFAULT, system32);
+	QString pythonE9 = QString::fromWCharArray(system32)+QDir::separator()+"PythonE9.dll";
+	CopyFile(L"PythonE9.dll", pythonE9.toStdWString().c_str(), TRUE);
 }
-
 void MainGui::startPython()
 {
 	Sniffer *sniffer = _manager->getActiveSniffer();

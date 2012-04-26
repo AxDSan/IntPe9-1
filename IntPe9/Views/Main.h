@@ -59,6 +59,7 @@ public slots:
 	void setPacketModel(PacketList *model);
 	void selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous);
 	void autoScroll(bool state);
+	void installPython();
 
 private:
 	bool _firstModel;

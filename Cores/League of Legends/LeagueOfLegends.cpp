@@ -177,8 +177,6 @@ void LeagueOfLegends::stealAddEvent(void *pointer, ENetEvent *event)
 
 void LeagueOfLegends::stealRecvPacket(ENetEvent *event)
 {	
-	leagueOfLegends->DbgPrint("Recv event, type: %i, channel: %i, peer: %08X, data: %08X, packet: %08X", event->type, event->channelID, event->peer, event->data, event->packet);
-
 	//Skip all non receive events
 	if(event->type != ENET_EVENT_TYPE_RECEIVE)
 		return;
@@ -282,7 +280,6 @@ static NAKED void ASMSendPacket()
 
 static NAKED void AsmMaestroCleanup()
 {
-	//Hooked +18
 	__asm
 	{
 		pushad
@@ -331,7 +328,7 @@ void LeagueOfLegends::initialize()
 	uint8 *addressMaestroCleanup = Memory::searchAddress(section, signatureMaestroCleanup, maskMaestroCleanup);
 
 	if(addressSendPacket == NULL || addressAddEvent == NULL || addressEnetMalloc == NULL || addressMaestroCleanup == NULL || addressRecvPacket == NULL)
-		DbgPrint("WARNING: I did not found all signatures so carefull!!");
+		DbgPrint("WARNING: I did not found all signatures so carefully!!");
 
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
