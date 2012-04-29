@@ -9,17 +9,9 @@ Packet::Packet(MessagePacket *data)
 	_description = QString(data->description);
 
 	//Create list view data
-	QString temp;
-	for(uint8 i = 0; i < ((_length > SUMMARY_LEN) ? SUMMARY_LEN : _length); i++)
-	{
-		temp.sprintf("%02X ", (uint8)data->getData()[i]);
-		_summary.append(temp);
-	}
-	if(_length > SUMMARY_LEN)
-	{
-		temp.sprintf("... %02X %02X", (uint8)data->getData()[_length-2], (uint8)data->getData()[_length-1]);
-		_summary.append(temp);
-	}
+	_summary = toHexString(_data, SUMMARY_LEN);
+	if(_data->size() > SUMMARY_LEN)
+		_summary.append("... "+toHexString(_data, 2, _data->size()-2));
 }
 
 Packet::~Packet()
@@ -27,6 +19,54 @@ Packet::~Packet()
 	delete _data;
 }
 
+QString Packet::toHexString(QByteArray *buffer, int size, int start)
+{
+
+	QString format;
+	QString hex;
+
+	if(start >= buffer->size())
+		return NULL;
+
+	if(size == 0)
+		size = buffer->size();
+
+	if(size+start > buffer->size())
+		size = buffer->size() - start;
+
+	for(int i = start; i < size+start; i++)
+		format = format % hex.sprintf("%02X ", (uint8)buffer->at(i));
+
+	if(buffer->size() >= 1)
+		format.chop(1); //Remove last space
+
+	return format;
+}
+
+QByteArray *Packet::fromHexString(QString string)
+{
+	QString stripped = string.remove(QRegExp("[^a-zA-Z0-9]")); //Removes everything except a-z (and capital) and 0-9
+
+	//Error, its not an even numbered string (so not in correct form)
+	if(stripped.size() % 2 != 0)
+		return NULL;
+
+	QByteArray *buffer = new QByteArray(stripped.size() % 2, '\0');
+	bool good;
+	for(int i = 0; i < stripped.size(); i+=2)
+	{
+		QStringRef hex(&stripped, i, 2);
+		uint8 c = (uint8)hex.toString().toUShort(&good, 16);
+		if(!good)
+		{
+			delete buffer;
+			return NULL;
+		}
+
+		buffer->push_back(c);
+	}
+	return buffer;
+}
 
 QString Packet::toC()
 {
@@ -35,9 +75,9 @@ QString Packet::toC()
 	QString out, format;
 	uint8 hex;
 
-	out += format.sprintf("{0x%02X", (uint8)_data->at(0));
+	out = format.sprintf("{0x%02X", (uint8)_data->at(0));
 	for(uint32 i = 1; i < _data->size(); i++)
-		out += format.sprintf(", 0x%02X", (uint8)_data->at(i));
+		out = out % format.sprintf(", 0x%02X", (uint8)_data->at(i));
 	out += "};";
 
 	return out;
@@ -50,9 +90,9 @@ QString Packet::toPython()
 	QString out, format;
 	uint8 hex;
 
-	out += format.sprintf("[0x%02X", (uint8)_data->at(0));
+	out = format.sprintf("[0x%02X", (uint8)_data->at(0));
 	for(uint32 i = 1; i < _data->size(); i++)
-		out += format.sprintf(", 0x%02X", (uint8)_data->at(i));
+		out = out % format.sprintf(", 0x%02X", (uint8)_data->at(i));
 	out += "]";
 
 	return out;
@@ -71,6 +111,11 @@ QString Packet::strInfoHeader()
 	out += ", Description: " + _description + "\n";
 
 	return out;
+}
+
+bool Packet::isPrintable(QChar c)
+{
+	return (c.isLetterOrNumber() || c.isPunct() || c.isSpace());
 }
 
 QString Packet::strFullDump()
@@ -93,7 +138,7 @@ QString Packet::strFullDump()
 
 		//Format ascii
 		for(x = s, c = 0; x < _length && c < 16; x++, c++)
-			out += (QChar(_data->at(x)).isLetterOrNumber() ? QChar(_data->at(x)) : '.');
+			out += (isPrintable(QChar(_data->at(x))) ? QChar(_data->at(x)) : '.');
 		out += "\n";
 
 		//Break if we are done

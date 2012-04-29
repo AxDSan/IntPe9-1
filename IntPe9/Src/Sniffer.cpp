@@ -35,6 +35,7 @@ Sniffer::~Sniffer()
 	delete _packetIpc;
 	delete _controlIpc;
 	delete[] recvPacket;
+	delete _filterList;
 	delete _packetList;
 }
 
@@ -42,6 +43,7 @@ void Sniffer::start()
 {
 	//Create some stuff
 	_packetList = new PacketList();
+	_filterList = new FilterList(_packetList);
 	recvPacket = (MessagePacket*)new uint8[MP_MAX_SIZE];
 
 	//Open the queue's
@@ -95,7 +97,10 @@ void Sniffer::eventLoop()
 	while(_packetIpc->get_num_msg() > 0)                                                //Get all packets from the queue
 		if(_packetIpc->try_receive(recvPacket, MP_MAX_SIZE, recvdSize, priority))   //Try to receive a packet
 			if(recvPacket->messagePacketSize() == recvdSize)                    //If it is all good
-				_packetList->addPacket(new Packet(recvPacket));             //Create the packet (in my thread) and add it to the model
+			{                                                                   //Create the packet (in my thread) and add it to the model
+				Packet *packet = new Packet(recvPacket);
+				_packetList->addPacket(packet, _filterList->showInTable(packet));             
+			}
 
 	_ticks++;
 }
@@ -171,6 +176,11 @@ uint32 Sniffer::getPid()
 Core *Sniffer::getCore()
 {
 	return _core;
+}
+
+FilterList *Sniffer::getFilterList()
+{
+	return _filterList;
 }
 
 PacketList *Sniffer::getPacketList()

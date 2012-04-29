@@ -23,13 +23,13 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.hexWidget->layout()->addWidget(_hexView);
 	_hexView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-
 	//Install my python version (if they did not have it yet)
 	installPython();
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
 	_parserGui = new ParserGui(this);
+	_filterView = new FilterView(this);
 
 	//Create classes
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
@@ -62,16 +62,20 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	//Toolbar
 	connect(_mainView.scrollAction, SIGNAL(triggered(bool)), this, SLOT(autoScroll(bool)));
 	connect(_mainView.eraseAction, SIGNAL(triggered()), this, SLOT(clearList()));
-	connect(_mainView.pythonAction, SIGNAL(triggered()), this, SLOT(startPython()));
+	connect(_mainView.pythonAction, SIGNAL(triggered()), _parserGui, SLOT(show()));
 	
 	//Action menu
 	connect(_mainView.actionAbout, SIGNAL(triggered()), _aboutGui, SLOT(slotShow()));
 	connect(_mainView.actionSavePackets, SIGNAL(triggered()), _manager, SLOT(activeSaveAll()));
 	connect(_mainView.actionClear_packet_list, SIGNAL(triggered()), this, SLOT(clearList()));
-	connect(_mainView.actionShowCores, SIGNAL(triggered()), _mainView.dockCores, SLOT(show()));
-	connect(_mainView.actionShowSniffers, SIGNAL(triggered()), _mainView.dockSniffer, SLOT(show()));
+	connect(_mainView.actionShowCoresSniffers, SIGNAL(triggered()), _mainView.dockCores, SLOT(show()));
+	connect(_mainView.actionShowFilters, SIGNAL(triggered()), _mainView.dockFilters, SLOT(show()));
+
 	//Others
-	connect(_manager, SIGNAL(activateModel(PacketList*)), this, SLOT(setPacketModel(PacketList*)));
+	connect(_mainView.buttonNewFilter, SIGNAL(clicked()), _filterView, SLOT(showEmpty()));
+	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), _filterView, SLOT(setSniffer(Sniffer*)));
+	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), _parserGui, SLOT(setSniffer(Sniffer*)));
+	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), this, SLOT(setActiveSniffer(Sniffer*)));
 }
 
 MainGui::~MainGui()
@@ -85,14 +89,6 @@ void MainGui::installPython()
 	SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_DEFAULT, system32);
 	QString pythonE9 = QString::fromWCharArray(system32)+QDir::separator()+"PythonE9.dll";
 	CopyFile(L"PythonE9.dll", pythonE9.toStdWString().c_str(), TRUE);
-}
-void MainGui::startPython()
-{
-	Sniffer *sniffer = _manager->getActiveSniffer();
-	if(sniffer != NULL)
-	{
-		_parserGui->showAndActivate(sniffer);
-	}
 }
 
 void MainGui::copyAsC()
@@ -161,14 +157,18 @@ void MainGui::autoScroll(bool state)
 		_mainView.scrollAction->setChecked(false);
 }
 
-void MainGui::setPacketModel(PacketList *model)
+void MainGui::setActiveSniffer(Sniffer *sniffer)
 {
 	_hexView->setData(NULL);
-	_mainView.tablePackets->setModel(model);
+	_mainView.tableFilters->setModel(sniffer->getFilterList());
+	_mainView.tablePackets->setModel(sniffer->getPacketList());
 	autoScroll(true);
 
 	if(_firstModel)
 	{
+		//Enable filter button
+		_mainView.buttonNewFilter->setEnabled(true);
+
 		//Header setup
 		_mainView.tablePackets->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
 		_mainView.tablePackets->horizontalHeader()->resizeSection(0, 25);

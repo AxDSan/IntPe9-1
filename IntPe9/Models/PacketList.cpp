@@ -17,17 +17,24 @@ void PacketList::clear()
 	foreach(packet, _packets)
 		delete packet;
 	_packets.clear();
+	_filteredPackets.clear();
 	mutexList.unlock();
 	reset();
-	emit layoutChanged();
+	refresh();
 }
 
-void PacketList::addPacket(Packet *packet)
+void PacketList::addPacket(Packet *packet, bool showInTable)
 {
 	mutexList.lock();
 	_packets.push_back(packet);
+
+	if(showInTable)
+	{
+		_filteredPackets.push_back(packet);
+		refresh();
+	}
+
 	mutexList.unlock();
-	emit layoutChanged();
 }
 
 void PacketList::refresh()
@@ -51,6 +58,19 @@ Packet *PacketList::getPacketAt(int index)
 	return _packets.at(index);
 }
 
+QVector<Packet*> *PacketList::getPacketList()
+{
+	return &_packets;
+}
+
+void PacketList::setFilteredList(QVector<Packet*> *packets)
+{
+	mutexList.lock();
+	_filteredPackets = QVector<Packet*>(*packets); //copy
+	mutexList.unlock();
+	refresh();
+
+}
 int PacketList::columnCount(const QModelIndex &parent) const
 {
 	return 4;

@@ -41,8 +41,7 @@ void Manager::registerSniffer(Sniffer *sniffer)
 	connect(sniffer->getPacketList(), SIGNAL(layoutChanged()), _snifferList, SLOT(refresh()));
 	_snifferList->refresh();
 
-
-	emit activateModel(sniffer->getPacketList());
+	emit activeSnifferChanged(sniffer);
 }
 
 void Manager::readCores(QString path)
@@ -82,7 +81,7 @@ void Manager::setActiveSniffer(const QModelIndex &index)
 {
 	_activeSniffer = _sniffers.at(index.row());
 	_snifferList->refresh();
-	emit activateModel(_activeSniffer->getPacketList());
+	emit activeSnifferChanged(_activeSniffer);
 }
 
 Core *Manager::getCore(QString name)

@@ -22,6 +22,7 @@
 #include <QVariant>
 #include <QPixmap>
 #include <QByteArray>
+#include <QStringBuilder>
 
 #define SUMMARY_LEN 16
 
@@ -47,6 +48,11 @@ public:
 
 	QString strInfoHeader();
 	QString strFullDump();
+
+	//Static global functions
+	static bool isPrintable(QChar c);
+	static QString toHexString(QByteArray *buffer, int size = 0, int start = 0);
+	static QByteArray *fromHexString(QString string);
 
 private:
 	//Data

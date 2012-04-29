@@ -36,6 +36,7 @@
 //Extra views/handlers
 #include "Parser.h"
 #include "About.h"
+#include "FilterView.h"
 
 class MainGui : public QMainWindow
 {
@@ -54,9 +55,8 @@ public:
 public slots:
 	void clearList();
 	void closing();
-	void startPython();
 
-	void setPacketModel(PacketList *model);
+	void setActiveSniffer(Sniffer *sniffer);
 	void selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous);
 	void autoScroll(bool state);
 	void installPython();
@@ -77,6 +77,7 @@ private:
 	QHexEdit *_hexView;
 	ParserGui *_parserGui;
 	AboutGui *_aboutGui;
+	FilterView *_filterView;
 	Ui::mainView _mainView;
 };
 

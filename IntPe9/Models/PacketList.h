@@ -44,15 +44,19 @@ public:
 
 	//Methods
 	Packet *getPacketAt(int index);
+	QVector<Packet*> *getPacketList();
+	
 	void autoScroll(bool state, QTableView *view);
 	
 public slots:
 	void clear();
-	void addPacket(Packet *packet);
+	void addPacket(Packet *packet, bool showInTable = true);
+	void setFilteredList(QVector<Packet*> *packets);
 	void refresh();
 
 private:
 	QVector<Packet*> _packets;
+	QVector<Packet*> _filteredPackets;
 	QMutex mutexList;
 
 };

@@ -20,7 +20,7 @@ public:
 
 public slots:
 	void sendCode();
-	void showAndActivate(Sniffer *sniffer);
+	void setSniffer(Sniffer *sniffer);
 
 private:
 	Sniffer *_activeSniffer;

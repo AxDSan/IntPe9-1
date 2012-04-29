@@ -27,6 +27,7 @@
 
 #include "Core.h"
 #include "Models/PacketList.h"
+#include "Models/FilterList.h"
 
 #include <boost/interprocess/ipc/message_queue.hpp>
 using namespace boost::interprocess;
@@ -42,6 +43,7 @@ public:
 	Core *getCore();
 	uint32 getPid();
 	PacketList *getPacketList();
+	FilterList *getFilterList();
 	QVariant getField(uint32 index);
 
 	//Methods (run from own thread)
@@ -67,6 +69,7 @@ private:
 
 	//Model
 	PacketList *_packetList;
+	FilterList *_filterList;
 
 	//control IPC
 	message_queue *_controlIpc;

@@ -70,7 +70,7 @@ public slots:
 	void activeSaveAll();
 
 signals:
-	void activateModel(PacketList *);
+	void activeSnifferChanged(Sniffer *);
 
 };
 
