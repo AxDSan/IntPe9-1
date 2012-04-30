@@ -35,6 +35,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_manager = new Manager(QDir::currentPath()+QDir::separator()+"Cores");
 	_injector = new Injector(_manager, this);
 
+	connect(_mainView.tableFilters, SIGNAL(doubleClicked(const QModelIndex &)), _filterView, SLOT(editFilter(const QModelIndex &)));
 	connect(_mainView.tableSniffers, SIGNAL(doubleClicked(const QModelIndex &)), _manager, SLOT(setActiveSniffer(const QModelIndex &)));
 	connect(_mainView.tableCores, SIGNAL(doubleClicked(const QModelIndex &)), _injector, SLOT(selectProcess(const QModelIndex &)), Qt::DirectConnection);
 
@@ -174,8 +175,13 @@ void MainGui::setActiveSniffer(Sniffer *sniffer)
 		_mainView.tablePackets->horizontalHeader()->resizeSection(0, 25);
 		_mainView.tablePackets->horizontalHeader()->resizeSection(1, 45);
 		_mainView.tablePackets->horizontalHeader()->resizeSection(2, 420);
+		_mainView.tableFilters->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+		_mainView.tableFilters->horizontalHeader()->resizeSection(0, 19);
+		_mainView.tableFilters->horizontalHeader()->resizeSection(1, 80);
+		_mainView.tableFilters->horizontalHeader()->resizeSection(2, 63);
 
 		//Selection model connect
+		connect(_mainView.isDefaultHidden, SIGNAL(toggled (bool)), sniffer->getFilterList(), SLOT(setDefaultHide(bool)));
 		_firstModel = connect(_mainView.tablePackets->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(selectedPacketChanged(const QModelIndex &, const QModelIndex &)));
 	}
 }

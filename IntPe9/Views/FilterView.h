@@ -26,6 +26,8 @@ public slots:
 	void setSniffer(Sniffer *sniffer);
 	void processOk();
 	void showEmpty();
+	void editFilter(const QModelIndex &index);
+	void setFilterMode(Filter::SearchMode mode);
 
 private:
 	Filter::SearchMode getFilterMode();

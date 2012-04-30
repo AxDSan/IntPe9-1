@@ -55,12 +55,17 @@ Packet *PacketList::getPacketAt(int index)
 	if(index < 0 && index >= _packets.count())
 		return NULL;
 
-	return _packets.at(index);
+	return _filteredPackets.at(index);
 }
 
 QVector<Packet*> *PacketList::getPacketList()
 {
 	return &_packets;
+}
+
+QVector<Packet*> *PacketList::getFilteredPacketList()
+{
+	return &_filteredPackets;
 }
 
 void PacketList::setFilteredList(QVector<Packet*> *packets)
@@ -78,7 +83,7 @@ int PacketList::columnCount(const QModelIndex &parent) const
 
 int PacketList::rowCount(const QModelIndex &parent) const
 {
-	return _packets.count();
+	return _filteredPackets.count();
 }
 
 QVariant PacketList::data(const QModelIndex &index, int role) const
@@ -86,7 +91,7 @@ QVariant PacketList::data(const QModelIndex &index, int role) const
 	if (!index.isValid() || index.row() >= _packets.count() || index.column() > 3 || (role != Qt::DisplayRole && role != Qt::DecorationRole) )
 		return QVariant();
 
-	return _packets.at(index.row())->getField(index.column());
+	return _filteredPackets.at(index.row())->getField(index.column());
 }
 
 QVariant PacketList::headerData(int section, Qt::Orientation orientation, int role) const

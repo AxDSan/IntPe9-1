@@ -21,12 +21,12 @@ class FilterList : public QAbstractListModel
 		int columnCount(const QModelIndex &parent) const;
 		int rowCount(const QModelIndex &parent = QModelIndex()) const;
 		QVariant data(const QModelIndex &index, int role) const;
+		bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 		QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 		Qt::ItemFlags flags(const QModelIndex & index) const;
 
 		//New functions
 		Filter *getFilterAt(int row);
-		void setDefaultHide(bool hideAll);
 		bool showInTable(Packet *packet);
 		bool isInFilter(Packet *packet);
 		void addFilter(QString name, Filter::SearchMode mode, QByteArray *search);
@@ -43,6 +43,7 @@ class FilterList : public QAbstractListModel
 	public slots:
 		void applyFilters();
 		void refresh();
+		void setDefaultHide(bool hideAll);
 
 };
 

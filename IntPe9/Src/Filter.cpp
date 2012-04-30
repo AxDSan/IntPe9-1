@@ -5,11 +5,22 @@ Filter::Filter(QString name, SearchMode mode, QByteArray *search)
 	_name = name;
 	_mode = mode;
 	_search = search; //Implicit copy, so we should take care of deleting the object
+	_isEnabled = true;
 }
 
 Filter::~Filter()
 {
 	delete _search;
+}
+
+bool Filter::isEnabled()
+{
+	return _isEnabled;
+}
+
+void Filter::setEnabled(bool state)
+{
+	_isEnabled = state;
 }
 
 QVariant Filter::getField(int column)
@@ -21,8 +32,6 @@ QVariant Filter::getField(int column)
 		case 1:
 			return getMode();
 		case 2:
-			return QVariant(); //dummy
-		case 3:
 			return Packet::toHexString(_search);
 		default:
 			return QVariant();

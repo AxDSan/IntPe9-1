@@ -2,10 +2,10 @@
 
 FilterList::FilterList(PacketList *packetList)
 {
-	_header << "" << "Name" << "Type" << "Hits" << "Search";
+	_header << "" << "Name" << "Type" << "Search";
 	_packetList = packetList;
 
-	_defaultHideAll = false;
+	_defaultHideAll = true;
 
 	connect(this, SIGNAL(layoutChanged()), this, SLOT(applyFilters()));
 }
@@ -36,13 +36,26 @@ int FilterList::rowCount(const QModelIndex &parent) const
 Qt::ItemFlags FilterList::flags(const QModelIndex &index) const
 {
 	if(index.column() == 0)
-		return Qt::ItemIsUserCheckable;
+		return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
 	else
-		return Qt::NoItemFlags;
+		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
+bool FilterList::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if(role == Qt::CheckStateRole && index.column() == 0)
+	{
+		_filters.at(index.row())->setEnabled(value.toBool());
+		emit dataChanged(index, index);
+		emit layoutChanged();
+		return true;
+	}
+	return false;
+}
 QVariant FilterList::data(const QModelIndex &index, int role) const
 {
+	if(index.column() == 0 && role == Qt::CheckStateRole)
+		return (_filters.at(index.row())->isEnabled()) ? Qt::Checked : Qt::Unchecked;
 	if (!index.isValid() || index.row() >= _filters.count() || index.column() > _header.count() || (role != Qt::DisplayRole && role != Qt::DecorationRole) )
 		return QVariant();
 	return _filters.at(index.row())->getField(index.column()-1);
@@ -59,14 +72,16 @@ bool FilterList::isInFilter(Packet *packet)
 {
 	Filter *filter;
 	foreach(filter, _filters)
-		if(filter->isHit(packet->getData()))
-			return true;
+		if(filter->isEnabled())
+			if(filter->isHit(packet->getData()))
+				return true;
 	return false;
 }
 
 void FilterList::setDefaultHide(bool hideAll)
 {
 	_defaultHideAll = hideAll;
+	applyFilters();
 }
 
 bool FilterList::showInTable(Packet *packet)

@@ -28,10 +28,16 @@ class Filter : public QObject
 		QVariant getField(int column);
 		QString getMode();
 
-	private:
+		bool isEnabled();
+		void setEnabled(bool state);
+
 		QString _name;
 		QByteArray *_search;
 		SearchMode _mode;
+
+	private:
+		bool _isEnabled;
+
 };
 
 #endif

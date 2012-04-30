@@ -45,6 +45,7 @@ public:
 	//Methods
 	Packet *getPacketAt(int index);
 	QVector<Packet*> *getPacketList();
+	QVector<Packet*> *getFilteredPacketList();
 	
 	void autoScroll(bool state, QTableView *view);
 	
@@ -53,7 +54,7 @@ public slots:
 	void addPacket(Packet *packet, bool showInTable = true);
 	void setFilteredList(QVector<Packet*> *packets);
 	void refresh();
-
+	
 private:
 	QVector<Packet*> _packets;
 	QVector<Packet*> _filteredPackets;
