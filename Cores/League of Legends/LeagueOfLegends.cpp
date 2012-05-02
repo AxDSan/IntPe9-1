@@ -21,9 +21,9 @@ uint8 signatureDeadbeef[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
 //SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8 51 8B 45 14 83 E8 00)
 uint8 signatureSendPacket[] = {0x55,0x8B,0xEC,0x83,0xE4,0xF8,0x51,0x8B,0x45,0x14,0x83,0xE8,0x00};
 
-//RecvPacket ESP+1C = ENetEvent* (8B 7C 24 2C 85 FF ?? ?? ?? ?? ?? ?? 8B)
-uint8 maskRecvPacket[] = "xxxxxx??????x";
-uint8 signatureRecvPacket[] = {0x8B, 0x7C, 0x24, 0x2C, 0x85, 0xFF, 0, 0, 0, 0, 0, 0, 0x8B};
+//RecvPacket ESP+1C = ENetEvent* (8B 7C 24 ?? 8B 54 24 ?? 33 C9 3B F9)
+uint8 maskRecvPacket[] = "xxx?xxx?xxxx";
+uint8 signatureRecvPacket[] = {0x8B, 0x7C, 0x24, 0, 0x8B, 0x54, 0x24, 0, 0x33, 0xC9, 0x3B, 0xF9};
 
 //AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 53 8B 5C 24 08)
 uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x53, 0x8B, 0x5C, 0x24, 0x08};
@@ -232,11 +232,11 @@ static NAKED void AsmRecvPacket()
 	__asm
 	{
 		mov eax, esp
-		add eax, 0x20
+		add eax, 0x24
 		push eax //ENetEvent*
 		call LeagueOfLegends::stealRecvPacket
-		mov edi,[esp+0x30]
-		test edi,edi
+		mov edi,[esp+0x34] //packet
+		mov edx,[esp+0x24] //eventType
 		RET
 	}
 }
@@ -328,8 +328,16 @@ void LeagueOfLegends::initialize()
 	uint8 *addressEnetMalloc = Memory::searchAddress(section, signatureEnetMalloc, maskEnetMalloc);
 	uint8 *addressMaestroCleanup = Memory::searchAddress(section, signatureMaestroCleanup, maskMaestroCleanup);
 
-	if(addressSendPacket == NULL || addressAddEvent == NULL || addressEnetMalloc == NULL || addressMaestroCleanup == NULL || addressRecvPacket == NULL)
-		DbgPrint("WARNING: I did not found all signatures so carefully!!");
+	if(addressSendPacket == NULL)
+		DbgPrint("ERROR: I did not find SendPacket!");
+	if(addressAddEvent == NULL)
+		DbgPrint("WARNING: I did not find AddEvent!");
+	if(addressEnetMalloc == NULL)
+		DbgPrint("WARNING: I did not find EnetMalloc!");		
+	if(addressMaestroCleanup == NULL)
+		DbgPrint("WARNING: I did not find MaestroCleanup!");
+	if(addressRecvPacket == NULL)
+		DbgPrint("ERROR: I did not find RecvPacket!");
 
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
@@ -341,7 +349,7 @@ void LeagueOfLegends::initialize()
 	enetMalloc = (EnetMalloc)addressEnetMalloc;
 
 	//Set hooks
-	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 1);
+	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 3);
 	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
 	Memory::writeCall(addressSendPacket+7, (uint8*)ASMSendPacket, 1);
 	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
