@@ -89,7 +89,9 @@ public:
 	void initialize();
 	void finalize();
 	char *getName();
+#ifndef NO_PYTHON
 	void parsePython(const char *script);
+#endif
 	void debugToChat(uint8 *text);
 
 //Static part

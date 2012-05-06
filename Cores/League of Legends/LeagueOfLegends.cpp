@@ -1,5 +1,7 @@
 #include "LeagueOfLegends.h"
+#ifndef NO_PYTHON
 #include "PythonWrapper.h"
+#endif
 
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
@@ -63,6 +65,7 @@ LeagueOfLegends::LeagueOfLegends()
 			if(cmd[i] == '"')
 				q++;
 	}
+	
 	//Test if we where able to parse the command line
 	_wrongCommandLine = (!sStart || !sEnd);
 	if(_wrongCommandLine)
@@ -94,7 +97,7 @@ LeagueOfLegends::LeagueOfLegends()
 	free(_keyDecrypted);
 }
 
-
+#ifndef NO_PYTHON
 void LeagueOfLegends::parsePython(const char *script)
 {
 	try
@@ -111,6 +114,7 @@ void LeagueOfLegends::parsePython(const char *script)
 		PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
 	}
 }
+#endif
 
 void LeagueOfLegends::sendPacket(uint8* data, uint32 length, uint8 channel, ENetPacketFlag type)
 {
@@ -300,6 +304,7 @@ void LeagueOfLegends::debugToChat(uint8 *text)
 	recvPacket((uint8*)packet, packet->totalLength(), ChatPacket::getChannel(), true);
 }
 
+#ifndef NO_PYTHON
 BOOST_PYTHON_MODULE(lol)
 {
 	boost::python::class_<PythonWrapper>("Pe")
@@ -310,6 +315,7 @@ BOOST_PYTHON_MODULE(lol)
 
 	def("getInstance", &PythonWrapper::getInstance, boost::python::return_value_policy<boost::python::reference_existing_object>());
 }
+#endif
 
 void LeagueOfLegends::initialize()
 {
@@ -355,6 +361,8 @@ void LeagueOfLegends::initialize()
 	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
 	DbgPrint("League of Legends hooks applied!");
 
+	
+#ifndef NO_PYTHON
 	//Start python extending
 	initlol();
 	boost::python::object mainModule = boost::python::import("__main__");
@@ -366,6 +374,8 @@ void LeagueOfLegends::initialize()
 	PyRun_SimpleString("pe = lol.getInstance()");
 	PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
 	PyRun_SimpleString("sys.stdout = pe");
+#endif
+
 	DbgPrint("League of Legends engine started!");
 }
 
