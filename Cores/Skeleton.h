@@ -2,7 +2,9 @@
 #define SKELETON_H
 
 //Boost
+#ifndef NO_PYTHON
 #include <boost/python.hpp>
+#endif
 #include <boost/interprocess/ipc/message_queue.hpp>
 
 //Default system
@@ -47,8 +49,10 @@ protected:
 	Upx *_upx;
 	virtual void initialize() = 0;
 	virtual void finalize() = 0;
+#ifndef NO_PYTHON
 	virtual void parsePython(const char *script) = 0;
 	boost::python::object pythonNamespace;
+#endif
 
 private:
 	message_queue *_masterQue, *_packetQue;
