@@ -50,10 +50,8 @@ void Skeleton::handleCommand(CommandControll *command)
 			stop();           //Remove the queue
 		break;
 		case PYTHON:
-#ifndef NO_PYTHON
 			DbgPrint("Received PYTHON command with length: %i", command->length);
 			parsePython((const char*)command->getData());
-#endif
 		break;
 		default:
 			DbgPrint("Unknown command");
@@ -139,9 +137,7 @@ Skeleton::Skeleton()
 	_upx = new Upx();
 
 	//Initialize python
-#ifndef NO_PYTHON
 	Py_Initialize();
-#endif
 
 	//Start the packet queue and start command queue thread
 	start();

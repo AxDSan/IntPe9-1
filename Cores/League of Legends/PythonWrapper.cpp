@@ -1,5 +1,3 @@
-#ifndef NO_PYTHON
-
 #include "PythonWrapper.h"
 #include "LeagueOfLegends.h"
 
@@ -75,5 +73,3 @@ void PythonWrapper::write(std::string const&msg)
 		return;
 	leagueOfLegends->debugToChat((uint8*)msg.c_str());
 }
-
-#endif
