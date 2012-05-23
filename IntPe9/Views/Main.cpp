@@ -2,6 +2,18 @@
 #include <Shlobj.h>
 #include "Main.h"
 
+MainGui *_mainGui;
+
+void debugPrint(const char *str)
+{
+	debugPrint((char*)str);
+}
+
+void debugPrint(char *str)
+{
+	//Thread safety
+	QMetaObject::invokeMethod(_mainGui, "addDebugString", Q_ARG(char*, str));
+}
 
 MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
@@ -16,6 +28,13 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	//Init variables
 	_mainView.setupUi(this);
 	_firstModel = true;
+
+	#ifndef _DEBUG
+	_mainView.dockDebug->hide();
+	#else
+	_mainGui = this;
+	#endif
+
 
 	//Create the hex viewer
 	_hexView = new QHexEdit(_mainView.hexWidget);
@@ -77,11 +96,20 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), _filterView, SLOT(setSniffer(Sniffer*)));
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), _parserGui, SLOT(setSniffer(Sniffer*)));
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), this, SLOT(setActiveSniffer(Sniffer*)));
+
+	DebugPrint("Connections are up and running.");
 }
 
 MainGui::~MainGui()
 {
-	//Disable environment
+	
+}
+
+void MainGui::addDebugString(char *str)
+{
+	if(_mainView.textDebug->toPlainText().size() > 0)
+		_mainView.textDebug->insertPlainText("\n");
+	_mainView.textDebug->insertPlainText(str);
 }
 
 void MainGui::installPython()

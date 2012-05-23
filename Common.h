@@ -5,6 +5,15 @@
 #include <vector>
 #include <cstdarg>
 
+#ifdef _DEBUG
+#define DebugPrint debugPrint
+#else
+#define DebugPrint(...)
+#endif
+
+void debugPrint(char *str);
+void debugPrint(const char *str);
+
 #define MP_QUEUE_NAME "PacketListener_"
 #define MP_QUEUE_NAME_SIZE 30
 #define MP_MAX_SIZE 0x1500

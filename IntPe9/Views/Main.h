@@ -60,6 +60,7 @@ public slots:
 	void selectedPacketChanged(const QModelIndex &current, const QModelIndex &previous);
 	void autoScroll(bool state);
 	void installPython();
+	void addDebugString(char *str);
 
 	//Copy actions
 	void copyAsC();

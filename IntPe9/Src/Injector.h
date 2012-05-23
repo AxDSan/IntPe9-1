@@ -55,6 +55,7 @@ public:
 	bool isInjected(uint32 pid, Core *core);
 	ProcessList getProcesses();
 	QPixmap getIcon(uint32 pid);
+	bool enableDebugPrivilege();
 		
 	//Constants
 	uint32 getTimeout();

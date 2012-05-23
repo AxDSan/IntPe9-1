@@ -135,7 +135,8 @@ Skeleton::Skeleton()
 	isRunning = true;
 	me = this;
 	_upx = new Upx();
-
+	
+	DbgPrint("Trying to initialize python!");
 	//Initialize python
 	Py_Initialize();
 

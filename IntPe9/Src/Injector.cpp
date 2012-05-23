@@ -14,6 +14,8 @@ uint32 Injector::getTimeout()
 
 Injector::Injector(Manager *manager, QWidget *parent)
 {
+	
+
 	//Build processList gui
 	_parent = parent;
 	_processGui = new QDialog(_parent, Qt::Dialog);
@@ -36,6 +38,13 @@ Injector::Injector(Manager *manager, QWidget *parent)
 	
 	//Start the thread and let the this->start() handle the real initial work
 	_thread->start();
+
+	DebugPrint("Injector thread running.");
+
+	if(enableDebugPrivilege())
+		DebugPrint("Got SeDebugPrivilege");
+	else
+		DebugPrint("Failed to get SeDebugPrivilege");
 }
 
 Injector::~Injector()
@@ -106,6 +115,28 @@ void Injector::refreshProcessList()
 	}
 }
 
+bool Injector::enableDebugPrivilege()
+{
+	HANDLE hToken = NULL;
+	TOKEN_PRIVILEGES tokenPriv;
+	LUID luidDebug;
+	if(OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken) != FALSE) 
+	{
+		if(LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug) != FALSE)
+		{
+			tokenPriv.PrivilegeCount           = 1;
+			tokenPriv.Privileges[0].Luid       = luidDebug;
+			tokenPriv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+			if(AdjustTokenPrivileges(hToken, FALSE, &tokenPriv, 0, NULL, NULL) != FALSE)
+				return true;
+			else
+				return false;
+		}
+	}
+	CloseHandle(hToken);
+	return false;
+}
+
 void Injector::selectProcess(const QModelIndex &index)
 {
 	CoreList *model = (CoreList*)index.model();
@@ -172,31 +203,48 @@ bool Injector::isInjected(uint32 pid, Core *core)
  */
 bool Injector::inject(uint32 pid, Core *core)
 {
+	QString dbg = "Injecting core: ";
+	DebugPrint((dbg+core->getBaseName()).toStdString().c_str());
+
 	if(core == NULL)
 		return false;
 
 	HANDLE process = NULL;
 
 	if(!(process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid)))
+	{
+		DebugPrint("Failed to open proc");
 		return false;
+	}
 
 	void *allocatedMemory = VirtualAllocEx(process, NULL, core->getFullPath().size() + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	if(allocatedMemory == NULL)
+	{
+		DebugPrint("Failed to alloc");
 		return false;
+	}
 
 	SIZE_T writedBytes;
 	WriteProcessMemory(process, allocatedMemory, core->getFullPath().toStdString().c_str(), core->getFullPath().size() + 1, &writedBytes);
 
 	if(writedBytes < core->getFullPath().size() + 1)
+	{
+		DebugPrint("Failed to write bytes");
 		return false;
+	}
 
 	HANDLE thread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA"), allocatedMemory, 0, NULL);
 	if(thread == NULL)
+	{
+		DebugPrint("Failed to start remote thread");
 		return false;
+	}
 
 	//Cleanup
 	CloseHandle(thread);
 	CloseHandle(process);
+
+	DebugPrint("Successfully injected");
 
 	return true;
 }
@@ -261,6 +309,8 @@ bool Injector::injectAll()
 			Core *core = _manager->getCore(processName);                                    //If we have a Core for this process
 			if(core)
 			{
+				QString dbg = "Found an injectable exe: ";
+				DebugPrint((dbg+processName).toStdString().c_str());
 				if(!isInjected(pe32.th32ProcessID, core))                               //Check if we already injected
 					if(!inject(pe32.th32ProcessID, core))                           //Not yet injected so try now
 						continue;                                               //We failed to inject so skip this injection (and try again later)
