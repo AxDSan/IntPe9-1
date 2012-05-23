@@ -461,7 +461,8 @@
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(OutDir)\QtCored4.dll" copy $(QTDIR)\bin\QtCored4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\QtGuid4.dll" copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)
-IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)</Command>
+IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\PythonE9.zip" copy ..\..\dep\lib\PythonE9.zip $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Qt  &amp; Python runtime</Message>
@@ -484,7 +485,8 @@ IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)<
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(OutDir)\QtCore4.dll" copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\QtGui4.dll" copy $(QTDIR)\bin\QtGui4.dll $(OutDir)
-IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)</Command>
+IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\PythonE9.zip" copy ..\..\dep\lib\PythonE9.zip $(OutDir)</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Qt  &amp; Python runtime</Message>

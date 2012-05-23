@@ -89,7 +89,9 @@ void MainGui::installPython()
 	wchar_t system32[MAX_PATH];
 	SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_DEFAULT, system32);
 	QString pythonE9 = QString::fromWCharArray(system32)+QDir::separator()+"PythonE9.dll";
+	QString pythonLib = QString::fromWCharArray(system32)+QDir::separator()+"PythonE9.zip";
 	CopyFile(L"PythonE9.dll", pythonE9.toStdWString().c_str(), TRUE);
+	CopyFile(L"PythonE9.zip", pythonLib.toStdWString().c_str(), TRUE);
 }
 
 void MainGui::copyAsC()
@@ -163,6 +165,7 @@ void MainGui::setActiveSniffer(Sniffer *sniffer)
 	_hexView->setData(NULL);
 	_mainView.tableFilters->setModel(sniffer->getFilterList());
 	_mainView.tablePackets->setModel(sniffer->getPacketList());
+	_mainView.isDefaultHidden->setChecked(sniffer->getFilterList()->getDefaultHide());
 	autoScroll(true);
 
 	if(_firstModel)

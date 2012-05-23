@@ -33,6 +33,7 @@ class FilterList : public QAbstractListModel
 		void addFilter(Filter *filter);
 
 		void clear();
+		bool getDefaultHide();
 
 	private:
 		QVector<Filter*> _filters;
@@ -44,7 +45,6 @@ class FilterList : public QAbstractListModel
 		void applyFilters();
 		void refresh();
 		void setDefaultHide(bool hideAll);
-
 };
 
 #endif

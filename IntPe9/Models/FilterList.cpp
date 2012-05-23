@@ -5,7 +5,7 @@ FilterList::FilterList(PacketList *packetList)
 	_header << "" << "Name" << "Type" << "Search";
 	_packetList = packetList;
 
-	_defaultHideAll = true;
+	_defaultHideAll = false;
 
 	connect(this, SIGNAL(layoutChanged()), this, SLOT(applyFilters()));
 }
@@ -76,6 +76,11 @@ bool FilterList::isInFilter(Packet *packet)
 			if(filter->isHit(packet->getData()))
 				return true;
 	return false;
+}
+
+bool FilterList::getDefaultHide()
+{
+	return _defaultHideAll;
 }
 
 void FilterList::setDefaultHide(bool hideAll)
