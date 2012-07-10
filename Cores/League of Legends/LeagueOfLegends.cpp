@@ -14,27 +14,42 @@ EnetMalloc enetMalloc;
 SendPacket lolSendPacket;
 AddEvent lolAddEvent;
 
+/**
+ Some notes on how to simple find updates in functions
+
+ To find enet loop:
+ - Search for the encryption functions: 83 EC 08 53 8B 5C 24 14  55 8B 6C 24 1C 33 C0 83 FD 08 56 57
+ - First occurrence is decrypt buffer, second is encrypt buffer
+ - Then for jump to xref from the decrypt buffer and the first result should be enetLoop (should be obvious by a 3 way switch and some strings about client connected etc)
+
+ To find sendPacket:
+ - Search for the encryption functions: 83 EC 08 53 8B 5C 24 14  55 8B 6C 24 1C 33 C0 83 FD 08 56 57
+ - First occurrence is decrypt buffer, second is encrypt buffer
+ - Then from the encrypt buffer the second X ref should be sendPacket (Begin has some if {if {}else{ if return} }else )
+
+ */
 //All signatures
 //Deadbeef search place holder signature (B8 EF BE AD DE)
 uint8 signatureDeadbeef[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
 
-//SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8 51 8B 45 14 83 E8 00)
-uint8 signatureSendPacket[] = {0x55,0x8B,0xEC,0x83,0xE4,0xF8,0x51,0x8B,0x45,0x14,0x83,0xE8,0x00};
+//SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8  64 A1 00 00 00 00 6A FF 68 ?? ?? ?? ?? 50 8B 45 14)
+uint8 maskSendPacket[] = "xxxxxxxxxxxxxxx????xxxx";
+uint8 signatureSendPacket[] = {0x55, 0x8B, 0xEC, 0x83, 0xE4, 0xF8, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x6A, 0xFF, 0x68, 0, 0, 0, 0, 0x50, 0x8B, 0x45, 0x14};
 
 //RecvPacket ESP+1C = ENetEvent* (8B 7C 24 ?? 8B 54 24 ?? 33 C9 3B F9)
 uint8 maskRecvPacket[] = "xxx?xxx?xxxx";
 uint8 signatureRecvPacket[] = {0x8B, 0x7C, 0x24, 0, 0x8B, 0x54, 0x24, 0, 0x33, 0xC9, 0x3B, 0xF9};
 
-//AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 53 8B 5C 24 08)
-uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x53, 0x8B, 0x5C, 0x24, 0x08};
+//AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 53 8B 5C 24 08) 8B 46 10 83 C0 01 39 46 08
+uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08};
 
 //Custom enet malloc function, its thread safe! (void *__cdecl enetMalloc(size_t Size)) (68 ?? ?? ?? ?? FF 15 ?? ?? ?? ?? A1 ?? ?? ?? ?? B9 01 00 00 00 01 0D)
 uint8 maskEnetMalloc[] = "x????xx????x????xxxxxxx";
 uint8 signatureEnetMalloc[] = {0x68, 0, 0, 0, 0, 0xFF, 0x15, 0, 0, 0, 0, 0xA1, 0, 0, 0, 0, 0xB9, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0D};
 
-//Meastro cleanup, always called when you kill LoL or shutdown (int __thiscall maestroCleanup(void *this)) (51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 B4 00 00 00 FF)
-uint8 maskMaestroCleanup[] = "xxx????xxxxxxxxx";
-uint8 signatureMaestroCleanup[] = {0x51, 0x8B, 0x0D, 0, 0, 0, 0, 0x8B, 0x01, 0x8B, 0x90, 0xB4, 0x00, 0x00, 0x00, 0xFF};
+//Meastro cleanup, always called when you kill LoL or shutdown (int __thiscall maestroCleanup(void *this)) (51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 ?? 00 00 00 FF)
+uint8 maskMaestroCleanup[] = "xxx????xxxx?xxxx";
+uint8 signatureMaestroCleanup[] = {0x51, 0x8B, 0x0D, 0, 0, 0, 0, 0x8B, 0x01, 0x8B, 0x90, 0, 0x00, 0x00, 0x00, 0xFF};
 
 //Start of LeagueOfLegends.cpp
 char *LeagueOfLegends::getName()
@@ -271,8 +286,7 @@ static NAKED void ASMSendPacket()
 		PUSH ecx                     //this pointer
 		CALL LeagueOfLegends::stealSendPacket
 		POPAD
-		MOV EAX,DWORD PTR SS:[EBP + 0x14]
-		SUB EAX,0
+		//mov large 0, esp; exception handler, but how can we implement it???
 		RET
 	}
 }
@@ -351,7 +365,7 @@ void LeagueOfLegends::initialize()
 	//Set hooks
 	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 3);
 	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
-	Memory::writeCall(addressSendPacket+7, (uint8*)ASMSendPacket, 1);
+	Memory::writeCall(addressSendPacket+23, (uint8*)ASMSendPacket, 2);
 	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);
 	DbgPrint("League of Legends hooks applied!");
 
