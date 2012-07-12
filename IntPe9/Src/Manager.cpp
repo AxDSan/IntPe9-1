@@ -52,10 +52,13 @@ void Manager::readCores(QString path)
 	dir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
 	QFileInfoList list = dir.entryInfoList();
 
+	QSettings settings(INI_FILE, QSettings::IniFormat);
 	for (int i = 0; i < list.size(); ++i)
 	{
 		const QFileInfo *fileInfo = &list.at(i);
-		_cores.push_back(new Core(fileInfo));
+		Core *core = new Core(fileInfo);
+		core->setEnabled(settings.value(INI_S_AUTO_INJECT+core->getName(), false).toBool());
+		_cores.push_back(core);
 	}
 }
 

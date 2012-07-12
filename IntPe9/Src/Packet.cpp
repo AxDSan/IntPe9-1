@@ -113,11 +113,6 @@ QString Packet::strInfoHeader()
 	return out;
 }
 
-bool Packet::isPrintable(QChar c)
-{
-	return (c.isLetterOrNumber() || c.isPunct() || c.isSpace());
-}
-
 QString Packet::strFullDump()
 {
 	QString out;
@@ -138,7 +133,7 @@ QString Packet::strFullDump()
 
 		//Format ascii
 		for(x = s, c = 0; x < _length && c < 16; x++, c++)
-			out += (isPrintable(QChar(_data->at(x))) ? QChar(_data->at(x)) : '.');
+			out += (isprint(_data->at(x)) ? _data->at(x) : '.');
 		out += "\n";
 
 		//Break if we are done

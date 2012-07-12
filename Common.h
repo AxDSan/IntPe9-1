@@ -14,6 +14,9 @@
 void debugPrint(char *str);
 void debugPrint(const char *str);
 
+#define INI_FILE "IntPe9.ini"
+#define INI_S_AUTO_INJECT "CoresAI/"
+
 #define MP_QUEUE_NAME "PacketListener_"
 #define MP_QUEUE_NAME_SIZE 30
 #define MP_MAX_SIZE 0x1500

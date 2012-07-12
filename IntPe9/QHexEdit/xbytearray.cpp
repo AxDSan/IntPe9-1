@@ -134,7 +134,7 @@ QByteArray & XByteArray::replace(int index, int length, const QByteArray & ba)
 QChar XByteArray::asciiChar(int index)
 {
     QChar ch = _data[index];
-    if(!ch.isLetterOrNumber() && !ch.isPunct() && !ch.isSpace())
+    if(!isprint(_data[index]))
 	    ch = '.';
     return ch;
 }

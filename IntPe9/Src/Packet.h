@@ -50,7 +50,6 @@ public:
 	QString strFullDump();
 
 	//Static global functions
-	static bool isPrintable(QChar c);
 	static QString toHexString(QByteArray *buffer, int size = 0, int start = 0);
 	static QByteArray *fromHexString(QString string);
 

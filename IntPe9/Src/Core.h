@@ -3,6 +3,7 @@
 
 #include <Common.h>
 
+#include <QSettings>
 #include <QVariant>
 #include <QAbstractListModel>
 #include <QPixmap>

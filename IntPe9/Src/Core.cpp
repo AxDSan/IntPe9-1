@@ -45,6 +45,9 @@ bool Core::isEnabled()
 void Core::setEnabled(bool state)
 {
 	_isEnabled = state;
+
+	QSettings settings(INI_FILE, QSettings::IniFormat);
+	settings.setValue(INI_S_AUTO_INJECT+getName(), state);
 }
 
 QString Core::getName()
