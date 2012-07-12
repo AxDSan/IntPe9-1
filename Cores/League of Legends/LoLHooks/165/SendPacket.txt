@@ -1,0 +1,114 @@
+SendPacket
+Signature:	55 8B EC 83 E4 F8 64 A1 00 00 00 00 6A FF 68 ?? ?? ?? ?? 50 8B 45 14
+Nops:		2
+Offset:		23 (0x17)
+restore:	mov fs:[00000000],esp
+	
+	
+	
+	00754070 - 55                    - push ebp
+	00754071 - 8B EC                 - mov ebp,esp
+	00754073 - 83 E4 F8              - and esp,F8
+	00754076 - 64 A1 00000000        - mov eax,fs:[00000000]
+	0075407C - 6A FF                 - push FF
+	0075407E - 68 5DD29600           - push 0096D25D : [AF8D84B8]
+	00754083 - 50                    - push eax
+	00754084 - 8B 45 14              - mov eax,[ebp+14]
+	00754087 - 64 89 25 00000000     - mov fs:[00000000],esp			; PLACE HOOK HERE
+	0075408E - 83 EC 10              - sub esp,10
+	00754091 - 53                    - push ebx
+	00754092 - 56                    - push esi
+	00754093 - 57                    - push edi
+	00754094 - 33 FF                 - xor edi,edi
+	00754096 - 2B C7                 - sub eax,edi
+	00754098 - 8B D9                 - mov ebx,ecx
+	0075409A - 74 17                 - je 007540B3
+	0075409C - 83 E8 01              - sub eax,01
+	0075409F - 74 0E                 - je 007540AF
+	007540A1 - 83 E8 01              - sub eax,01
+	007540A4 - 0F85 E9000000         - jne 00754193
+	007540AA - 8D 77 02              - lea esi,[edi+02]
+	007540AD - EB 09                 - jmp 007540B8
+	007540AF - 33 F6                 - xor esi,esi
+	007540B1 - EB 05                 - jmp 007540B8
+	007540B3 - BE 01000000           - mov esi,00000001
+	007540B8 - 39 BB 34FFFFFF        - cmp [ebx-000000CC],edi
+	007540BE - 0F84 CF000000         - je 00754193
+	007540C4 - 39 BB 30FFFFFF        - cmp [ebx-000000D0],edi
+	007540CA - 0F84 C3000000         - je 00754193
+	007540D0 - 68 6C61F302           - push 02F3616C : [00234CA8]
+	007540D5 - C7 44 24 18 6C61F302  - mov [esp+18],02F3616C : [00234CA8]
+	007540DD - FF 15 18229B00        - call dword ptr [009B2218]
+	007540E3 - 8B 45 0C              - mov eax,[ebp+0C]
+	007540E6 - 3B C7                 - cmp eax,edi
+	007540E8 - 89 7C 24 24           - mov [esp+24],edi
+	007540EC - 74 0D                 - je 007540FB
+	007540EE - 66 0FB6 08            - movzx cx,byte ptr [eax]
+	007540F2 - 0FB7 D1               - movzx edx,cx
+	007540F5 - 89 54 24 10           - mov [esp+10],edx
+	007540F9 - EB 04                 - jmp 007540FF
+	007540FB - 89 7C 24 10           - mov [esp+10],edi
+	007540FF - 39 7B 0C              - cmp [ebx+0C],edi
+	00754102 - 8B 7D 08              - mov edi,[ebp+08]
+	00754105 - 74 27                 - je 0075412E
+	00754107 - 57                    - push edi
+	00754108 - 50                    - push eax
+	00754109 - 68 0002F40A           - push 0AF40200 : [1BCF145A]
+	0075410E - E8 D388FBFF           - call 0070C9E6 : [->725B4FB0]
+	00754113 - 8B 43 0C              - mov eax,[ebx+0C]
+	00754116 - 83 C4 0C              - add esp,0C
+	00754119 - 57                    - push edi
+	0075411A - 68 0002F40A           - push 0AF40200 : [1BCF145A]
+	0075411F - 50                    - push eax
+	00754120 - E8 AB601D00           - call 0092A1D0
+	00754125 - 56                    - push esi
+	00754126 - 57                    - push edi
+	00754127 - 68 0002F40A           - push 0AF40200 : [1BCF145A]
+	0075412C - EB 03                 - jmp 00754131
+	0075412E - 56                    - push esi
+	0075412F - 57                    - push edi
+	00754130 - 50                    - push eax
+	00754131 - E8 0A1D1A00           - call 008F5E40
+	00754136 - 8B 4D 10              - mov ecx,[ebp+10]
+	00754139 - 8B 93 34FFFFFF        - mov edx,[ebx-000000CC]
+	0075413F - 83 C4 0C              - add esp,0C
+	00754142 - 51                    - push ecx
+	00754143 - 52                    - push edx
+	00754144 - 8B F0                 - mov esi,eax
+	00754146 - E8 65F5FFFF           - call 007536B0
+	0075414B - 83 C4 08              - add esp,08
+	0075414E - 83 7B 10 00           - cmp dword ptr [ebx+10],00
+	00754152 - 74 1E                 - je 00754172
+	00754154 - 8B 44 24 10           - mov eax,[esp+10]
+	00754158 - 66 3D 0001            - cmp ax,0100
+	0075415C - 8B 5B 10              - mov ebx,[ebx+10]
+	0075415F - 8B 13                 - mov edx,[ebx]
+	00754161 - 6A 01                 - push 01
+	00754163 - 8B CB                 - mov ecx,ebx
+	00754165 - 57                    - push edi
+	00754166 - 73 03                 - jae 0075416B
+	00754168 - 50                    - push eax
+	00754169 - EB 02                 - jmp 0075416D
+	0075416B - 6A 00                 - push 00
+	0075416D - 8B 42 08              - mov eax,[edx+08]
+	00754170 - FF D0                 - call eax
+	00754172 - 68 6C61F302           - push 02F3616C : [00234CA8]
+	00754177 - FF 15 14229B00        - call dword ptr [009B2214]
+	0075417D - B0 01                 - mov al,01
+	0075417F - 8B 4C 24 1C           - mov ecx,[esp+1C]
+	00754183 - 64 89 0D 00000000     - mov fs:[00000000],ecx
+	0075418A - 5F                    - pop edi
+	0075418B - 5E                    - pop esi
+	0075418C - 5B                    - pop ebx
+	0075418D - 8B E5                 - mov esp,ebp
+	0075418F - 5D                    - pop ebp
+	00754190 - C2 1000               - ret 0010
+	00754193 - 8B 4C 24 1C           - mov ecx,[esp+1C]
+	00754197 - 5F                    - pop edi
+	00754198 - 5E                    - pop esi
+	00754199 - 32 C0                 - xor al,al
+	0075419B - 64 89 0D 00000000     - mov fs:[00000000],ecx
+	007541A2 - 5B                    - pop ebx
+	007541A3 - 8B E5                 - mov esp,ebp
+	007541A5 - 5D                    - pop ebp
+	007541A6 - C2 1000               - ret 0010

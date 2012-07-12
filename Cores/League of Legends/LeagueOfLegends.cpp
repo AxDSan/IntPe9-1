@@ -32,20 +32,21 @@ AddEvent lolAddEvent;
 //Deadbeef search place holder signature (B8 EF BE AD DE)
 uint8 signatureDeadbeef[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
 
-//SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8  64 A1 00 00 00 00 6A FF 68 ?? ?? ?? ?? 50 8B 45 14)
+//SendPacket (char __thiscall sendPacket(NetClient *this, size_t length, const void *data, unsigned __int8 channel, int type)) (55 8B EC 83 E4 F8 64 A1 00 00 00 00 6A FF 68 ?? ?? ?? ?? 50 8B 45 14)
 uint8 maskSendPacket[] = "xxxxxxxxxxxxxxx????xxxx";
 uint8 signatureSendPacket[] = {0x55, 0x8B, 0xEC, 0x83, 0xE4, 0xF8, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x6A, 0xFF, 0x68, 0, 0, 0, 0, 0x50, 0x8B, 0x45, 0x14};
 
-//RecvPacket ESP+1C = ENetEvent* (8B 7C 24 ?? 8B 54 24 ?? 33 C9 3B F9)
-uint8 maskRecvPacket[] = "xxx?xxx?xxxx";
-uint8 signatureRecvPacket[] = {0x8B, 0x7C, 0x24, 0, 0x8B, 0x54, 0x24, 0, 0x33, 0xC9, 0x3B, 0xF9};
+//RecvPacket ESP+1C = ENetEvent* (39 96 E8 00 00 00 74 ?? 66 0F B6 08)
+uint8 maskRecvPacket[] = "xxxxxxx?xxxx";
+uint8 signatureRecvPacket[] = {0x39, 0x96, 0xE8, 0x00, 0x00, 0x00, 0x74, 0, 0x66, 0x0F, 0xB6, 0x08};
 
-//AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 53 8B 5C 24 08) 8B 46 10 83 C0 01 39 46 08
-uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08};
+//AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 77 ?? E8)
+uint8 maskAddEvent[] = "xxxxxxxxxx?x";
+uint8 signatureAddEvent[] = {0x8B, 0x46, 0x10, 0x83, 0xC0, 0x01, 0x39, 0x46, 0x08, 0x77, 0, 0xE8};
 
-//Custom enet malloc function, its thread safe! (void *__cdecl enetMalloc(size_t Size)) (68 ?? ?? ?? ?? FF 15 ?? ?? ?? ?? A1 ?? ?? ?? ?? B9 01 00 00 00 01 0D)
-uint8 maskEnetMalloc[] = "x????xx????x????xxxxxxx";
-uint8 signatureEnetMalloc[] = {0x68, 0, 0, 0, 0, 0xFF, 0x15, 0, 0, 0, 0, 0xA1, 0, 0, 0, 0, 0xB9, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0D};
+//Custom enet malloc function, its thread safe! (void *__cdecl enetMalloc(size_t Size)) (51 56 68 ?? ?? ?? ?? FF 15 ?? ?? ?? ?? A1 ?? ?? ?? ?? B9 01 00 00 00 01 0D)
+uint8 maskEnetMalloc[] = "xxx????xx????x????xxxxxxx";
+uint8 signatureEnetMalloc[] = {0x51, 0x56, 0x68, 0, 0, 0, 0, 0xFF, 0x15, 0, 0, 0, 0, 0xA1, 0, 0, 0, 0, 0xB9, 0x01, 0x00, 0x00, 0x00, 0x01, 0x0D};
 
 //Meastro cleanup, always called when you kill LoL or shutdown (int __thiscall maestroCleanup(void *this)) (51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 ?? 00 00 00 FF)
 uint8 maskMaestroCleanup[] = "xxx????xxxx?xxxx";
@@ -167,7 +168,7 @@ void LeagueOfLegends::addEvent(void *pointer, ENetEvent *event)
 	__asm
 	{
 		push event
-		mov esi, pointer
+		mov eax, pointer
 		call lolAddEvent
 	}
 }
@@ -246,12 +247,13 @@ static NAKED void AsmRecvPacket()
 {
 	__asm
 	{
+		push eax
 		mov eax, esp
-		add eax, 0x24
-		push eax //ENetEvent*
+		add eax, 0x38
+		push eax
 		call LeagueOfLegends::stealRecvPacket
-		mov edi,[esp+0x34] //packet
-		mov edx,[esp+0x24] //eventType
+		pop eax
+		cmp [esi+0x000000E8],edx
 		RET
 	}
 }
@@ -260,16 +262,13 @@ static NAKED void AsmAddEvent()
 {
 	__asm
 	{
-		push ebp
-		mov ebp, esp
 		pushad
-		PUSH DWORD PTR [ebp+0x0C]  //ENetEvent*
-		PUSH esi                   //this pointer
+		PUSH ebx            //ENetEvent*
+		PUSH esi            //this pointer
 		CALL LeagueOfLegends::stealAddEvent
 		popad
-		pop ebp
-		mov eax,[esi+0x10]
-		add eax,1
+		mov eax, [esi+0x10]
+		add eax, 1
 		RET
 	}
 }
@@ -286,7 +285,7 @@ static NAKED void ASMSendPacket()
 		PUSH ecx                     //this pointer
 		CALL LeagueOfLegends::stealSendPacket
 		POPAD
-		//mov large 0, esp; exception handler, but how can we implement it???
+		mov fs:[00000000],esp
 		RET
 	}
 }
@@ -299,7 +298,7 @@ static NAKED void AsmMaestroCleanup()
 		pushad
 		call LeagueOfLegends::onExit
 		popad
-		mov edx,[eax+0xB4]
+		mov edx,[eax+0xB8]
 		RET
 	}
 }
@@ -336,34 +335,44 @@ void LeagueOfLegends::initialize()
 
 	//Search for all signatures
 	uint8 *deadbeef;
-	uint8* addressSendPacket = Memory::searchAddress(section, signatureSendPacket, sizeof(signatureSendPacket));
+	uint8* addressSendPacket = Memory::searchAddress(section, signatureSendPacket, maskSendPacket);
 	uint8* addressRecvPacket = Memory::searchAddress(section, signatureRecvPacket, maskRecvPacket);
-	uint8 *addressAddEvent = Memory::searchAddress(section, signatureAddEvent, sizeof(signatureAddEvent));
+	uint8 *addressAddEvent = Memory::searchAddress(section, signatureAddEvent, maskAddEvent);
 	uint8 *addressEnetMalloc = Memory::searchAddress(section, signatureEnetMalloc, maskEnetMalloc);
 	uint8 *addressMaestroCleanup = Memory::searchAddress(section, signatureMaestroCleanup, maskMaestroCleanup);
 
 	if(addressSendPacket == NULL)
 		DbgPrint("ERROR: I did not find SendPacket!");
+	else
+		DbgPrint("INFO: Found SendPacket: %08X", addressSendPacket);
 	if(addressAddEvent == NULL)
 		DbgPrint("WARNING: I did not find AddEvent!");
+	else
+		DbgPrint("INFO: Found AddEvent: %08X", addressAddEvent);
 	if(addressEnetMalloc == NULL)
-		DbgPrint("WARNING: I did not find EnetMalloc!");		
+		DbgPrint("WARNING: I did not find EnetMalloc!");
+	else
+		DbgPrint("INFO: Found EnetMalloc: %08X", addressEnetMalloc);
 	if(addressMaestroCleanup == NULL)
 		DbgPrint("WARNING: I did not find MaestroCleanup!");
+	else
+		DbgPrint("INFO: Found MaestroCleanup: %08X", addressMaestroCleanup);
 	if(addressRecvPacket == NULL)
 		DbgPrint("ERROR: I did not find RecvPacket!");
+	else
+		DbgPrint("INFO: Found RecvPacket: %08X", addressRecvPacket);
 
 	//First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
-
+	
 	//Set function
-	lolAddEvent = (AddEvent)addressAddEvent;
+	lolAddEvent = (AddEvent)(addressAddEvent-8);
 	lolSendPacket = (SendPacket)addressSendPacket;
 	enetMalloc = (EnetMalloc)addressEnetMalloc;
 
 	//Set hooks
-	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 3);
+	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 1);
 	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
 	Memory::writeCall(addressSendPacket+23, (uint8*)ASMSendPacket, 2);
 	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);

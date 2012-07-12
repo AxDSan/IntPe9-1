@@ -1,0 +1,30 @@
+MeastroCleanup
+Signature:	51 8B 0D ?? ?? ?? ?? 8B 01 8B 90 ?? 00 00 00 FF
+Nops:		1
+Offset:		9
+restore:	mov edx,[eax+000000B8]
+
+			
+	007C7860 - 51                    - push ecx
+	007C7861 - 8B 0D 78C6F202        - mov ecx,[02F2C678]
+	007C7867 - 8B 01                 - mov eax,[ecx]
+	007C7869 - 8B 90 B8000000        - mov edx,[eax+000000B8]			; PLACE HOOK HERE
+	007C786F - FF D2                 - call edx
+	007C7871 - 84 C0                 - test al,al
+	007C7873 - 75 36                 - jne 007C78AB
+	007C7875 - 83 3D F0A4DF00 03     - cmp dword ptr [00DFA4F0],03
+	007C787C - 74 07                 - je 007C7885
+	007C787E - E8 7F31F0FF           - call 006CAA02 
+	007C7883 - EB 05                 - jmp 007C788A
+	007C7885 - E8 7E31F0FF           - call 006CAA08 
+	007C788A - 8D 04 24              - lea eax,[esp]
+	007C788D - 50                    - push eax
+	007C788E - E8 7B31F0FF           - call 006CAA0E
+	007C7893 - 83 C4 04              - add esp,04
+	007C7896 - 83 3C 24  00          - cmp dword ptr [esp],00
+	007C789A - 74 05                 - je 007C78A1
+	007C789C - E8 7331F0FF           - call 006CAA14
+	007C78A1 - E8 7431F0FF           - call 006CAA1A
+	007C78A6 - E8 7531F0FF           - call 006CAA20
+	007C78AB - 59                    - pop ecx
+	007C78AC - C3                    - ret 

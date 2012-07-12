@@ -1,0 +1,49 @@
+AddEvent
+Signature:	8B 46 10 83 C0 01 39 46 08 77 ?? E8
+Nops:		1
+Offset:		0
+restore:	mov eax,[esi+10]
+			add eax,01
+
+	005198F0 - 53                    - push ebx
+	005198F1 - 8B 5C 24 08           - mov ebx,[esp+08]
+	005198F5 - 56                    - push esi
+	005198F6 - 8B F0                 - mov esi,eax
+	005198F8 - 8B 46 10              - mov eax,[esi+10]				; PLACE HOOK HERE
+	005198FB - 83 C0 01              - add eax,01
+	005198FE - 39 46 08              - cmp [esi+08],eax
+	00519901 - 77 05                 - ja 00519908
+	00519903 - E8 68000000           - call 00519970
+	00519908 - 8B 46 08              - mov eax,[esi+08]
+	0051990B - 57                    - push edi
+	0051990C - 8B 7E 0C              - mov edi,[esi+0C]
+	0051990F - 03 7E 10              - add edi,[esi+10]
+	00519912 - 3B C7                 - cmp eax,edi
+	00519914 - 77 02                 - ja 00519918
+	00519916 - 2B F8                 - sub edi,eax
+	00519918 - 8B 4E 04              - mov ecx,[esi+04]
+	0051991B - 83 3C B9  00          - cmp dword ptr [ecx+edi*4],00
+	0051991F - 75 10                 - jne 00519931
+	00519921 - B9 01000000           - mov ecx,00000001
+	00519926 - E8 2581FDFF           - call 004F1A50
+	0051992B - 8B 56 04              - mov edx,[esi+04]
+	0051992E - 89 04 BA              - mov [edx+edi*4],eax
+	00519931 - 8B 46 04              - mov eax,[esi+04]
+	00519934 - 8B 04 B8              - mov eax,[eax+edi*4]
+	00519937 - 85 C0                 - test eax,eax
+	00519939 - 5F                    - pop edi
+	0051993A - 74 1C                 - je 00519958
+	0051993C - 8B 0B                 - mov ecx,[ebx]
+	0051993E - 89 08                 - mov [eax],ecx
+	00519940 - 8B 53 04              - mov edx,[ebx+04]
+	00519943 - 89 50 04              - mov [eax+04],edx
+	00519946 - 8B 4B 08              - mov ecx,[ebx+08]
+	00519949 - 89 48 08              - mov [eax+08],ecx
+	0051994C - 8B 53 0C              - mov edx,[ebx+0C]
+	0051994F - 89 50 0C              - mov [eax+0C],edx
+	00519952 - 8B 4B 10              - mov ecx,[ebx+10]
+	00519955 - 89 48 10              - mov [eax+10],ecx
+	00519958 - 83 46 10 01           - add dword ptr [esi+10],01
+	0051995C - 5E                    - pop esi
+	0051995D - 5B                    - pop ebx
+	0051995E - C2 0400               - ret 0004

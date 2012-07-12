@@ -1,5 +1,6 @@
 #ifndef LEAGUE_OF_LEGENDS_H
 #define LEAGUE_OF_LEGENDS_H
+#pragma warning(disable: 4733)
 
 #include <Skeleton.h>
 #include <Crypto/Blowfish.h>
