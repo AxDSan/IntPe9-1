@@ -1,9 +1,24 @@
 #include "Core.h"
-
+#include <Windows.h>
 
 Core::Core(const QFileInfo *dll)
 {
+	_hasInfo = false;
+
 	_dll = *dll;
+	try
+	{
+		HINSTANCE library = LoadLibrary(dll->absoluteFilePath().toStdWString().c_str());
+		GetCoreInfo getCoreInfo = (GetCoreInfo)GetProcAddress(library, "getCoreInfo");
+		getCoreInfo(&_info);
+		FreeLibrary(library);
+		_hasInfo = true;
+	}
+	catch(...)
+	{
+		
+	}
+
 }
 
 Core::~Core()
@@ -22,15 +37,38 @@ void Core::deletePid(int pid)
 	_pidList.removeAll(pid);
 }
 
-QString Core::getBaseName()
+bool Core::isEnabled()
 {
-	return _dll.fileName();
-
+	return _isEnabled;
 }
 
-QString Core::getExeName()
+void Core::setEnabled(bool state)
 {
-	return _dll.baseName()+".exe";
+	_isEnabled = state;
+}
+
+QString Core::getName()
+{
+	if(_hasInfo)
+		return QString(_info.name);
+	else
+		return _dll.baseName();
+}
+
+QString Core::getVersion()
+{
+	if(_hasInfo)
+		return QString::number(_info.versionNo.major)+"."+QString::number(_info.versionNo.minor);
+	else
+		return "0";
+}
+
+QString Core::getProcessName()
+{
+	if(_hasInfo)
+		return QString(_info.process);
+	else
+		return _dll.baseName()+"exe";
 }
 
 QString Core::getFullPath()
@@ -43,26 +81,22 @@ QVariant Core::getField(int column)
 	switch(column)
 	{
 		case 0:
-			return getIcon();
+			if(_info.hasProcess)
+				return QPixmap(":/Common/ok.png");
+			else
+				return QPixmap(":/Common/no.png");
 		case 1:
-			return _pidList.size();
+			if(_info.hasPython)
+				return QPixmap(":/Common/ok.png");
+			else
+				return QPixmap(":/Common/no.png");
 		case 2:
-			return _dll.baseName();
+			return getName();
+		case 3:
+			return getVersion();
+		case 4:
+			return getProcessName();
 		default:
 			return QVariant();
 	}
-}
-
-QPixmap Core::getIcon()
-{
-	return QPixmap(":/Common/ok.png");
-/*
-	if(_type == WSASENDTO)
-		return QPixmap(":/Common/Resources/send.gif");
-	else if(_type == WSARECVFROM)
-		return QPixmap(":/Common/Resources/recv.gif");
-	else if(_type == WSARECV)
-		return QPixmap(":/Common/Resources/logo.png");
-	else*/
-		return QPixmap();
 }

@@ -16,6 +16,8 @@
 #include <UpxLoader/Upx.h>
 
 #define DBG_SIZE 2048
+#define NAKED __declspec(naked)
+#define DLL_EXPORT __declspec(dllexport)
 
 using std::map;
 using std::list;
@@ -48,7 +50,16 @@ protected:
 	virtual void initialize() = 0;
 	virtual void finalize() = 0;
 	virtual void parsePython(const char *script) = 0;
+	
+	void startThread();
 	boost::python::object pythonNamespace;
+
+	//Module information
+	static VersionNo versionNo;
+	static char *name;
+	static char *process;
+	static bool hasProcess;
+	static bool hasPython;
 
 private:
 	message_queue *_masterQue, *_packetQue;
@@ -56,11 +67,12 @@ private:
 	char *_dbg;
 
 public:
-	virtual char *getName() = 0;
+	DLL_EXPORT void getCoreInfo(CoreInfo *info);
 	void DbgPrint(const char* format, ...);
 	Skeleton();
 	~Skeleton();
 
+	bool isFail;
 	bool isAlive;
 	bool isRunning;
 
@@ -70,6 +82,7 @@ public:
 	void handleCommand(CommandControll *command);
 	bool stop();
 	bool start();
+	void exit();
 
 	//All hookable functions with IAT
 	defWSASendTo			_oldWSASendTo;

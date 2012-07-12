@@ -32,6 +32,10 @@ typedef unsigned long long	uint64;
 typedef unsigned int		uint32;
 typedef unsigned short		uint16;
 typedef unsigned char		uint8;
+struct CoreInfo;
+
+//Export functions
+typedef void (*GetCoreInfo)(CoreInfo *info);
 
 enum PacketType : uint32
 {
@@ -59,6 +63,40 @@ enum CommandType : uint8
 #pragma pack(1)
 #pragma warning(push)
 #pragma warning(disable: 4200)
+
+struct VersionNo
+{
+public:
+
+	int8 major;
+	int8 minor;
+
+	VersionNo()
+	{
+		major = minor = 0;
+	}
+
+	VersionNo(int8 major, int8 minor)
+	{
+		this->major = major;
+		this->minor = minor;
+	}
+};
+
+struct CoreInfo
+{
+public:
+	int8 name[25];
+	VersionNo versionNo;
+	int8 process[60];
+	bool hasProcess;
+	bool hasPython;
+
+	CoreInfo()
+	{
+
+	}
+};
 
 class CommandControll
 {

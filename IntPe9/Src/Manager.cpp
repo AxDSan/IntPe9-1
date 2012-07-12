@@ -83,12 +83,20 @@ void Manager::setActiveSniffer(const QModelIndex &index)
 	_snifferList->refresh();
 	emit activeSnifferChanged(_activeSniffer);
 }
+bool Manager::hasSniffer(int32 pid)
+{
+	Sniffer *sniffer;
+	foreach(sniffer, _sniffers)
+		if(sniffer->getPid() == pid)
+		return true;
+	return false;
+}
 
 Core *Manager::getCore(QString name)
 {
 	Core *core;
 	foreach(core, _cores)
-		if(core->getExeName() == name)
+		if(core->getProcessName() == name)
 			return core;
 	return NULL;
 }

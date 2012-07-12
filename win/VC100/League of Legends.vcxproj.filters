@@ -22,6 +22,9 @@
     <ClInclude Include="..\..\Cores\League of Legends\PythonWrapper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Cores\League of Legends\Signatures.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Skeleton">
@@ -31,5 +34,8 @@
       <UniqueIdentifier>{80287419-e624-4160-ae88-b15fb2698168}</UniqueIdentifier>
       <Extensions>cpp;cxx;c;def</Extensions>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Exports.def" />
   </ItemGroup>
 </Project>

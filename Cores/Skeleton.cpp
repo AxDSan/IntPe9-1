@@ -83,9 +83,10 @@ DWORD WINAPI commandListener(LPVOID lpParam)
 	{
 		if(queue->try_receive(command, CC_MAX_SIZE, recvdSize, priority))
 			me->handleCommand(command); //Handle it
-		Sleep(100);
+		Sleep(10);
 	}
 	me->DbgPrint("Done running command listener!");
+	ExitThread(0);
 	return 0;
 } 
 
@@ -93,9 +94,6 @@ bool Skeleton::stop()
 {
 	isAlive = false;
 	Sleep(200);
-	delete _packetQue;
-	_packetQue = NULL;
-
 	return true;
 }
 
@@ -122,6 +120,26 @@ bool Skeleton::start()
 	return isAlive = true;
 }
 
+void Skeleton::getCoreInfo(CoreInfo *info)
+{
+	memcpy(info->name, name, strlen(name)+1);
+	memcpy(info->process, process, strlen(process)+1);
+	info->versionNo = versionNo;
+	info->hasProcess = true;
+	info->hasPython = true;
+}
+
+void Skeleton::startThread()
+{
+	DbgPrint("Trying to initialize python!");
+	//Initialize python
+	Py_Initialize();
+
+	//Start the packet queue and start command queue thread
+	start();
+	CreateThread( NULL, 0, commandListener, NULL, 0, NULL);
+}
+
 Skeleton::Skeleton()
 {
 #ifdef _DEBUG
@@ -135,20 +153,18 @@ Skeleton::Skeleton()
 	isRunning = true;
 	me = this;
 	_upx = new Upx();
-	
-	DbgPrint("Trying to initialize python!");
-	//Initialize python
-	Py_Initialize();
-
-	//Start the packet queue and start command queue thread
-	start();
-	CreateThread( NULL, 0, commandListener, NULL, 0, NULL);
 }
 
-Skeleton::~Skeleton()
+void Skeleton::exit()
 {
 	isRunning = false;
 	isAlive = false;
 	stop();
+}
+
+Skeleton::~Skeleton()
+{
+	delete _packetQue;
+	_packetQue = NULL;
 	free(_dbgPrint);
 }

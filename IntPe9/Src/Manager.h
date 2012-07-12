@@ -46,6 +46,7 @@ public:
 	Cores *getCores();
 	SnifferList *getSnifferModel();
 	CoreList *getCoreModel();
+	bool hasSniffer(int32 pid);
 
 	//Methods
 	void readCores(QString path);

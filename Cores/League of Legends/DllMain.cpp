@@ -3,19 +3,31 @@
 LeagueOfLegends *leagueOfLegends = NULL;
 BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 {
-	switch(callReason)
+	try
 	{
+		switch(callReason)
+		{
 		case DLL_PROCESS_ATTACH:
 			leagueOfLegends = new LeagueOfLegends();
-			leagueOfLegends->initialize();
-		break;
+			if(!leagueOfLegends->isFail)
+				leagueOfLegends->initialize();
+			break;
 		case DLL_PROCESS_DETACH:
+			leagueOfLegends->DbgPrint("Unloading");
 			if(leagueOfLegends != NULL)
 			{
-				leagueOfLegends->finalize();
-				delete leagueOfLegends;
+				if(!leagueOfLegends->isFail)
+					leagueOfLegends->finalize();
+				leagueOfLegends->exit();
 			}
-		break;
+			break;
+		}
 	}
+	catch(...)
+	{
+
+	}
+
+	
 	return true;
 }

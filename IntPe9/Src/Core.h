@@ -20,9 +20,13 @@ public:
 	//Custom stuff
 	QString getFullPath();
 	QVariant getField(int column);
-	QPixmap getIcon();
-	QString getBaseName();
-	QString getExeName();
+
+	QString getName();
+	QString getVersion();
+	QString getProcessName();
+
+	bool isEnabled();
+	void setEnabled(bool state);
 
 	void addPid(int pid);
 	void deletePid(int pid);
@@ -31,6 +35,9 @@ public:
 private:
 	QFileInfo _dll;
 	QList<int> _pidList;
+	bool _hasInfo;
+	bool _isEnabled;
+	CoreInfo _info;
 
 };
 
