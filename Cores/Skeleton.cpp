@@ -125,8 +125,8 @@ void Skeleton::getCoreInfo(CoreInfo *info)
 	memcpy(info->name, name, strlen(name)+1);
 	memcpy(info->process, process, strlen(process)+1);
 	info->versionNo = versionNo;
-	info->hasProcess = true;
-	info->hasPython = true;
+	info->hasProcess = hasProcess;
+	info->hasPython = hasPython;
 }
 
 void Skeleton::startThread()

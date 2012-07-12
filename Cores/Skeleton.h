@@ -67,7 +67,7 @@ private:
 	char *_dbg;
 
 public:
-	DLL_EXPORT void getCoreInfo(CoreInfo *info);
+	DLL_EXPORT static void getCoreInfo(CoreInfo *info);
 	void DbgPrint(const char* format, ...);
 	Skeleton();
 	~Skeleton();

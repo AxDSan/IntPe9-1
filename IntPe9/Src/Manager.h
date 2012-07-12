@@ -40,7 +40,7 @@ public:
 	~Manager();
 
 	//Property's
-	Core *getCore(QString name);
+	Core *getCore(QString name, bool enabled = true);
 	Sniffer *getActiveSniffer();
 	Sniffers *getSniffers();
 	Cores *getCores();

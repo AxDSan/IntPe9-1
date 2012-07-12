@@ -23,6 +23,10 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 		QDir corePath("Cores");
 		if(!corePath.exists())
 			QDir::setCurrent("../../bin/VC100_Debug");
+	#else
+		QDir corePath("Cores");
+		if(!corePath.exists())
+			QDir::setCurrent("../../bin/VC100_Release");
 	#endif
 
 	//Init variables
@@ -96,6 +100,8 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), _filterView, SLOT(setSniffer(Sniffer*)));
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), _parserGui, SLOT(setSniffer(Sniffer*)));
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), this, SLOT(setActiveSniffer(Sniffer*)));
+
+	qRegisterMetaType<char*>("char*");
 
 	DebugPrint("Connections are up and running.");
 }

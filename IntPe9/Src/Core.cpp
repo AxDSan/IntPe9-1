@@ -4,7 +4,7 @@
 Core::Core(const QFileInfo *dll)
 {
 	_hasInfo = false;
-
+	_isEnabled = true;
 	_dll = *dll;
 	try
 	{
@@ -55,6 +55,12 @@ QString Core::getName()
 		return _dll.baseName();
 }
 
+QString Core::getModuleName()
+{
+
+	return _dll.fileName();
+}
+
 QString Core::getVersion()
 {
 	if(_hasInfo)
@@ -68,7 +74,7 @@ QString Core::getProcessName()
 	if(_hasInfo)
 		return QString(_info.process);
 	else
-		return _dll.baseName()+"exe";
+		return _dll.baseName()+".exe";
 }
 
 QString Core::getFullPath()

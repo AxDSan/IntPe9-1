@@ -16,7 +16,7 @@ ENetPeer *LeagueOfLegends::addEventPeer = NULL;
 void *LeagueOfLegends::pointerAddEvent = NULL;
 void *LeagueOfLegends::pointerSendPacket = NULL;
 
-LeagueOfLegends::LeagueOfLegends() : Skeleton()
+LeagueOfLegends::LeagueOfLegends()
 {
 	isFail = false;
 

@@ -145,7 +145,6 @@ void Injector::selectProcess(const QModelIndex &index)
 	_processGui->show();
 }
 
-//Todo, find if we already have a sniffer running for this process
 void Injector::selectedProcess(const QModelIndex &index)
 {
 	uint32 pid = index.model()->data(index, Qt::WhatsThisRole).toUInt();
@@ -188,7 +187,7 @@ bool Injector::isInjected(uint32 pid, Core *core)
 		return false;
 	}
 	do{
-		if(core->getProcessName() == QString::fromWCharArray(me32.szModule))
+		if(core->getModuleName() == QString::fromWCharArray(me32.szModule))
 			return true;
 	} while(Module32Next(hModuleSnap, &me32));
 
@@ -313,20 +312,17 @@ bool Injector::injectAll()
 			Core *core = _manager->getCore(processName);                                            //If we have a Core for this process
 			if(core)
 			{
-				if(core->isEnabled())                                                           //Is auto injection enabled for this core?
-				{
-					QString dbg = "Found an injectable exe: ";
-					DebugPrint((dbg+processName).toStdString().c_str());
-					if(!isInjected(pe32.th32ProcessID, core))                               //Check if we already injected
-						if(!inject(pe32.th32ProcessID, core))                           //Not yet injected so try now
-							continue;                                               //We failed to inject so skip this injection (and try again later)
+				QString dbg = QString("Found an injectable exe: ") + processName;
+				DebugPrint(dbg.toStdString().c_str());
+				if(!isInjected(pe32.th32ProcessID, core))                               //Check if we already injected
+					if(!inject(pe32.th32ProcessID, core))                           //Not yet injected so try now
+						continue;                                               //We failed to inject so skip this injection (and try again later)
 
-					_injected.insert(pe32.th32ProcessID);                                   //Remember that we injected to this process
-					if(!_manager->hasSniffer(pe32.th32ProcessID))                           //Check if there is already an active sniffer for this pid
-					{
-						Sniffer *sniffer = new Sniffer(pe32.th32ProcessID, processName, core);                      //Create new sniffer thread
-						connect(sniffer, SIGNAL(doneLoading(Sniffer*)), _manager, SLOT(registerSniffer(Sniffer*))); //Set up default connections
-					}
+				_injected.insert(pe32.th32ProcessID);                                   //Remember that we injected to this process
+				if(!_manager->hasSniffer(pe32.th32ProcessID))                           //Check if there is already an active sniffer for this pid
+				{
+					Sniffer *sniffer = new Sniffer(pe32.th32ProcessID, processName, core);                      //Create new sniffer thread
+					connect(sniffer, SIGNAL(doneLoading(Sniffer*)), _manager, SLOT(registerSniffer(Sniffer*))); //Set up default connections
 				}
 			}
 		}

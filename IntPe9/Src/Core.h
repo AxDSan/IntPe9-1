@@ -23,6 +23,7 @@ public:
 
 	QString getName();
 	QString getVersion();
+	QString getModuleName();
 	QString getProcessName();
 
 	bool isEnabled();

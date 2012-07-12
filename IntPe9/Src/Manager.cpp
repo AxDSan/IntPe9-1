@@ -92,11 +92,11 @@ bool Manager::hasSniffer(int32 pid)
 	return false;
 }
 
-Core *Manager::getCore(QString name)
+Core *Manager::getCore(QString name, bool enabled)
 {
 	Core *core;
 	foreach(core, _cores)
-		if(core->getProcessName() == name)
+		if(core->getProcessName() == name && core->isEnabled() == enabled)
 			return core;
 	return NULL;
 }
