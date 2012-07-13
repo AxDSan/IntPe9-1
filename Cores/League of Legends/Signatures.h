@@ -25,9 +25,10 @@ static unsigned char signatureDeadbeef[] = {0xB8, 0xEF, 0xBE, 0xAD, 0xDE};
 static unsigned char maskSendPacket[] = "xxxxxxxxxxxxxxx????xxxx";
 static unsigned char signatureSendPacket[] = {0x55, 0x8B, 0xEC, 0x83, 0xE4, 0xF8, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x6A, 0xFF, 0x68, 0, 0, 0, 0, 0x50, 0x8B, 0x45, 0x14};
 
-//RecvPacket ESP+1C = ENetEvent* (39 96 E8 00 00 00 74 ?? 66 0F B6 08)
-static unsigned char maskRecvPacket[] = "xxxxxxx?xxxx";
-static unsigned char signatureRecvPacket[] = {0x39, 0x96, 0xE8, 0x00, 0x00, 0x00, 0x74, 0, 0x66, 0x0F, 0xB6, 0x08};
+//RecvPacket ESP+1C = ENetEvent* (8B 43 08 80 38 FF 75 ?? 33 C9 51)
+static unsigned int nopRecvPacket = 1;
+static unsigned char maskRecvPacket[] = "xxxxxxx?xxx";
+static unsigned char signatureRecvPacket[] = {0x8B, 0x43, 0x08, 0x80, 0x38, 0xFF, 0x75, 0, 0x33, 0xC9, 0x51};
 
 //AddEvent hook (ENetEvent *__userpurge addEvent<eax>(struct_a1 *a1<esi>, ENetEvent *a2)) (8B 46 10 83 C0 01 39 46 08 77 ?? E8)
 static unsigned char maskAddEvent[] = "xxxxxxxxxx?x";

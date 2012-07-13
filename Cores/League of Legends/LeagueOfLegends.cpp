@@ -3,7 +3,7 @@
 #include "Signatures.h"
 
 /** Core information begin **/
-VersionNo LeagueOfLegends::versionNo(2, 3);
+VersionNo LeagueOfLegends::versionNo(2, 4);
 char *LeagueOfLegends::name = "LoL inline";
 char *LeagueOfLegends::process = "League of Legends.exe";
 bool LeagueOfLegends::hasProcess = true;
@@ -208,13 +208,12 @@ static NAKED void AsmRecvPacket()
 {
 	__asm
 	{
-		push eax
-		mov eax, esp
-		add eax, 0x38
+		mov eax, esp         //Move esp into eax (note base esp changed because of the call, so +4)
+		add eax, 0x34        //Normally ENetEvent resides on ESP+30 but because of call do 34
 		push eax
 		call LeagueOfLegends::stealRecvPacket
-		pop eax
-		cmp [esi+0x000000E8],edx
+		mov eax,[ebx+0x08]
+		cmp byte ptr [eax],0xFF
 		RET
 	}
 }
@@ -335,7 +334,7 @@ void LeagueOfLegends::initialize()
 	enetMalloc = (EnetMalloc)addressEnetMalloc;
 
 	//Set hooks
-	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, 1);
+	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, nopRecvPacket);
 	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);
 	Memory::writeCall(addressSendPacket+23, (uint8*)ASMSendPacket, 2);
 	Memory::writeCall(addressAddEvent, (uint8*)AsmAddEvent, 1);

@@ -1,28 +1,24 @@
 RecvPacket
-Signature:	39 96 E8 00 00 00 74 ?? 66 0F B6 08
+Signature:	8B 43 08 80 38 FF 75 ?? 33 C9 51
 Nops:		1
 Offset:		0
-restore:	cmp [esi+000000E8],edx
+restore:	mov eax,[ebx+08]
+			cmp byte ptr [eax],FF
 
-0075466A - E8 E1080000           - call 00754F50
-0075466F - 83 C4 10              - add esp,10
-00754672 - EB 46                 - jmp 007546BA
-00754674 - 83 FF 03              - cmp edi,03
-00754677 - 75 20                 - jne 00754699
-00754679 - 8B 43 08              - mov eax,[ebx+08]
-0075467C - 3B C2                 - cmp eax,edx
-0075467E - 74 19                 - je 00754699
-00754680 - 39 96 E8000000        - cmp [esi+000000E8],edx			; PLACE HOOK HERE
-00754686 - 74 11                 - je 00754699
-00754688 - 66 0FB6 08            - movzx cx,byte ptr [eax]
-0075468C - 8B 53 0C              - mov edx,[ebx+0C]
-0075468F - 8B C6                 - mov eax,esi
-00754691 - 51                    - push ecx
-00754692 - E8 59F5FFFF           - call 00753BF0
-00754697 - 33 D2                 - xor edx,edx
-00754699 - 8B 4D FC              - mov ecx,[ebp-04]
-0075469C - 89 54 24 18           - mov [esp+18],edx
-007546A0 - 8B 43 08              - mov eax,[ebx+08]
-007546A3 - 8B 11                 - mov edx,[ecx]
-007546A5 - 8B 52 08              - mov edx,[edx+08]
-007546A8 - 50                    - push eax
+00754620 - 8B 5C 24 40           - mov ebx,[esp+40]
+00754624 - 33 D2                 - xor edx,edx
+00754626 - 3B DA                 - cmp ebx,edx
+00754628 - 0F84 B8000000         - je 007546E6
+0075462E - 8B 7C 24 30           - mov edi,[esp+30]
+00754632 - 83 FF 03              - cmp edi,03							; Check if this is a ENET_RECEIVE EVENT
+00754635 - 75 62                 - jne 00754699
+00754637 - 8B 43 08              - mov eax,[ebx+08]						; PLACE HOOK HERE
+0075463A - 80 38 FF              - cmp byte ptr [eax],FF				; Check if this is an batch packet or not
+0075463D - 75 35                 - jne 00754674							
+0075463F - 33 C9                 - xor ecx,ecx
+00754641 - 51                    - push ecx
+00754642 - 89 64 24 18           - mov [esp+18],esp
+00754646 - 89 74 24 1C           - mov [esp+1C],esi
+0075464A - 8B F4                 - mov esi,esp
+0075464C - 51                    - push ecx
+0075464D - B8 903C7500           - mov eax,00753C90
