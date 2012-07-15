@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Signatures.h"
 
 /** Core information begin **/
-VersionNo LeagueOfLegends::versionNo(2, 4);
+VersionNo LeagueOfLegends::versionNo(2, 5);
 char *LeagueOfLegends::name = "LoL inline";
 char *LeagueOfLegends::process = "League of Legends.exe";
 bool LeagueOfLegends::hasProcess = true;
@@ -32,6 +32,11 @@ bool LeagueOfLegends::isInjected = false;
 ENetPeer *LeagueOfLegends::addEventPeer = NULL;
 void *LeagueOfLegends::pointerAddEvent = NULL;
 void *LeagueOfLegends::pointerSendPacket = NULL;
+
+//Functions
+EnetMalloc enetMalloc;
+SendPacket lolSendPacket;
+AddEvent lolAddEvent;
 
 LeagueOfLegends::LeagueOfLegends()
 {
@@ -143,6 +148,7 @@ void LeagueOfLegends::recvPacket(uint8 *data, uint32 length, uint8 channel, bool
 
 void LeagueOfLegends::addEvent(void *pointer, ENetEvent *event)
 {
+	leagueOfLegends->DbgPrint("Adding an event, ch: %i", event->channelID);
 	__asm
 	{
 		push event
@@ -350,6 +356,7 @@ void LeagueOfLegends::initialize()
 	lolSendPacket = (SendPacket)addressSendPacket;
 	enetMalloc = (EnetMalloc)addressEnetMalloc;
 
+	DbgPrint("Enet malloc: %08X", enetMalloc);
 	//Set hooks
 	Memory::writeCall(addressRecvPacket, (uint8*)AsmRecvPacket, nopRecvPacket);
 	Memory::writeCall(addressMaestroCleanup+9, (uint8*)AsmMaestroCleanup, 1);

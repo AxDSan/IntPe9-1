@@ -48,9 +48,16 @@ uint8 *PythonWrapper::listToChars(boost::python::list &pList, uint32 *size, bool
 	*size = bytes.size();
 	uint8 *buffer;
 	if(useMalloc)
+	{
+		leagueOfLegends->DbgPrint("Allocing with: %08X enetMalloc, with arg: %i", enetMalloc, bytes.size());
 		buffer = (uint8*)enetMalloc(bytes.size());
+	}
 	else
+	{
 		buffer = new uint8[bytes.size()];
+	}
+
+	leagueOfLegends->DbgPrint("Got an alloc on: %08X", buffer);
 
 	uint32 i = 0;
 	while(!bytes.empty())

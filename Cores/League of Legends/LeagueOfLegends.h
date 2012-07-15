@@ -39,9 +39,9 @@ typedef void*        (__cdecl *EnetMalloc)(size_t Size);
 //Some static variables and buffers
 static MessagePacket *sendBuf;
 static MessagePacket *recvBuf;
-static EnetMalloc enetMalloc;
-static SendPacket lolSendPacket;
-static AddEvent lolAddEvent;
+extern EnetMalloc enetMalloc;
+extern SendPacket lolSendPacket;
+extern AddEvent lolAddEvent;
 
 #pragma pack(push,1)
 struct ChatPacket
