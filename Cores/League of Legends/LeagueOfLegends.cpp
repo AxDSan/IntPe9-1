@@ -25,6 +25,7 @@ char *LeagueOfLegends::name = "LoL inline";
 char *LeagueOfLegends::process = "League of Legends.exe";
 bool LeagueOfLegends::hasProcess = true;
 bool LeagueOfLegends::hasPython = true;
+bool LeagueOfLegends::isProxy = false;
 /** Core information end **/
 
 //Initial setting and functions
@@ -40,6 +41,9 @@ AddEvent lolAddEvent;
 
 LeagueOfLegends::LeagueOfLegends()
 {
+	if(isGetInfo)
+		return;
+
 	isFail = false;
 
 	//Blowfish key extraction
@@ -309,6 +313,9 @@ BOOST_PYTHON_MODULE(lol)
 
 void LeagueOfLegends::initialize()
 {
+	if(isGetInfo)
+		return;
+
 	if(_wrongCommandLine)
 		return;
 
@@ -380,6 +387,9 @@ void LeagueOfLegends::initialize()
 
 void LeagueOfLegends::finalize()
 {
+	if(isGetInfo)
+		return;
+
 	if(_wrongCommandLine)
 		return;
 

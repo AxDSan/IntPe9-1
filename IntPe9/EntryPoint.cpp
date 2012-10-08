@@ -18,9 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QApplication>
 #include <QCleanlooksStyle>
 #include "Views\Main.h"
+#include <Windows.h>
 
 int main(int argc, char *argv[])
 {
+	// Start application
 	QApplication a(argc, argv);
 	a.setStyle(new QCleanlooksStyle); //FANCY!
 	MainGui mainGui;

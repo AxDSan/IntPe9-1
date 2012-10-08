@@ -176,6 +176,12 @@ Skeleton::Skeleton()
 	_dbgPrint = &_dbg[9];
 #endif
 
+	// Check the magic mark
+	IsMagicMarked
+		isGetInfo = true;
+	else
+		isGetInfo = false;
+
 	//Set some vars
 	isAlive = false;
 	isRunning = true;

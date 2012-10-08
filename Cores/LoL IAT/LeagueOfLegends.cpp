@@ -23,10 +23,14 @@ char *LeagueOfLegends::name = "LoL IAT";
 char *LeagueOfLegends::process = "League of Legends.exe";
 bool LeagueOfLegends::hasProcess = true;
 bool LeagueOfLegends::hasPython = false;
+bool LeagueOfLegends::isProxy = false;
 /** Core information end **/
 
 LeagueOfLegends::LeagueOfLegends()
 {
+	if(isGetInfo)
+		return;
+
 	isFail = false;
 
 	//Blowfish key extraction
@@ -82,6 +86,9 @@ LeagueOfLegends::LeagueOfLegends()
 
 void LeagueOfLegends::initialize()
 {
+	if(isGetInfo)
+		return;
+
 	if(_wrongCommandLine)
 		return;
 
@@ -99,6 +106,9 @@ void LeagueOfLegends::initialize()
 
 void LeagueOfLegends::finalize()
 {
+	if(isGetInfo)
+		return;
+
 	if(_wrongCommandLine)
 		return;
 

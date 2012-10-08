@@ -74,6 +74,8 @@ protected:
 	void startThread();
 	boost::python::object pythonNamespace;
 
+	
+
 	//Module information
 	static VersionNo versionNo;
 	static char *name;
@@ -93,6 +95,7 @@ public:
 	Skeleton();
 	~Skeleton();
 
+	bool isGetInfo;
 	bool isFail;
 	bool isAlive;
 	bool isRunning;

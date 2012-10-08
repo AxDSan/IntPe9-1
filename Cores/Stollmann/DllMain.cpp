@@ -29,16 +29,29 @@ bool Stollmann::isProxy = true;
 Stollmann *stollmann = NULL;
 BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 {
+	
 	try
 	{
 		switch(callReason)
 		{
 		case DLL_PROCESS_ATTACH:
 			stollmann = new Stollmann();
+
+			if(stollmann->isGetInfo)
+				break;
+
+			char buff[MAX_PATH];
+			GetCurrentDirectoryA(MAX_PATH, buff);
+			stollmann->DbgPrint(buff);
+
 			stollmann->DbgPrint("Loading");
 			stollmann->initialize();
 			break;
 		case DLL_PROCESS_DETACH:
+
+			if(stollmann->isGetInfo)
+				break;
+
 			stollmann->DbgPrint("Unloading");
 			stollmann->finalize();
 			stollmann->exit();

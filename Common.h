@@ -31,6 +31,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void debugPrint(char *str);
 void debugPrint(const char *str);
 
+#define MAGIC_MARKER "Int9"
+#define IsMagicMarked 	uint32 magicMarker = 0; \
+						FILE *exe = fopen("IntPe9.exe", "rb"); \
+						if(exe != nullptr) \
+						{ \
+							fseek(exe, 0x30, SEEK_SET); \
+							fread(&magicMarker, sizeof(int), 1, exe); \
+							fclose(exe); \
+						} \
+						if(magicMarker == *(uint32*)MAGIC_MARKER) \
+
+
 #define INI_FILE "IntPe9.ini"
 #define INI_S_AUTO_INJECT "CoresAI/"
 

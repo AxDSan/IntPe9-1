@@ -30,7 +30,6 @@ BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 				leagueOfLegends->initialize();
 			break;
 		case DLL_PROCESS_DETACH:
-			leagueOfLegends->DbgPrint("Unloading");
 			if(leagueOfLegends != NULL)
 			{
 				if(!leagueOfLegends->isFail)
