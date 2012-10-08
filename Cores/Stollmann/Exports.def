@@ -1,0 +1,14 @@
+LIBRARY   "ehciTransport"
+EXPORTS
+	getCoreInfo
+	comOpen
+	comClose
+	comWrite=eComWrite
+	comSetProperty
+	comGetProperty
+	comReset
+	comResponse
+	debugCaptureOutputEx
+	debugGetFlags
+	debugSetFlags
+	debugCaptureOutput

@@ -22,6 +22,7 @@ callgrind.out.*
 *.exp
 ipch
 *.user
+_ReSharper*
 
 # Subversion data folders
 .svn

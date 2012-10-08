@@ -441,6 +441,7 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\VC$(PlatformToolsetVersion)_$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)__$(Platform)_$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)__$(Platform)_$(Configuration)\</IntDir>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtTest;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtScriptTools;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtScript;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtNetwork;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtHelp;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtGui;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtDesigner;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtDeclarative;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtDBus;C:\Windows\Qt\Desktop\Qt\4.8.3\include\QtCore;C:\Windows\Qt\Desktop\Qt\4.8.3\include\Qt;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -497,7 +498,7 @@ IF NOT EXIST "$(OutDir)\PythonE9.zip" copy ..\..\dep\lib\PythonE9.zip $(OutDir)<
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir="..\..\IntPe9\GeneratedFiles" MocDir="..\..\IntPe9\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir="..\..\IntPe9\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" QtVersion_x0020_Win32="Qt 4.8.0 (2010)" />
+      <UserProperties UicDir="..\..\IntPe9\GeneratedFiles" MocDir="..\..\IntPe9\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir="..\..\IntPe9\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" QtVersion_x0020_Win32="4.8.3" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

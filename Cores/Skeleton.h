@@ -77,6 +77,7 @@ protected:
 	static char *process;
 	static bool hasProcess;
 	static bool hasPython;
+	static bool isProxy;
 
 private:
 	message_queue *_masterQue, *_packetQue;
@@ -102,14 +103,14 @@ public:
 	void exit();
 
 	//All hookable functions with IAT
-	defWSASendTo			_oldWSASendTo;
-	defWSARecvFrom			_oldWSARecvFrom;
-	defWSAGetOverlappedResult	_oldWSAGetOverlappedResult;
-	defWSAConnect			_oldWSAConnect;
-	defWSASend			_oldWSASend;
-	defWSARecv			_oldWSARecv;
-	defWSASocketA			_oldWSASocketA;
-	defSend				_oldSend;
+	defWSASendTo              _oldWSASendTo;
+	defWSARecvFrom            _oldWSARecvFrom;
+	defWSAGetOverlappedResult _oldWSAGetOverlappedResult;
+	defWSAConnect             _oldWSAConnect;
+	defWSASend                _oldWSASend;
+	defWSARecv                _oldWSARecv;
+	defWSASocketA             _oldWSASocketA;
+	defSend                   _oldSend;
 };
 
 #endif

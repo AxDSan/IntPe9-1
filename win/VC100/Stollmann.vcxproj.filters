@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Cores\Stollmann\DllMain.cpp" />
+    <ClCompile Include="..\..\Cores\Skeleton.cpp">
+      <Filter>Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Cores\Stollmann\Stollmann.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Cores\Skeleton.h">
+      <Filter>Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cores\Stollmann\Stollmann.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Cores\Stollmann\Exports.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Skeleton">
+      <UniqueIdentifier>{a8f5ab71-e938-4e19-b969-4b322604c129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{99f3862c-beef-457e-b661-da0bb9e3281d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
