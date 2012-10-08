@@ -144,6 +144,17 @@ void Skeleton::getCoreInfo(CoreInfo *info)
 	info->versionNo = versionNo;
 	info->hasProcess = hasProcess;
 	info->hasPython = hasPython;
+	info->isProxy = isProxy;
+}
+
+void Skeleton::parsePython(const char *script)
+{
+	DbgPrint("This core does not support python");
+}
+
+void Skeleton::installProxy(const char *myPath)
+{
+	DbgPrint("This core is not a proxy");
 }
 
 void Skeleton::startThread()

@@ -38,9 +38,6 @@ public:
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);
 
-	// Not supported
-	void parsePython(const char *){};
-
 	// Proxy old functions
 	ComWrite pComWrite;
 };

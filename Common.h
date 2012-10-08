@@ -111,6 +111,7 @@ public:
 	int8 process[60];
 	bool hasProcess;
 	bool hasPython;
+	bool isProxy;
 
 	CoreInfo()
 	{

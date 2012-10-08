@@ -23,6 +23,7 @@ char *Stollmann::name = "Stollmann proxy";
 char *Stollmann::process = "";
 bool Stollmann::hasProcess = false;
 bool Stollmann::hasPython = false;
+bool Stollmann::isProxy = true;
 /** Core information end **/
 
 Stollmann *stollmann = NULL;
