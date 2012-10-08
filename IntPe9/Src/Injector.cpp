@@ -329,11 +329,15 @@ bool Injector::injectAll()
 			Core *core = _manager->getCore(processName);                                            //If we have a Core for this process
 			if(core)
 			{
-				QString dbg = QString("Found an injectable exe: ") + processName;
-				DebugPrint(dbg.toStdString().c_str());
-				if(!isInjected(pe32.th32ProcessID, core))                               //Check if we already injected
-					if(!inject(pe32.th32ProcessID, core))                           //Not yet injected so try now
-						continue;                                               //We failed to inject so skip this injection (and try again later)
+				// If the core is not a proxy inject else just start sniffing
+				if(!core->isProxy())
+				{
+					QString dbg = QString("Found an injectable exe: ") + processName;
+					DebugPrint(dbg.toStdString().c_str());
+					if(!isInjected(pe32.th32ProcessID, core))                               //Check if we already injected
+						if(!inject(pe32.th32ProcessID, core))                           //Not yet injected so try now
+							continue;                                               //We failed to inject so skip this injection (and try again later)
+				}
 
 				_injected.insert(pe32.th32ProcessID);                                   //Remember that we injected to this process
 				if(!_manager->hasSniffer(pe32.th32ProcessID))                           //Check if there is already an active sniffer for this pid

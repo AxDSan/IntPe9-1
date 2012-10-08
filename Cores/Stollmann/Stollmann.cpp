@@ -6,7 +6,7 @@ HINSTANCE hLThis = 0;
 HINSTANCE hL = 0;
 FARPROC p[13] = {0};
 
-Stollmann::Stollmann()
+Stollmann::Stollmann() : Skeleton()
 {
 
 
@@ -15,7 +15,10 @@ Stollmann::Stollmann()
 
 void Stollmann::initialize()
 {
-	hL = LoadLibrary("ehciTransport.orig.dll");
+	if(isGetInfo)
+		return;
+
+	hL = LoadLibrary(TARGET_ORIG);
 
 	p[0] = GetProcAddress(hL,"comOpen");
 	p[1] = GetProcAddress(hL,"comClose");
@@ -36,7 +39,54 @@ void Stollmann::initialize()
 
 void Stollmann::finalize()
 {
+	if(isGetInfo)
+		return;
+
 	FreeLibrary(hL);
+}
+
+
+BOOL FileExists(LPCTSTR szPath)
+{
+	DWORD dwAttrib = GetFileAttributes(szPath);
+
+	return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
+		!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+
+void Stollmann::installProxy(const char *myPath)
+{
+	HKEY hKey;
+	char buffer[MAX_PATH];
+	char tmp1[MAX_PATH], tmp2[MAX_PATH];
+
+	LONG lRet = RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\Stollmann\\NFCStack+Eva R02", 0, KEY_QUERY_VALUE | KEY_WOW64_64KEY,  &hKey);
+	if(lRet != ERROR_SUCCESS)
+		OutputDebugStringA("Could not read the registry");
+
+	RegQueryValue(hKey, "InstallDir", buffer, NULL);
+
+	strcpy(buffer, "C:\\Program Files (x86)\\Stollmann\\NFCStack+Eva R02\\Application");
+		 
+	OutputDebugStringA(buffer);
+
+	strcpy(tmp1, buffer);
+	strcat(tmp1, SLASH);
+	strcat(tmp1, TARGET);
+
+	strcpy(tmp2, buffer);
+	strcat(tmp2, SLASH);
+	strcat(tmp2, TARGET_ORIG);
+
+	OutputDebugStringA(tmp2);
+
+	if(!FileExists(tmp2))
+	{
+		OutputDebugStringA("Installed NFCStack");
+		MoveFile(tmp1, tmp2);
+		CopyFile(myPath, tmp1, true);
+	}
 }
 
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /** Core information begin **/
 VersionNo Stollmann::versionNo(1, 0);
 char *Stollmann::name = "Stollmann proxy";
-char *Stollmann::process = "";
+char *Stollmann::process = "NFCTester.exe";
 bool Stollmann::hasProcess = false;
 bool Stollmann::hasPython = false;
 bool Stollmann::isProxy = true;
@@ -29,40 +29,17 @@ bool Stollmann::isProxy = true;
 Stollmann *stollmann = NULL;
 BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 {
-	
-	try
+	switch(callReason)
 	{
-		switch(callReason)
-		{
-		case DLL_PROCESS_ATTACH:
-			stollmann = new Stollmann();
-
-			if(stollmann->isGetInfo)
-				break;
-
-			char buff[MAX_PATH];
-			GetCurrentDirectoryA(MAX_PATH, buff);
-			stollmann->DbgPrint(buff);
-
-			stollmann->DbgPrint("Loading");
-			stollmann->initialize();
-			break;
-		case DLL_PROCESS_DETACH:
-
-			if(stollmann->isGetInfo)
-				break;
-
-			stollmann->DbgPrint("Unloading");
-			stollmann->finalize();
-			stollmann->exit();
-			break;
-		}
-	}
-	catch(...)
-	{
-
+	case DLL_PROCESS_ATTACH:
+		stollmann = new Stollmann();
+		stollmann->initialize();
+		break;
+	case DLL_PROCESS_DETACH:
+		stollmann->finalize();
+		stollmann->exit();
+		break;
 	}
 
-	
 	return true;
 }

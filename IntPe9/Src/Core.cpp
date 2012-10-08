@@ -27,9 +27,17 @@ Core::Core(const QFileInfo *dll)
 	{
 		HINSTANCE library = LoadLibrary(dll->absoluteFilePath().toStdWString().c_str());
 		GetCoreInfo getCoreInfo = (GetCoreInfo)GetProcAddress(library, "getCoreInfo");
+		InstallProxy installProxy = (InstallProxy)GetProcAddress(library, "installProxy");
+
+		// Get info from the dll
 		getCoreInfo(&_info);
-		FreeLibrary(library);
 		_hasInfo = true;
+
+		// If proxy call the install routine
+		if(isProxy())
+			installProxy(dll->absoluteFilePath().toStdString().c_str());
+
+		FreeLibrary(library);
 	}
 	catch(...)
 	{
@@ -79,6 +87,14 @@ QString Core::getModuleName()
 {
 
 	return _dll.fileName();
+}
+
+bool Core::isProxy()
+{
+	if(_hasInfo)
+		return _info.isProxy;
+	else
+		return false;
 }
 
 QString Core::getVersion()

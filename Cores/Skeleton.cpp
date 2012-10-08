@@ -152,11 +152,6 @@ void Skeleton::parsePython(const char *script)
 	DbgPrint("This core does not support python");
 }
 
-void Skeleton::installProxy(const char *myPath)
-{
-	DbgPrint("This core is not a proxy");
-}
-
 void Skeleton::startThread()
 {
 	DbgPrint("Trying to initialize python!");

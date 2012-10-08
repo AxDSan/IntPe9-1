@@ -69,7 +69,7 @@ protected:
 
 	// Optional implements
 	virtual void parsePython(const char *script);
-	virtual void installProxy(const char *myPath);
+	virtual void installProxy(const char *myPath) = 0;
 	
 	void startThread();
 	boost::python::object pythonNamespace;

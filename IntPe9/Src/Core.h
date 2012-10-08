@@ -44,6 +44,7 @@ public:
 	QString getModuleName();
 	QString getProcessName();
 
+	bool isProxy();
 	bool isEnabled();
 	void setEnabled(bool state);
 

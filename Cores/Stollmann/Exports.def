@@ -1,6 +1,8 @@
-LIBRARY   "ehciTransport"
+LIBRARY   "Stollmann"
 EXPORTS
 	getCoreInfo
+	installProxy
+
 	comOpen
 	comClose
 	comWrite=eComWrite

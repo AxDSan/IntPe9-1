@@ -21,6 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Skeleton.h>
 #include <windows.h>
 
+#define SLASH "\\"
+#define TARGET_ORIG "ehciTransport.orig.dll"
+#define TARGET "ehciTransport.dll"
+
 //Typedef
 typedef int (__stdcall *ComWrite)(HANDLE h, void* buffer, int size);
 
@@ -34,6 +38,8 @@ public:
 
 	void initialize();
 	void finalize();
+
+	void installProxy(const char *myPath);
 
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);
