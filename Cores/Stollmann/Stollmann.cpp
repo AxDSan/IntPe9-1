@@ -28,10 +28,6 @@ void Stollmann::initialize()
 	p[4] = GetProcAddress(hL,"comGetProperty");
 	p[5] = GetProcAddress(hL,"comReset");
 	p[6] = GetProcAddress(hL,"comResponse");
-	p[7] = GetProcAddress(hL,"debugCaptureOutputEx");
-	p[8] = GetProcAddress(hL,"debugGetFlags");
-	p[9] = GetProcAddress(hL,"debugSetFlags");
-	p[10] = GetProcAddress(hL,"debugCaptureOutput");
 
 	pComWrite = (ComWrite)GetProcAddress(hL,"comWrite");
 	DbgPrint("ComWrite at %08X", pComWrite);
@@ -97,13 +93,15 @@ bool Stollmann::installProxy(const char *myPath)
 
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 {
-	DbgPrint("Received a comWrite call");
-
 	MessagePacket *packet = (MessagePacket*)new uint8[size+sizeof(MessagePacket)];
+	
 	memcpy(packet->getData(), buffer, size);
 	packet->length = size;
+	packet->description[0] = '\0';
+	packet->type = SEND;
 
 	sendMessagePacket(packet);
+
 	delete []packet;
 	return pComWrite(h, buffer, size);
 }
@@ -165,41 +163,5 @@ extern "C" __declspec(naked) void __stdcall comResponse()
 	__asm
 		{
 		jmp p[6*4];
-		}
-	}
-
-// debugCaptureOutputEx
-extern "C" __declspec(naked) void __stdcall debugCaptureOutputEx()
-	{
-	__asm
-		{
-		jmp p[7*4];
-		}
-	}
-
-// debugGetFlags
-extern "C" __declspec(naked) void __stdcall debugGetFlags()
-	{
-	__asm
-		{
-		jmp p[8*4];
-		}
-	}
-
-// debugSetFlags
-extern "C" __declspec(naked) void __stdcall debugSetFlags()
-	{
-	__asm
-		{
-		jmp p[9*4];
-		}
-	}
-
-// debugCaptureOutput
-extern "C" __declspec(naked) void __stdcall debugCaptureOutput()
-	{
-	__asm
-		{
-		jmp p[10*4];
 		}
 	}

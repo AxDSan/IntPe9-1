@@ -10,7 +10,3 @@ EXPORTS
 	comGetProperty
 	comReset
 	comResponse
-	debugCaptureOutputEx
-	debugGetFlags
-	debugSetFlags
-	debugCaptureOutput
