@@ -30,6 +30,8 @@ void Stollmann::initialize()
 	p[6] = GetProcAddress(hL,"comResponse");
 
 	pComWrite = (ComWrite)GetProcAddress(hL,"comWrite");
+	pComResponse = (ComResponse)GetProcAddress(hL,"comResponse");
+
 	DbgPrint("ComWrite at %08X", pComWrite);
 
 	start();
@@ -106,6 +108,21 @@ int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 	return pComWrite(h, buffer, size);
 }
 
+int Stollmann::comResponse(HANDLE h, void* data)
+{
+	int ret = pComResponse(h, data);
+
+	MessagePacket *packet = (MessagePacket*)new uint8[0x64+sizeof(MessagePacket)];
+
+	memcpy(packet->getData(), h, 0x64);
+	packet->length = 0x64;
+	sprintf(packet->description, "Debug: phCom");
+	sendMessagePacket(packet);
+	delete []packet;
+
+	return ret;
+}
+
 // comOpen
 extern "C" __declspec(naked) void __stdcall comOpen()
 	{
@@ -158,10 +175,7 @@ extern "C" __declspec(naked) void __stdcall comReset()
 	}
 
 // comResponse
-extern "C" __declspec(naked) void __stdcall comResponse()
-	{
-	__asm
-		{
-		jmp p[6*4];
-		}
-	}
+int __stdcall eComResponse(HANDLE h, void* data)
+{
+	return stollmann->comResponse(h, data);
+}

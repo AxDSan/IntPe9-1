@@ -9,4 +9,4 @@ EXPORTS
 	comSetProperty
 	comGetProperty
 	comReset
-	comResponse
+	comResponse=eComResponse

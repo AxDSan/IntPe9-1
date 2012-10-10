@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //Typedef
 typedef int (__stdcall *ComWrite)(HANDLE h, void* buffer, int size);
+typedef int (__stdcall *ComResponse)(HANDLE h, void* data);
 
 class Stollmann : public Skeleton
 {
@@ -44,9 +45,11 @@ public:
 
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);
+	int comResponse(HANDLE h, void* data);
 
 	// Proxy old functions
 	ComWrite pComWrite;
+	ComResponse pComResponse;
 };
 
 extern Stollmann *stollmann;
