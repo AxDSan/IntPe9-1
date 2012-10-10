@@ -219,6 +219,9 @@ void MainGui::setActiveSniffer(Sniffer *sniffer)
 	_mainView.isDefaultHidden->setChecked(sniffer->getFilterList()->getDefaultHide());
 	autoScroll(true);
 
+	// Change toolbar according core functionalities
+	_mainView.pythonAction->setEnabled(sniffer->getCore()->hasPython());
+
 	if(_firstModel)
 	{
 		//Enable filter button

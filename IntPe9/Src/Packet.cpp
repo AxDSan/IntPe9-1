@@ -179,9 +179,9 @@ QVariant Packet::getField(int column)
 
 QPixmap Packet::getIcon()
 {
-	if(_type == WSASENDTO || _type == WSASEND)
+	if(_type == WSASENDTO || _type == WSASEND || _type == SEND || _type == SENDTO)
 		return QPixmap(":/Common/out.png");
-	else if(_type == WSARECVFROM || _type == WSARECV)
+	else if(_type == WSARECVFROM || _type == WSARECV || _type == RECV || _type == RECVFROM)
 		return QPixmap(":/Common/in.png");
 	else if(_type == INJECT_RECV)
 		return QPixmap(":/Common/customIn.png");

@@ -35,7 +35,7 @@ Core::Core(const QFileInfo *dll)
 
 		// If proxy call the install routine
 		if(isProxy())
-			installProxy(dll->absoluteFilePath().toStdString().c_str());
+			installProxy(dll->absoluteFilePath().toStdString().c_str()); //TODO: If false disable this core
 
 		FreeLibrary(library);
 	}
@@ -87,6 +87,14 @@ QString Core::getModuleName()
 {
 
 	return _dll.fileName();
+}
+
+bool Core::hasPython()
+{
+	if(_hasInfo)
+		return _info.hasPython;
+	else
+		return false;
 }
 
 bool Core::isProxy()
