@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /** Core information begin **/
 VersionNo Stollmann::versionNo(1, 0);
-char *Stollmann::name = "Stollmann proxy";
+char *Stollmann::name = "Stollmann proxy R04";
 char *Stollmann::process = "NFCTester.exe";
 bool Stollmann::hasProcess = false;
 bool Stollmann::hasPython = false;
@@ -37,7 +37,6 @@ BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 		break;
 	case DLL_PROCESS_DETACH:
 		stollmann->finalize();
-		stollmann->exit();
 		break;
 	}
 

@@ -18,6 +18,7 @@ void Stollmann::initialize()
 	if(isGetInfo)
 		return;
 
+	DbgPrint("Loading original library");
 	hL = LoadLibrary(TARGET_ORIG);
 
 	p[0] = GetProcAddress(hL,"comOpen");
@@ -34,7 +35,8 @@ void Stollmann::initialize()
 
 	pComWrite = (ComWrite)GetProcAddress(hL,"comWrite");
 	DbgPrint("ComWrite at %08X", pComWrite);
-	DbgPrint("O my god, imma initialized");
+
+	start();
 }
 
 void Stollmann::finalize()
@@ -43,50 +45,54 @@ void Stollmann::finalize()
 		return;
 
 	FreeLibrary(hL);
+
+	exit();
 }
 
-
-BOOL FileExists(LPCTSTR szPath)
-{
-	DWORD dwAttrib = GetFileAttributes(szPath);
-
-	return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
-		!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
-}
-
-
-void Stollmann::installProxy(const char *myPath)
+bool Stollmann::installProxy(const char *myPath)
 {
 	HKEY hKey;
-	char buffer[MAX_PATH];
-	char tmp1[MAX_PATH], tmp2[MAX_PATH];
+	char installPath[MAX_PATH*2];
+	char proxy[MAX_PATH], original[MAX_PATH];
 
-	LONG lRet = RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\Stollmann\\NFCStack+Eva R02", 0, KEY_QUERY_VALUE | KEY_WOW64_64KEY,  &hKey);
+	long lRet = RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\Stollmann\\NFCStack+Eva R04", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY,  &hKey);
 	if(lRet != ERROR_SUCCESS)
-		OutputDebugStringA("Could not read the registry");
-
-	RegQueryValue(hKey, "InstallDir", buffer, NULL);
-
-	strcpy(buffer, "C:\\Program Files (x86)\\Stollmann\\NFCStack+Eva R02\\Application");
-		 
-	OutputDebugStringA(buffer);
-
-	strcpy(tmp1, buffer);
-	strcat(tmp1, SLASH);
-	strcat(tmp1, TARGET);
-
-	strcpy(tmp2, buffer);
-	strcat(tmp2, SLASH);
-	strcat(tmp2, TARGET_ORIG);
-
-	OutputDebugStringA(tmp2);
-
-	if(!FileExists(tmp2))
 	{
-		OutputDebugStringA("Installed NFCStack");
-		MoveFile(tmp1, tmp2);
-		CopyFile(myPath, tmp1, true);
+		DbgExport("Could not read the registry (error %i)", lRet);
+		return false;
 	}
+
+	DWORD size;
+	lRet = RegQueryValueEx(hKey, "InstallDir", 0, NULL, (LPBYTE)installPath, &size);
+	RegCloseKey(hKey);
+	if(lRet != ERROR_SUCCESS)
+	{
+		DbgExport("Could not read the key (error %i)", lRet);
+		return false;
+	}
+
+	sprintf_s(proxy, MAX_PATH, "%s\\%s\\%s", installPath, APP_DIR, TARGET);
+	sprintf_s(original, MAX_PATH, "%s\\%s\\%s", installPath, APP_DIR, TARGET_ORIG);
+
+	// Not installed yet so just install it
+	if(!FileExists(original))
+	{
+		DbgExport("Installing %s proxy dll", name);
+		MoveFile(proxy, original);
+		CopyFile(myPath, proxy, true);
+
+		DbgExport("Target dll: %s", proxy);
+		DbgExport("Backup dll: %s", original);
+	}
+	else
+	{
+		if(IsNewVersion(myPath, proxy)) // Is this a different version, then we overwrite
+		{
+			DbgExport("Installing updated version %i.%i of %s", versionNo.major, versionNo.minor, name);
+			CopyFile(myPath, proxy, false);
+		}
+	}
+	return true;
 }
 
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)

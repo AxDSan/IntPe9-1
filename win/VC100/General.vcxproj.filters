@@ -8,6 +8,9 @@
     <ClInclude Include="..\..\dep\include\General\Memory.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\dep\include\General\MurmurHash3.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base64">
@@ -22,6 +25,9 @@
       <Filter>Base64</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dep\src\General\Memory.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\General\MurmurHash3.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>

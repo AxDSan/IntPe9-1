@@ -110,7 +110,7 @@ public:
 	void parsePython(const char *script);
 	void debugToChat(uint8 *text);
 
-	void installProxy(const char *myPath){};
+	bool installProxy(const char *myPath){return false;};
 	//Static part
 	//Custom functions/callbacks
 	static void onExit();

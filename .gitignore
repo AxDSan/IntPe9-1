@@ -10,6 +10,7 @@ Thumbs.db
 *.orig
 *.patch
 callgrind.out.*
+_ReSharper*
 
 # Visual studio
 *.webinfo
@@ -22,7 +23,10 @@ callgrind.out.*
 *.exp
 ipch
 *.user
-_ReSharper*
+
+# Debug helps
+win/VC100/Cores
+win/VC100/IntPe9.ini
 
 # Subversion data folders
 .svn

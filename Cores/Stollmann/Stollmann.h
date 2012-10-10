@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <windows.h>
 
 #define SLASH "\\"
+#define APP_DIR "Application"
 #define TARGET_ORIG "ehciTransport.orig.dll"
 #define TARGET "ehciTransport.dll"
 
@@ -39,7 +40,7 @@ public:
 	void initialize();
 	void finalize();
 
-	void installProxy(const char *myPath);
+	bool installProxy(const char *myPath);
 
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);

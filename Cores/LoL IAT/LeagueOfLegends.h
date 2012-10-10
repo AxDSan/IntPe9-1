@@ -45,7 +45,7 @@ public:
 	void initialize();
 	void finalize();
 	void parsePython(const char *script){};
-	void installProxy(const char *myPath){};
+	bool installProxy(const char *myPath){return false;};
 };
 
 extern LeagueOfLegends *leagueOfLegends;

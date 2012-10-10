@@ -68,7 +68,7 @@ struct CoreInfo;
 
 //Export functions
 typedef void (*GetCoreInfo)(CoreInfo *info);
-typedef void (*InstallProxy)(const char *myPath);
+typedef bool (*InstallProxy)(const char *myPath);
 
 enum PacketType : uint32
 {

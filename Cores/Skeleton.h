@@ -69,12 +69,16 @@ protected:
 
 	// Optional implements
 	virtual void parsePython(const char *script);
-	virtual void installProxy(const char *myPath) = 0;
+	virtual bool installProxy(const char *myPath) = 0;
 	
 	void startThread();
 	boost::python::object pythonNamespace;
 
-	
+	// Helper functions
+	void DbgExport(const char* format, ...);
+	uint32 getHash(HANDLE file);
+	bool FileExists(const char *path);
+	bool IsNewVersion(const char *pathLeft, const char *pathRight);
 
 	//Module information
 	static VersionNo versionNo;
