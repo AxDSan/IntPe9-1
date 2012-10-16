@@ -21,19 +21,32 @@ void Stollmann::initialize()
 	DbgPrint("Loading original library");
 	hL = LoadLibrary(TARGET_ORIG);
 
-	p[0] = GetProcAddress(hL,"comOpen");
+	// Original call table
+	p[0] = GetProcAddress(hL,"comCallControl");
 	p[1] = GetProcAddress(hL,"comClose");
-	p[2] = GetProcAddress(hL,"comWrite");
-	p[3] = GetProcAddress(hL,"comSetProperty");
+	p[2] = GetProcAddress(hL,"comEnumAdapters");
+	p[3] = GetProcAddress(hL,"comGetInterface");
 	p[4] = GetProcAddress(hL,"comGetProperty");
-	p[5] = GetProcAddress(hL,"comReset");
-	p[6] = GetProcAddress(hL,"comResponse");
+	p[5] = GetProcAddress(hL,"comOpen");
+	p[6] = GetProcAddress(hL,"comReset");
+	p[7] = GetProcAddress(hL,"comSetProperty");
+	p[8] = GetProcAddress(hL,"comWrite");
+	p[9] = GetProcAddress(hL,"debugCaptureOutput");
+	p[10] = GetProcAddress(hL,"debugCaptureOutputEx");
+	p[11] = GetProcAddress(hL,"debugGetFlags");
+	p[12] = GetProcAddress(hL,"debugSetFlags");
 
+	// Get hooks addresses
 	pComWrite = (ComWrite)GetProcAddress(hL,"comWrite");
-	pComResponse = (ComResponse)GetProcAddress(hL,"comResponse");
 
+	// Print all hooks
 	DbgPrint("ComWrite at %08X", pComWrite);
 
+	// Install custom hook
+	DbgPrint("Image base of dll is: %08X, hook address: %08X", hL, (hL+0x251A));
+	Memory::writeCall((uint8*)(hL+0x251A), (uint8*)codeCave, 0); // From the base of the dll offset 0x251A
+
+	// Start the skeleton
 	start();
 }
 
@@ -93,6 +106,14 @@ bool Stollmann::installProxy(const char *myPath)
 	return true;
 }
 
+void Stollmann::comResponse(void *buffer, uint32 bufferSize, uint32 size)
+{
+	if(size <= 0)
+		return;
+
+	DbgPrint("Response received with size %i", size);
+}
+
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 {
 	MessagePacket *packet = (MessagePacket*)new uint8[size+sizeof(MessagePacket)];
@@ -108,23 +129,37 @@ int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 	return pComWrite(h, buffer, size);
 }
 
-int Stollmann::comResponse(HANDLE h, void* data)
+// Hooks
+__declspec(naked) void codeCave()
 {
-	int ret = pComResponse(h, data);
-
-	MessagePacket *packet = (MessagePacket*)new uint8[0x64+sizeof(MessagePacket)];
-
-	memcpy(packet->getData(), h, 0x64);
-	packet->length = 0x64;
-	sprintf(packet->description, "Debug: phCom");
-	sendMessagePacket(packet);
-	delete []packet;
-
-	return ret;
+	__asm
+	{
+		mov ecx, eax         // Place lpBuffer in ecx
+		call ReadFile
+		push eax             // Store response of ReadFile
+		mov eax, [esi+0x364]
+		push eax             // (lp)NumberOfBytesRead
+		push edx             // nNumberOfBytesToRead
+		push ecx             // lpBuffer
+		call ComResponse
+		pop eax
+		ret
+	}
 }
 
-// comOpen
-extern "C" __declspec(naked) void __stdcall comOpen()
+// Wrappers
+void ComResponse(void *buffer, uint32 bufferSize, uint32 size)
+{
+	stollmann->comResponse(buffer, bufferSize, size);
+}
+
+int __stdcall eComWrite(HANDLE h, void* buffer, int size)
+{
+	return stollmann->comWrite(h, buffer, size);
+}
+
+// ORIGINALS
+extern "C" __declspec(naked) void __stdcall comCallControl()
 	{
 	__asm
 		{
@@ -132,7 +167,6 @@ extern "C" __declspec(naked) void __stdcall comOpen()
 		}
 	}
 
-// comClose
 extern "C" __declspec(naked) void __stdcall comClose()
 	{
 	__asm
@@ -141,14 +175,15 @@ extern "C" __declspec(naked) void __stdcall comClose()
 		}
 	}
 
-// comWrite
-int __stdcall eComWrite(HANDLE h, void* buffer, int size)
-{
-	return stollmann->comWrite(h, buffer, size);
-}
+extern "C" __declspec(naked) void __stdcall comEnumAdapters()
+	{
+	__asm
+		{
+		jmp p[2*4];
+		}
+	}
 
-// comSetProperty
-extern "C" __declspec(naked) void __stdcall comSetProperty()
+extern "C" __declspec(naked) void __stdcall comGetInterface()
 	{
 	__asm
 		{
@@ -156,7 +191,6 @@ extern "C" __declspec(naked) void __stdcall comSetProperty()
 		}
 	}
 
-// comGetProperty
 extern "C" __declspec(naked) void __stdcall comGetProperty()
 	{
 	__asm
@@ -165,17 +199,66 @@ extern "C" __declspec(naked) void __stdcall comGetProperty()
 		}
 	}
 
-// comReset
-extern "C" __declspec(naked) void __stdcall comReset()
-	{
-	__asm
-		{
-		jmp p[5*4];
-		}
-	}
-
-// comResponse
-int __stdcall eComResponse(HANDLE h, void* data)
+extern "C" __declspec(naked) void __stdcall comOpen()
 {
-	return stollmann->comResponse(h, data);
+	__asm
+	{
+		jmp p[5*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall comReset()
+{
+	__asm
+	{
+		jmp p[6*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall comSetProperty()
+{
+	__asm
+	{
+		jmp p[7*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall comWrite()
+{
+	__asm
+	{
+		jmp p[8*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall debugCaptureOutput()
+{
+	__asm
+	{
+		jmp p[9*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall debugCaptureOutputEx()
+{
+	__asm
+	{
+		jmp p[10*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall debugGetFlags()
+{
+	__asm
+	{
+		jmp p[11*4];
+	}
+}
+
+extern "C" __declspec(naked) void __stdcall debugSetFlags()
+{
+	__asm
+	{
+		jmp p[12*4];
+	}
 }

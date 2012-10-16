@@ -20,15 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Skeleton.h>
 #include <windows.h>
+#include "General/Memory.h"
 
 #define SLASH "\\"
 #define APP_DIR "Application"
-#define TARGET_ORIG "ehciTransport.orig.dll"
-#define TARGET "ehciTransport.dll"
+#define TARGET_ORIG "rs232api.orig.dll"
+#define TARGET "rs232api.dll"
 
 //Typedef
 typedef int (__stdcall *ComWrite)(HANDLE h, void* buffer, int size);
-typedef int (__stdcall *ComResponse)(HANDLE h, void* data);
+
+// Forward definitions
+void ComResponse(void *buffer, uint32 bufferSize, uint32 size);
+void codeCave();
 
 class Stollmann : public Skeleton
 {
@@ -45,11 +49,10 @@ public:
 
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);
-	int comResponse(HANDLE h, void* data);
+	void comResponse(void *buffer, uint32 bufferSize, uint32 size);
 
 	// Proxy old functions
 	ComWrite pComWrite;
-	ComResponse pComResponse;
 };
 
 extern Stollmann *stollmann;

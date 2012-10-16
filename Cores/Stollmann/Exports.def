@@ -3,10 +3,16 @@ EXPORTS
 	getCoreInfo
 	installProxy
 
-	comOpen
+	comCallControl
 	comClose
-	comWrite=eComWrite
-	comSetProperty
+	comEnumAdapters
+	comGetInterface
 	comGetProperty
+	comOpen
 	comReset
-	comResponse=eComResponse
+	comSetProperty
+	comWrite             = eComWrite
+	debugCaptureOutput
+	debugCaptureOutputEx
+	debugGetFlags
+	debugSetFlags
