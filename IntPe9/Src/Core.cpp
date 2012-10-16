@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Core.h"
+#include <QMessageBox>
 #include <Windows.h>
 
 Core::Core(const QFileInfo *dll)
@@ -34,14 +35,14 @@ Core::Core(const QFileInfo *dll)
 		_hasInfo = true;
 
 		// If proxy call the install routine
-		if(isProxy())
+		if(isProxy() && installProxy != NULL)
 			installProxy(dll->absoluteFilePath().toStdString().c_str()); //TODO: If false disable this core
-
+	
 		FreeLibrary(library);
 	}
 	catch(...)
 	{
-		
+		QMessageBox::warning(NULL, tr("IntPe9"), tr("Error with loading of module: ")+QString(_info.name), QMessageBox::Ok);
 	}
 
 }

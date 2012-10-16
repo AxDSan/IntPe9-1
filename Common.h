@@ -56,19 +56,19 @@ void debugPrint(const char *str);
 #define CC_MAX_SIZE 0x2000
 #define CC_MAX_NO 0x100
 
-typedef long long		int64;
-typedef int			int32;
-typedef short			int16;
-typedef char			int8; 
-typedef unsigned long long	uint64;
-typedef unsigned int		uint32;
-typedef unsigned short		uint16;
-typedef unsigned char		uint8;
+typedef long long          int64;
+typedef int                int32;
+typedef short              int16;
+typedef char               int8; 
+typedef unsigned long long uint64;
+typedef unsigned int       uint32;
+typedef unsigned short     uint16;
+typedef unsigned char      uint8;
 struct CoreInfo;
 
 //Export functions
-typedef void (*GetCoreInfo)(CoreInfo *info);
-typedef bool (*InstallProxy)(const char *myPath);
+typedef void (__cdecl *GetCoreInfo)(CoreInfo *);
+typedef bool (__stdcall *InstallProxy)(const char *);
 
 enum PacketType : uint32
 {
