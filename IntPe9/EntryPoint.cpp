@@ -17,16 +17,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QtGui/QApplication>
 #include <QCleanlooksStyle>
+#include <QSharedMemory>
 #include "Views\Main.h"
-#include <Windows.h>
+
+#define UNIQUE_KEY "IntPe9GlobalKey"
 
 int main(int argc, char *argv[])
 {
-	// Start application
-	QApplication a(argc, argv);
-	a.setStyle(new QCleanlooksStyle); //FANCY!
-	MainGui mainGui;
-	QObject::connect(&a, SIGNAL(aboutToQuit()), &mainGui, SLOT(closing()));
-	mainGui.show();
-	return a.exec();
+	int ret = 0;
+
+	// Global mutex checking
+	QSharedMemory shared;
+	shared.setKey(UNIQUE_KEY);
+
+	if(shared.create(5000))
+	{
+		// Start application
+		QApplication a(argc, argv);
+		a.setStyle(new QCleanlooksStyle); //FANCY!
+		MainGui mainGui;
+		QObject::connect(&a, SIGNAL(aboutToQuit()), &mainGui, SLOT(closing()));
+		mainGui.show();
+		ret = a.exec();
+	}
+	else if(shared.attach()) // Die if we have two instances
+		shared.detach();
+
+	return ret;
 }
