@@ -4,7 +4,8 @@
 #pragma pack(1)
 HINSTANCE hLThis = 0;
 HINSTANCE hL = 0;
-FARPROC p[13] = {0};
+FARPROC p[7] = {0};
+uint32 returnAddress;
 
 Stollmann::Stollmann() : Skeleton()
 {
@@ -22,19 +23,13 @@ void Stollmann::initialize()
 	hL = LoadLibrary(TARGET_ORIG);
 
 	// Original call table
-	p[0] = GetProcAddress(hL,"comCallControl");
+	p[0] = GetProcAddress(hL,"comOpen");
 	p[1] = GetProcAddress(hL,"comClose");
-	p[2] = GetProcAddress(hL,"comEnumAdapters");
-	p[3] = GetProcAddress(hL,"comGetInterface");
+	p[2] = GetProcAddress(hL,"comWrite");
+	p[3] = GetProcAddress(hL,"comSetProperty");
 	p[4] = GetProcAddress(hL,"comGetProperty");
-	p[5] = GetProcAddress(hL,"comOpen");
-	p[6] = GetProcAddress(hL,"comReset");
-	p[7] = GetProcAddress(hL,"comSetProperty");
-	p[8] = GetProcAddress(hL,"comWrite");
-	p[9] = GetProcAddress(hL,"debugCaptureOutput");
-	p[10] = GetProcAddress(hL,"debugCaptureOutputEx");
-	p[11] = GetProcAddress(hL,"debugGetFlags");
-	p[12] = GetProcAddress(hL,"debugSetFlags");
+	p[5] = GetProcAddress(hL,"comReset");
+	p[6] = GetProcAddress(hL,"comResponse");
 
 	// Get hooks addresses
 	pComWrite = (ComWrite)GetProcAddress(hL,"comWrite");
@@ -43,8 +38,11 @@ void Stollmann::initialize()
 	DbgPrint("ComWrite at %08X", pComWrite);
 
 	// Install custom hook
-	DbgPrint("Image base of dll is: %08X, hook address: %08X", hL, (hL+0x251A));
-	Memory::writeCall((uint8*)(hL+0x251A), (uint8*)codeCave, 0); // From the base of the dll offset 0x251A
+	uint32 baseAddress = (uint32)hL;
+	uint32 transportAddress = baseAddress+0x15E0;
+	returnAddress = baseAddress+0x15E0+5;
+	DbgPrint("Image base of dll is: %08X, transportEvent: %08X", baseAddress, transportAddress);
+	Memory::writeJump((uint8*)(transportAddress), (uint8*)transportEvent, 2); // From the base of the dll offset 0x251A
 
 	// Start the skeleton
 	start();
@@ -106,18 +104,11 @@ bool Stollmann::installProxy(const char *myPath)
 	return true;
 }
 
-void Stollmann::comResponse(void *buffer, uint32 bufferSize, uint32 size)
-{
-	if(size <= 0)
-		return;
-
-	DbgPrint("Response received with size %i", size);
-}
-
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 {
 	MessagePacket *packet = (MessagePacket*)new uint8[size+sizeof(MessagePacket)];
 	
+	DbgPrint("Com write, handle: %08X", h);
 	memcpy(packet->getData(), buffer, size);
 	packet->length = size;
 	packet->description[0] = '\0';
@@ -129,37 +120,44 @@ int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 	return pComWrite(h, buffer, size);
 }
 
-// Hooks
-__declspec(naked) void codeCave()
+void Stollmann::comTransport(HANDLE h, int eventNo, bool a3, void *buffer, uint32 size)
 {
+	if(eventNo != 3)
+		return;
+
+	MessagePacket *packet = (MessagePacket*)new uint8[size+sizeof(MessagePacket)];
+
+	DbgPrint("Com read, handle: %08X", h);
+	memcpy(packet->getData(), buffer, size);
+	packet->length = size;
+	packet->description[0] = '\0';
+	packet->type = RECV;
+
+	sendMessagePacket(packet);
+
+	delete []packet;
+}
+
+int __stdcall transportEvent(int a1, int eventNo, int a3, void *buffer, size_t size)
+{
+	stollmann->DbgPrint("Transport event (%i): %08X, %i, buffer: %08X, len: %i", eventNo, a1, a3, buffer, size);
+	stollmann->comTransport((HANDLE)a1, eventNo, a3, buffer, size);
+	// Do not use this epilogue, instead jump to original transport event
 	__asm
 	{
-		mov ecx, eax         // Place lpBuffer in ecx
-		call ReadFile
-		push eax             // Store response of ReadFile
-		mov eax, [esi+0x364]
-		push eax             // (lp)NumberOfBytesRead
-		push edx             // nNumberOfBytesToRead
-		push ecx             // lpBuffer
-		call ComResponse
-		pop eax
-		ret
+		mov esi,[ebp+0xC]
+		jmp returnAddress;
 	}
 }
 
 // Wrappers
-void ComResponse(void *buffer, uint32 bufferSize, uint32 size)
-{
-	stollmann->comResponse(buffer, bufferSize, size);
-}
-
 int __stdcall eComWrite(HANDLE h, void* buffer, int size)
 {
 	return stollmann->comWrite(h, buffer, size);
 }
 
 // ORIGINALS
-extern "C" __declspec(naked) void __stdcall comCallControl()
+extern "C" __declspec(naked) void __stdcall comOpen()
 	{
 	__asm
 		{
@@ -175,7 +173,7 @@ extern "C" __declspec(naked) void __stdcall comClose()
 		}
 	}
 
-extern "C" __declspec(naked) void __stdcall comEnumAdapters()
+extern "C" __declspec(naked) void __stdcall comWrite()
 	{
 	__asm
 		{
@@ -183,7 +181,7 @@ extern "C" __declspec(naked) void __stdcall comEnumAdapters()
 		}
 	}
 
-extern "C" __declspec(naked) void __stdcall comGetInterface()
+extern "C" __declspec(naked) void __stdcall comSetProperty()
 	{
 	__asm
 		{
@@ -199,7 +197,7 @@ extern "C" __declspec(naked) void __stdcall comGetProperty()
 		}
 	}
 
-extern "C" __declspec(naked) void __stdcall comOpen()
+extern "C" __declspec(naked) void __stdcall comReset()
 {
 	__asm
 	{
@@ -207,58 +205,10 @@ extern "C" __declspec(naked) void __stdcall comOpen()
 	}
 }
 
-extern "C" __declspec(naked) void __stdcall comReset()
+extern "C" __declspec(naked) void __stdcall comResponse()
 {
 	__asm
 	{
 		jmp p[6*4];
-	}
-}
-
-extern "C" __declspec(naked) void __stdcall comSetProperty()
-{
-	__asm
-	{
-		jmp p[7*4];
-	}
-}
-
-extern "C" __declspec(naked) void __stdcall comWrite()
-{
-	__asm
-	{
-		jmp p[8*4];
-	}
-}
-
-extern "C" __declspec(naked) void __stdcall debugCaptureOutput()
-{
-	__asm
-	{
-		jmp p[9*4];
-	}
-}
-
-extern "C" __declspec(naked) void __stdcall debugCaptureOutputEx()
-{
-	__asm
-	{
-		jmp p[10*4];
-	}
-}
-
-extern "C" __declspec(naked) void __stdcall debugGetFlags()
-{
-	__asm
-	{
-		jmp p[11*4];
-	}
-}
-
-extern "C" __declspec(naked) void __stdcall debugSetFlags()
-{
-	__asm
-	{
-		jmp p[12*4];
 	}
 }

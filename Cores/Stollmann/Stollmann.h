@@ -24,15 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define SLASH "\\"
 #define APP_DIR "Application"
-#define TARGET_ORIG "rs232api.orig.dll"
-#define TARGET "rs232api.dll"
+#define TARGET_ORIG "ehciTransport.orig.dll"
+#define TARGET "ehciTransport.dll"
 
 //Typedef
 typedef int (__stdcall *ComWrite)(HANDLE h, void* buffer, int size);
 
 // Forward definitions
-void ComResponse(void *buffer, uint32 bufferSize, uint32 size);
-void codeCave();
+int __stdcall transportEvent(int a1, int a2, int a3, void *a4, size_t a5);
 
 class Stollmann : public Skeleton
 {
@@ -49,7 +48,7 @@ public:
 
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);
-	void comResponse(void *buffer, uint32 bufferSize, uint32 size);
+	void comTransport(HANDLE h, int eventNo, bool a3, void *buffer, uint32 size);
 
 	// Proxy old functions
 	ComWrite pComWrite;
