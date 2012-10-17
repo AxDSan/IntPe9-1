@@ -21,11 +21,6 @@ bool doFirst = true;
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
 
-char *Winsock::getName()
-{
-	return "Winsock.dll";
-}
-
 Winsock::Winsock()
 {
 
@@ -37,12 +32,12 @@ void Winsock::initialize()
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	
-	
-	//_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction("ws2_32", "WSASendTo", (unsigned long)&newWSASendTo);
-	//_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction("ws2_32", "WSARecvFrom", (unsigned long)&newWSARecvFrom);
-	//_oldWSASend = (defWSASend)_upx->hookIatFunction("ws2_32", "WSASend", (unsigned long)&newWSASend);
-	//_oldWSARecv = (defWSARecv)_upx->hookIatFunction(NULL, "WSARecv", (unsigned long)&newWSARecv);
-	_oldSend = (defSend)_upx->hookIatFunction(NULL, "send", (unsigned long)&newSend);
+	// Hook WSA by IAT
+	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction("ws2_32", "WSASendTo", (unsigned long)&newWSASendTo);
+	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction("ws2_32", "WSARecvFrom", (unsigned long)&newWSARecvFrom);
+	_oldWSASend = (defWSASend)_upx->hookIatFunction("ws2_32", "WSASend", (unsigned long)&newWSASend);
+	_oldWSARecv = (defWSARecv)_upx->hookIatFunction("ws2_32", "WSARecv", (unsigned long)&newWSARecv);
+	_oldSend = (defSend)_upx->hookIatFunction("ws2_32", "send", (unsigned long)&newSend);
 
 
 	DbgPrint("Original WSASend: %08X, New WSASend: %08X", _oldWSASend, &newWSASend);
@@ -71,7 +66,7 @@ int WSAAPI newWSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD
 			sendBuf->type = WSASEND;
 			sendBuf->length = lpBuffers[0].len;
 			memcpy(sendBuf->getData(), lpBuffers[0].buf, sendBuf->length);
-			winsock->sendPacket(sendBuf);
+			winsock->sendMessagePacket(sendBuf);
 		}
 
 	return winsock->_oldWSASend(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
@@ -88,7 +83,7 @@ int WSAAPI newWSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD
 			recvBuf->type = WSARECV;
 			recvBuf->length = lpBuffers[0].len;
 			memcpy(recvBuf->getData(), lpBuffers[0].buf, recvBuf->length);
-			winsock->sendPacket(recvBuf);
+			winsock->sendMessagePacket(recvBuf);
 		}
 
 	return returnLength;
@@ -103,7 +98,7 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 			sendBuf->type = WSASENDTO;
 			sendBuf->length = lpBuffers[0].len;
 			memcpy(sendBuf->getData(), lpBuffers[0].buf, sendBuf->length);
-			winsock->sendPacket(sendBuf);
+			winsock->sendMessagePacket(sendBuf);
 		}
 	return winsock->_oldWSASendTo(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpTo, iToLen, lpOverlapped, lpCompletionRoutine);
 }
@@ -119,7 +114,7 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 			recvBuf->type = WSARECVFROM;
 			recvBuf->length = lpBuffers[0].len;
 			memcpy(recvBuf->getData(), lpBuffers[0].buf, recvBuf->length);
-			winsock->sendPacket(recvBuf);
+			winsock->sendMessagePacket(recvBuf);
 		}
 
 	return returnLength;

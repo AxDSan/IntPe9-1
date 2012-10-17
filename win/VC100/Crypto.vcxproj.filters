@@ -5,15 +5,24 @@
     <ClInclude Include="..\..\dep\include\Crypto\Blowfish.h">
       <Filter>Blowfish</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\dep\include\Crypto\MurmurHash3.h">
+      <Filter>MurmurHash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Blowfish">
       <UniqueIdentifier>{9134541a-026b-4dde-b04b-7e7bfefcb4e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MurmurHash">
+      <UniqueIdentifier>{21bf5df7-0e63-4f2d-b1c8-96327e2ed80b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dep\src\Crypto\Blowfish.cpp">
       <Filter>Blowfish</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\src\Crypto\MurmurHash3.cpp">
+      <Filter>MurmurHash</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

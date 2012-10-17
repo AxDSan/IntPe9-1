@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define STOLLMAN_H
 
 #include <Skeleton.h>
-#include <windows.h>
 #include "General/Memory.h"
+#include "Helper.h"
 
 #define SLASH "\\"
 #define APP_DIR "Application"
@@ -36,7 +36,7 @@ int __stdcall transportEvent(int a1, int a2, int a3, void *a4, size_t a5);
 class Stollmann : public Skeleton
 {
 private:
-
+	HINSTANCE dllHandle;
 
 public:
 	Stollmann();

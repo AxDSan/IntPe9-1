@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <vector>
 #include <cstdarg>
+#include "typedef.h"
 
 #ifdef _DEBUG
 #define DebugPrint debugPrint
@@ -56,14 +57,6 @@ void debugPrint(const char *str);
 #define CC_MAX_SIZE 0x2000
 #define CC_MAX_NO 0x100
 
-typedef long long          int64;
-typedef int                int32;
-typedef short              int16;
-typedef char               int8; 
-typedef unsigned long long uint64;
-typedef unsigned int       uint32;
-typedef unsigned short     uint16;
-typedef unsigned char      uint8;
 struct CoreInfo;
 
 //Export functions

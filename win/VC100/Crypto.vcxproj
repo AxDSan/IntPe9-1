@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dep\src\Crypto\Blowfish.cpp" />
+    <ClCompile Include="..\..\dep\src\Crypto\MurmurHash3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dep\include\Crypto\Blowfish.h" />
     <ClInclude Include="..\..\dep\include\Crypto\Crypto.h" />
+    <ClInclude Include="..\..\dep\include\Crypto\MurmurHash3.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BED17788-577B-455E-B3B9-1CB8639131EF}</ProjectGuid>

@@ -17,6 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Winsock.h"
 
+/** Core information begin **/
+VersionNo Winsock::versionNo(1, 0);
+char *Winsock::name = "General winsock";
+char *Winsock::process = "";
+bool Winsock::hasProcess = false;
+bool Winsock::hasPython = false;
+bool Winsock::isProxy = true;
+/** Core information end **/
+
 Winsock *winsock = NULL;
 BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 {

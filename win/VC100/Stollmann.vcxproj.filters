@@ -8,6 +8,9 @@
     <ClCompile Include="..\..\Cores\Stollmann\Stollmann.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Cores\Helper.cpp">
+      <Filter>Skeleton\Helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Cores\Skeleton.h">
@@ -15,6 +18,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Cores\Stollmann\Stollmann.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cores\Helper.h">
+      <Filter>Skeleton\Helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +32,9 @@
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{99f3862c-beef-457e-b661-da0bb9e3281d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Skeleton\Helper">
+      <UniqueIdentifier>{a39a579a-fdfb-4f26-aa93-4b769fab832b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

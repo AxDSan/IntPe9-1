@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Stollmann.h"
 
 /** Core information begin **/
-VersionNo Stollmann::versionNo(1, 0);
+VersionNo Stollmann::versionNo(2, 0);
 char *Stollmann::name = "Stollmann proxy R04";
 char *Stollmann::process = "NFCTester.exe";
-bool Stollmann::hasProcess = false;
+bool Stollmann::hasProcess = true;
 bool Stollmann::hasPython = false;
 bool Stollmann::isProxy = true;
 /** Core information end **/

@@ -1,10 +1,6 @@
 #include "Stollmann.h"
-#include <Windows.h>
 
-#pragma pack(1)
-HINSTANCE hLThis = 0;
-HINSTANCE hL = 0;
-FARPROC p[7] = {0};
+FARPROC proc[7];
 uint32 returnAddress;
 
 Stollmann::Stollmann() : Skeleton()
@@ -13,32 +9,31 @@ Stollmann::Stollmann() : Skeleton()
 
 }
 
-
 void Stollmann::initialize()
 {
 	if(isGetInfo)
 		return;
 
 	DbgPrint("Loading original library");
-	hL = LoadLibrary(TARGET_ORIG);
+	dllHandle = LoadLibrary(TARGET_ORIG);
 
 	// Original call table
-	p[0] = GetProcAddress(hL,"comOpen");
-	p[1] = GetProcAddress(hL,"comClose");
-	p[2] = GetProcAddress(hL,"comWrite");
-	p[3] = GetProcAddress(hL,"comSetProperty");
-	p[4] = GetProcAddress(hL,"comGetProperty");
-	p[5] = GetProcAddress(hL,"comReset");
-	p[6] = GetProcAddress(hL,"comResponse");
+	proc[0] = GetProcAddress(dllHandle,"comOpen");
+	proc[1] = GetProcAddress(dllHandle,"comClose");
+	proc[2] = GetProcAddress(dllHandle,"comWrite");
+	proc[3] = GetProcAddress(dllHandle,"comSetProperty");
+	proc[4] = GetProcAddress(dllHandle,"comGetProperty");
+	proc[5] = GetProcAddress(dllHandle,"comReset");
+	proc[6] = GetProcAddress(dllHandle,"comResponse");
 
 	// Get hooks addresses
-	pComWrite = (ComWrite)GetProcAddress(hL,"comWrite");
+	pComWrite = (ComWrite)GetProcAddress(dllHandle,"comWrite");
 
 	// Print all hooks
 	DbgPrint("ComWrite at %08X", pComWrite);
 
 	// Install custom hook
-	uint32 baseAddress = (uint32)hL;
+	uint32 baseAddress = (uint32)dllHandle;
 	uint32 transportAddress = baseAddress+0x15E0;
 	returnAddress = baseAddress+0x15E0+5;
 	DbgPrint("Image base of dll is: %08X, transportEvent: %08X", baseAddress, transportAddress);
@@ -53,7 +48,7 @@ void Stollmann::finalize()
 	if(isGetInfo)
 		return;
 
-	FreeLibrary(hL);
+	FreeLibrary(dllHandle);
 
 	exit();
 }
@@ -84,7 +79,7 @@ bool Stollmann::installProxy(const char *myPath)
 	sprintf_s(original, MAX_PATH, "%s\\%s\\%s", installPath, APP_DIR, TARGET_ORIG);
 
 	// Not installed yet so just install it
-	if(!FileExists(original))
+	if(!Helper::FileExists(original))
 	{
 		DbgExport("Installing %s proxy dll", name);
 		MoveFile(proxy, original);
@@ -95,7 +90,7 @@ bool Stollmann::installProxy(const char *myPath)
 	}
 	else
 	{
-		if(IsNewVersion(myPath, proxy)) // Is this a different version, then we overwrite
+		if(Helper::IsNewVersion(myPath, proxy)) // Is this a different version, then we overwrite
 		{
 			DbgExport("Installing updated version %i.%i of %s", versionNo.major, versionNo.minor, name);
 			CopyFile(myPath, proxy, false);
@@ -156,52 +151,52 @@ int __stdcall eComWrite(HANDLE h, void* buffer, int size)
 	return stollmann->comWrite(h, buffer, size);
 }
 
-// ORIGINALS
+// Proxy
 extern "C" __declspec(naked) void __stdcall comOpen()
-	{
+{
 	__asm
-		{
-		jmp p[0*4];
-		}
+	{
+		jmp proc[0*4];
 	}
+}
 
 extern "C" __declspec(naked) void __stdcall comClose()
-	{
+{
 	__asm
-		{
-		jmp p[1*4];
-		}
+	{
+		jmp proc[1*4];
 	}
+}
 
 extern "C" __declspec(naked) void __stdcall comWrite()
-	{
+{
 	__asm
-		{
-		jmp p[2*4];
-		}
+	{
+		jmp proc[2*4];
 	}
+}
 
 extern "C" __declspec(naked) void __stdcall comSetProperty()
-	{
+{
 	__asm
-		{
-		jmp p[3*4];
-		}
+	{
+		jmp proc[3*4];
 	}
+}
 
 extern "C" __declspec(naked) void __stdcall comGetProperty()
-	{
+{
 	__asm
-		{
-		jmp p[4*4];
-		}
+	{
+		jmp proc[4*4];
 	}
+}
 
 extern "C" __declspec(naked) void __stdcall comReset()
 {
 	__asm
 	{
-		jmp p[5*4];
+		jmp proc[5*4];
 	}
 }
 
@@ -209,6 +204,6 @@ extern "C" __declspec(naked) void __stdcall comResponse()
 {
 	__asm
 	{
-		jmp p[6*4];
+		jmp proc[6*4];
 	}
 }

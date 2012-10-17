@@ -82,11 +82,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Cores\Helper.cpp" />
     <ClCompile Include="..\..\Cores\Skeleton.cpp" />
     <ClCompile Include="..\..\Cores\Stollmann\DllMain.cpp" />
     <ClCompile Include="..\..\Cores\Stollmann\Stollmann.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Cores\Helper.h" />
     <ClInclude Include="..\..\Cores\Skeleton.h" />
     <ClInclude Include="..\..\Cores\Stollmann\Stollmann.h" />
   </ItemGroup>

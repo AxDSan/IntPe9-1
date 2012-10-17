@@ -27,7 +27,9 @@ public:
 
 	void initialize();
 	void finalize();
-	char *getName();
+
+	void parsePython(const char *script){};
+	bool installProxy(const char *myPath){return false;};
 };
 
 extern Winsock *winsock;

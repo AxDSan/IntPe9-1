@@ -235,6 +235,7 @@
     <ClCompile Include="..\..\IntPe9\Views\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\typedef.h" />
     <CustomBuild Include="..\..\IntPe9\Views\FilterView.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing FilterView.h...</Message>

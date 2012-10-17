@@ -26,4 +26,7 @@
       <Extensions>cpp;cxx;c;def</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Cores\Winsock\Exports.def" />
+  </ItemGroup>
 </Project>

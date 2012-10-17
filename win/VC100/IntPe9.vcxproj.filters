@@ -316,6 +316,7 @@
     <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_Filter.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\typedef.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\IntPe9\Resources\IntPe.rc">

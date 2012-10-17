@@ -58,6 +58,7 @@ Injector::Injector(Manager *manager, QWidget *parent)
 
 	DebugPrint("Injector thread running.");
 
+	// Get debug privilege for opening protected processes
 	if(enableDebugPrivilege())
 		DebugPrint("Got SeDebugPrivilege");
 	else
@@ -157,9 +158,15 @@ bool Injector::enableDebugPrivilege()
 void Injector::selectProcess(const QModelIndex &index)
 {
 	CoreList *model = (CoreList*)index.model();
-	_selectedCore =  model->getCoreAt(index.row());
-	refreshProcessList();
-	_processGui->show();
+	Core *core =  model->getCoreAt(index.row());
+	if(!core->isProxy())
+	{
+		_selectedCore = core;
+		refreshProcessList();
+		_processGui->show();
+	}
+	else
+		DebugPrint("Cant inject a proxy dll");
 }
 
 void Injector::selectedProcess(const QModelIndex &index)
@@ -269,6 +276,11 @@ bool Injector::inject(uint32 pid, Core *core)
 	return true;
 }
 
+/**
+ * @brief	Gets all running processes on the computer
+ *
+ * @return	ProcessList
+ */
 ProcessList Injector::getProcesses()
 {
 	HANDLE hProcessSnap;
