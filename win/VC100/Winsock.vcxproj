@@ -93,6 +93,9 @@
     <ProjectReference Include="BoostPython.vcxproj">
       <Project>{132c4427-5fea-4c06-a9e7-3f5104e5cae3}</Project>
     </ProjectReference>
+    <ProjectReference Include="General.vcxproj">
+      <Project>{86c13717-6e05-4ab8-a8ef-7bcd50bb4b34}</Project>
+    </ProjectReference>
     <ProjectReference Include="UpxLoader.vcxproj">
       <Project>{d6996e56-e674-4102-9f4e-2407f4a87d4f}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

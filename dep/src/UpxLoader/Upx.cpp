@@ -135,18 +135,17 @@ unsigned long Upx::hookIatFunction(const char* moduleName, const char* functionN
 			if(!IsBadReadPtr(pszFunName, 4))
 			{
 				//OutputDebugStringA(pszFunName);
-
 				PDWORD lpAddr = (DWORD*)((BYTE*)hMod + pImportDesc->FirstThunk) + n;
 				if(strcmp(pszFunName, functionName) == 0)
 				{
 					DWORD oldProtection;
 					DWORD originalAddress = *lpAddr;
-					//OutputDebugStringA("Found a match!");
+					#ifdef _DEBUG
+					OutputDebugStringA("Found a match!");
+					#endif
 					VirtualProtect(lpAddr, 4, PAGE_READWRITE, &oldProtection);
 					*(DWORD*)lpAddr = newFunction;
 					VirtualProtect(lpAddr, 4, oldProtection, &oldProtection);
-
-
 					return originalAddress;
 				}
 			}

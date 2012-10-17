@@ -166,6 +166,12 @@ public:
 	{
 		return length+sizeof(MessagePacket);
 	}
+
+	void reset()
+	{
+		description[0] = '\0';
+		length = 0;
+	}
 };
 
 #pragma warning(pop)

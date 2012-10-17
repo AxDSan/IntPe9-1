@@ -36,7 +36,8 @@ BOOL APIENTRY DllMain(HANDLE thisHandle, DWORD callReason, LPVOID reserved)
 		stollmann->initialize();
 		break;
 	case DLL_PROCESS_DETACH:
-		stollmann->finalize();
+		if(stollmann != NULL)
+			stollmann->finalize();
 		break;
 	}
 
