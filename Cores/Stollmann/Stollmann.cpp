@@ -28,6 +28,7 @@ Stollmann::Stollmann() : Skeleton()
 
 void Stollmann::initialize()
 {
+	// Guard
 	if(isGetInfo)
 		return;
 

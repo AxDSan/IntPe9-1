@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WINSOCK_H
 
 #include <Skeleton.h>
+#include "General/Memory.h"
+
+// Forward decelerations
+void CaveSend();
 
 class Winsock : public Skeleton
 {

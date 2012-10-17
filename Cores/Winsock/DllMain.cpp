@@ -23,7 +23,7 @@ char *Winsock::name = "General winsock";
 char *Winsock::process = "";
 bool Winsock::hasProcess = false;
 bool Winsock::hasPython = false;
-bool Winsock::isProxy = true;
+bool Winsock::isProxy = false;
 /** Core information end **/
 
 Winsock *winsock = NULL;

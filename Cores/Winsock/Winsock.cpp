@@ -21,6 +21,9 @@ bool doFirst = true;
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
 
+// CodeCave addresses
+uint32 aSend;
+
 Winsock::Winsock()
 {
 
@@ -28,7 +31,11 @@ Winsock::Winsock()
 
 void Winsock::initialize()
 {
-	//First create buffers!!! then hook
+	// Guard
+	if(isGetInfo)
+		return;
+
+	// First create buffers!!! then hook
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	
@@ -39,6 +46,15 @@ void Winsock::initialize()
 	_oldWSARecv = (defWSARecv)_upx->hookIatFunction("ws2_32", "WSARecv", (unsigned long)&newWSARecv);
 	_oldSend = (defSend)_upx->hookIatFunction("ws2_32", "send", (unsigned long)&newSend);
 
+	// Now check for every function if we succeeded and if not lets do some inline hooking
+	if(!_oldSend)
+	{
+		DbgPrint("Hooking send by inline");
+		DbgPrint("Send at: %08X", send);
+		Memory::writeJump((uint8*)send, (uint8*)CaveSend);
+
+		aSend = ((uint32)&send) + 5;
+	}
 
 	DbgPrint("Original WSASend: %08X, New WSASend: %08X", _oldWSASend, &newWSASend);
 	DbgPrint("Original send: %08X, New send: %08X, real: %08X", _oldSend, &newSend, &send);
@@ -47,13 +63,53 @@ void Winsock::initialize()
 
 void Winsock::finalize()
 {
+	// Guard
+	if(isGetInfo)
+		return;
+
 	delete[]sendBuf;
 	delete[]recvBuf;
 }
 
+// CodeCave wrappers
+__declspec(naked) void CaveSend()
+{
+	__asm
+	{
+		// Restore prolog
+		mov edi, edi
+		push ebp
+		mov ebp, esp
+
+		// Push stack and call our function
+		pushad
+		mov eax, [ebp+0x8]
+		mov ecx, [ebp+0xC]
+		mov edx, [ebp+0x10]
+		mov ebx, [ebp+0x14]
+		push ebx
+		push edx
+		push ecx
+		push eax
+		call newSend
+		popad
+
+		// Return with send
+		jmp aSend
+	}
+}
+
+// HOOK wrappers
 int WSAAPI newSend(SOCKET s, const char FAR *buf, int len, int flags)
 {
 	winsock->DbgPrint("Send");
+	if(winsock->isAlive)
+	{
+		sendBuf->type = SEND;
+		sendBuf->length = len;
+		memcpy(sendBuf->getData(), buf, sendBuf->length);
+		winsock->sendMessagePacket(sendBuf);
+	}
 	return winsock->_oldSend(s, buf, len, flags);
 }
 

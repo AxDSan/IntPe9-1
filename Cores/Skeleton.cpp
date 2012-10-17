@@ -152,7 +152,7 @@ bool Skeleton::start()
 	}
 
 	
-	return isAlive = true;
+	return (isAlive = true);
 }
 
 void Skeleton::getCoreInfo(CoreInfo *info)
