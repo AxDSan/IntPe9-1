@@ -111,10 +111,10 @@ void Sniffer::eventLoop()
 	}
 
 	uint32 recvdSize, priority;
-	while(_packetIpc->get_num_msg() > 0)                                                //Get all packets from the queue
+	while(_packetIpc->get_num_msg() > 0)                                            //Get all packets from the queue
 		if(_packetIpc->try_receive(recvPacket, MP_MAX_SIZE, recvdSize, priority))   //Try to receive a packet
-			if(recvPacket->messagePacketSize() == recvdSize)                    //If it is all good
-			{                                                                   //Create the packet (in my thread) and add it to the model
+			if(recvPacket->messagePacketSize() == recvdSize)                        //If it is all good
+			{                                                                       //Create the packet (in my thread) and add it to the model
 				Packet *packet = new Packet(recvPacket);
 				_packetList->addPacket(packet, _filterList->showInTable(packet));             
 			}

@@ -49,7 +49,7 @@ void debugPrint(const char *str);
 
 #define MP_QUEUE_NAME "PacketListener_"
 #define MP_QUEUE_NAME_SIZE 30
-#define MP_MAX_SIZE 0x1500
+#define MP_MAX_SIZE 0x2000
 #define MP_MAX_NO 0x100
 
 #define CC_QUEUE_NAME "CommandControll_"

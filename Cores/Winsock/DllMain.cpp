@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Winsock.h"
 
 /** Core information begin **/
-VersionNo Winsock::versionNo(1, 1);
+VersionNo Winsock::versionNo(1, 3);
 char *Winsock::name = "General winsock";
 char *Winsock::process = "";
 bool Winsock::hasProcess = false;
