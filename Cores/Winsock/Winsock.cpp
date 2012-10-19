@@ -207,12 +207,17 @@ __declspec(naked) void CaveWSARecv()
 int WSAAPI newSend(SOCKET s, const char *buf, int len, int flags)
 {
 	// Get data and send it to front end
-	sendBuf->reset();
-	sendBuf->type = SEND;
-	sendBuf->length = len;
-	memcpy(sendBuf->getData(), buf, sendBuf->length);
-	winsock->sendMessagePacket(sendBuf);
-	
+	if(MP_MAX_SIZE < len)
+		winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", len, MP_MAX_SIZE);
+	else
+	{
+		sendBuf->reset();
+		sendBuf->type = SEND;
+		sendBuf->length = len;
+		memcpy(sendBuf->getData(), buf, sendBuf->length);
+		winsock->sendMessagePacket(sendBuf);
+	}
+
 	if(addressSend) //Inline hook so let codecave jump back
 		return 0;
 	return winsock->_oldSend(s, buf, len, flags);
@@ -231,22 +236,32 @@ void WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved)
 		return;
 
 	// Get data and send it to front end
-	sendBuf->reset();
-	sendBuf->type = RECV;
-	sendBuf->length = bytesRecved;
-	memcpy(sendBuf->getData(), buf, sendBuf->length);
-	winsock->sendMessagePacket(sendBuf);
+	if(MP_MAX_SIZE < bytesRecved)
+		winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", bytesRecved, MP_MAX_SIZE);
+	else
+	{
+		sendBuf->reset();
+		sendBuf->type = RECV;
+		sendBuf->length = bytesRecved;
+		memcpy(sendBuf->getData(), buf, sendBuf->length);
+		winsock->sendMessagePacket(sendBuf);
+	}
 }
 
 int WSAAPI newWSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
 {
 	for(uint32 i = 0; i <= dwBufferCount; i++)
 	{
-		sendBuf->reset();
-		sendBuf->type = WSASEND;
-		sendBuf->length = lpBuffers[i].len;
-		memcpy(sendBuf->getData(), lpBuffers[i].buf, sendBuf->length);
-		winsock->sendMessagePacket(sendBuf);
+		if(MP_MAX_SIZE < lpBuffers[i].len)
+			winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", lpBuffers[i].len, MP_MAX_SIZE);
+		else
+		{
+			sendBuf->reset();
+			sendBuf->type = WSASEND;
+			sendBuf->length = lpBuffers[i].len;
+			memcpy(sendBuf->getData(), lpBuffers[i].buf, sendBuf->length);
+			winsock->sendMessagePacket(sendBuf);
+		}
 	}
 
 	if(addressSend) //Inline hook so let codecave jump back
@@ -283,11 +298,16 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 {
 	for(uint32 i = 0; i <= dwBufferCount; i++)
 	{
-		sendBuf->reset();
-		sendBuf->type = WSASENDTO;
-		sendBuf->length = lpBuffers[i].len;
-		memcpy(sendBuf->getData(), lpBuffers[i].buf, sendBuf->length);
-		winsock->sendMessagePacket(sendBuf);
+		if(MP_MAX_SIZE < lpBuffers[i].len)
+			winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", lpBuffers[i].len, MP_MAX_SIZE);
+		else
+		{
+			sendBuf->reset();
+			sendBuf->type = WSASENDTO;
+			sendBuf->length = lpBuffers[i].len;
+			memcpy(sendBuf->getData(), lpBuffers[i].buf, sendBuf->length);
+			winsock->sendMessagePacket(sendBuf);
+		}
 	}
 	return winsock->_oldWSASendTo(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpTo, iToLen, lpOverlapped, lpCompletionRoutine);
 }
