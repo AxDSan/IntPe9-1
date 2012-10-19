@@ -63,14 +63,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>../../dep/include;../../</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dep/include;../../;</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>../../dep/include;../../../;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dep/include;../../;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
