@@ -22,12 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "General/Memory.h"
 
 // Static addresses
-static uint32 addressSend = 0;
-static uint32 addressRecv = 0;
-static uint32 addressWSASend = 0;
-static uint32 addressWSARecv = 0;
-static uint32 addressWSASendTo = 0;
-static uint32 addressWSARecvFrom = 0;
+extern uint32 addressSend;
+extern uint32 addressRecv;
+extern uint32 addressWSASend;
+extern uint32 addressWSARecv;
+extern uint32 addressWSASendTo;
+extern uint32 addressWSARecvFrom;
 
 // Forward decelerations
 void CaveSend();

@@ -17,6 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Winsock.h"
 
+uint32 addressSend = 0;
+uint32 addressRecv = 0;
+uint32 addressWSASend = 0;
+uint32 addressWSARecv = 0;
+uint32 addressWSASendTo = 0;
+uint32 addressWSARecvFrom = 0;
+
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
 
@@ -113,7 +120,7 @@ void Winsock::finalize()
 	exit();
 }
 
-// HOOK wrappers
+// Hooks
 int WSAAPI newSend(SOCKET s, const char *buf, int len, int flags)
 {
 	// Get data and send it to front end
@@ -150,11 +157,11 @@ void WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved)
 		winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", bytesRecved, MP_MAX_SIZE);
 	else
 	{
-		sendBuf->reset();
-		sendBuf->type = RECV;
-		sendBuf->length = bytesRecved;
-		memcpy(sendBuf->getData(), buf, sendBuf->length);
-		winsock->sendMessagePacket(sendBuf);
+		recvBuf->reset();
+		recvBuf->type = RECV;
+		recvBuf->length = bytesRecved;
+		memcpy(recvBuf->getData(), buf, recvBuf->length);
+		winsock->sendMessagePacket(recvBuf);
 	}
 }
 
@@ -194,7 +201,7 @@ int WSAAPI newWSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD
 
 	if(errorNo == 0 && *lpNumberOfBytesRecvd > 0)
 	{
-		sendBuf->reset();
+		recvBuf->reset();
 		recvBuf->type = WSARECV;
 		recvBuf->length = *lpNumberOfBytesRecvd;
 		memcpy(recvBuf->getData(), lpBuffers[0].buf, recvBuf->length);
@@ -226,7 +233,10 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 
 int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, struct sockaddr *lpFrom, LPINT lpFromlen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine)
 {
-	int errorNo = winsock->_oldWSARecvFrom(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpFrom, lpFromlen, lpOverlapped, lpCompletionRoutine);
+	int errorNo = 0;
+
+	if(!addressWSARecvFrom)
+		errorNo = winsock->_oldWSARecvFrom(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpFrom, lpFromlen, lpOverlapped, lpCompletionRoutine);
 
 	if(MP_MAX_SIZE < *lpNumberOfBytesRecvd)
 	{
@@ -236,7 +246,7 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 
 	if(errorNo == 0 && *lpNumberOfBytesRecvd > 0)
 	{
-			sendBuf->reset();
+			recvBuf->reset();
 			recvBuf->type = WSARECVFROM;
 			recvBuf->length = *lpNumberOfBytesRecvd;
 			memcpy(recvBuf->getData(), lpBuffers[0].buf, recvBuf->length);
