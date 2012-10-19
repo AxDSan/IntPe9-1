@@ -640,6 +640,7 @@ void QHexEditPrivate::paintEvent(QPaintEvent *event)
     QPen colHighlighted = QPen(this->palette().color(QPalette::WindowText));
     QBrush selected = QBrush(_selectionColor);
     QPen colSelected = QPen(Qt::white);
+	QPen colRed = QPen(Qt::red);
     QPen colStandard = QPen(this->palette().color(QPalette::WindowText));
 
     painter.setBackgroundMode(Qt::TransparentMode);
@@ -701,19 +702,12 @@ void QHexEditPrivate::paintEvent(QPaintEvent *event)
             int xPosAscii = _xPosAscii;
             for (int colIdx = 0; ((lineIdx + colIdx) < _xData.size() && (colIdx < BYTES_PER_LINE)); colIdx++)
             {
-				// Also highlight the ascii
+				// Higlight the ascii text based on selection area
 				int posBa = lineIdx + colIdx;
 				if ((getSelectionBegin() <= posBa) && (getSelectionEnd() > posBa))
-				{
-					painter.setBackground(selected);
-					painter.setBackgroundMode(Qt::OpaqueMode);
-					painter.setPen(colSelected);
-				}
+					painter.setPen(colRed);
 				else
-				{
-					painter.setBackgroundMode(Qt::TransparentMode);
 					painter.setPen(this->palette().color(QPalette::WindowText));
-				}
 
                 painter.drawText(xPosAscii, yPos, _xData.asciiChar(lineIdx + colIdx));
                 xPosAscii += _charWidth;

@@ -24,16 +24,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPixmap>
 #include <QByteArray>
 #include <QStringBuilder>
+#include <QAbstractItemModel>
 
 #define SUMMARY_LEN 16
 
-class Packet : public QObject
+class Packet : public QAbstractItemModel
 {
 	Q_OBJECT
 
 public:
 	Packet(MessagePacket *data);
 	~Packet();
+
+	// Item model
+	int columnCount(const QModelIndex &parent = QModelIndex()) const;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	QModelIndex parent(const QModelIndex &index) const;
+	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 	//Property's
 	QVariant getField(int column);

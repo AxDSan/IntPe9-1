@@ -36,6 +36,31 @@ Packet::~Packet()
 	delete _data;
 }
 
+int Packet::columnCount(const QModelIndex &parent) const
+{
+	return 0;
+}
+
+int Packet::rowCount(const QModelIndex &parent) const
+{
+	return 0;
+}
+
+QModelIndex Packet::parent(const QModelIndex &index) const
+{
+	return createIndex(0, 0);
+}
+
+QModelIndex Packet::index(int row, int column, const QModelIndex &parent) const
+{
+	return createIndex(0, 0);
+}
+
+QVariant Packet::data(const QModelIndex &index, int role) const
+{
+	return QVariant();
+}
+
 QString Packet::toHexString(QByteArray *buffer, int size, int start)
 {
 
