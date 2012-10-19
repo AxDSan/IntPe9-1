@@ -8,6 +8,9 @@
     <ClCompile Include="..\..\Cores\Winsock\Winsock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Cores\Winsock\Caves.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Cores\Skeleton.h">

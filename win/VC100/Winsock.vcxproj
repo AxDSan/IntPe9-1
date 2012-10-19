@@ -82,6 +82,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Cores\Skeleton.cpp" />
+    <ClCompile Include="..\..\Cores\Winsock\Caves.cpp" />
     <ClCompile Include="..\..\Cores\Winsock\DllMain.cpp" />
     <ClCompile Include="..\..\Cores\Winsock\Winsock.cpp" />
   </ItemGroup>

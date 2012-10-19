@@ -21,6 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Skeleton.h>
 #include "General/Memory.h"
 
+// Static addresses
+static uint32 addressSend = 0;
+static uint32 addressRecv = 0;
+static uint32 addressWSASend = 0;
+static uint32 addressWSARecv = 0;
+static uint32 addressWSASendTo = 0;
+static uint32 addressWSARecvFrom = 0;
+
 // Forward decelerations
 void CaveSend();
 void CaveRecv();
@@ -29,7 +37,7 @@ void CaveWSARecv();
 void CaveWSASendTo();
 void CaveWSARecvFrom();
 
-// Settings
+// Offsets for ws2_32.dll 
 #define OFFSET_JMP 5
 #define OFFSET_RECV 0x97
 #define OFFSET_WSARECV 0x95
