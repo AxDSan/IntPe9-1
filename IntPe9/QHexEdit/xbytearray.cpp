@@ -136,6 +136,8 @@ QChar XByteArray::asciiChar(int index)
     QChar ch = _data[index];
     if(!ch.isLetterOrNumber() && !ch.isPunct() && !ch.isSpace())
 	    ch = '.';
+	if(ch.category() == QChar::Other_Control || ch.category() == QChar::Other_Format)
+		ch = '.';
     return ch;
 }
 

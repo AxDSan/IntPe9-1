@@ -50,10 +50,12 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.setupUi(this);
 	_firstModel = true;
 
+	
 	#ifndef _DEBUG
 	_mainView.dockDebug->hide();
 	#else
 	_mainGui = this;
+	_mainView.dockDebug->hide();
 	#endif
 
 
