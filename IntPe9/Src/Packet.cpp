@@ -188,9 +188,9 @@ QPixmap Packet::getIcon()
 	else if(_type == RECV)
 		return QPixmap(":/Common/in3.png");
 	else if(_type == WSARECV)
-		return QPixmap(":/Common/in2.png");
-	else if(_type == WSARECVFROM || _type == RECVFROM)
 		return QPixmap(":/Common/in.png");
+	else if(_type == WSARECVFROM || _type == RECVFROM)
+		return QPixmap(":/Common/in2.png");
 	else if(_type == INJECT_RECV)
 		return QPixmap(":/Common/customIn.png");
 	else if(_type == INJECT_SEND)
