@@ -27,6 +27,13 @@ void CaveRecv();
 void CaveWSASend();
 void CaveWSARecv();
 void CaveWSASendTo();
+void CaveWSARecvFrom();
+
+// Settings
+#define OFFSET_JMP 5
+#define OFFSET_RECV 0x97
+#define OFFSET_WSARECV 0x95
+#define OFFSET_WSARECVFROM 0x8F
 
 class Winsock : public Skeleton
 {

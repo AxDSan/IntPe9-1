@@ -26,6 +26,7 @@ uint32 addressRecv = 0;
 uint32 addressWSASend = 0;
 uint32 addressWSARecv = 0;
 uint32 addressWSASendTo = 0;
+uint32 addressWSARecvFrom = 0;
 
 Winsock::Winsock()
 {
@@ -42,34 +43,34 @@ void Winsock::initialize()
 	sendBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	
-	// Hook WSA by IAT
-	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction("ws2_32", "WSASendTo", (unsigned long)&newWSASendTo);
-	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction("ws2_32", "WSARecvFrom", (unsigned long)&newWSARecvFrom);
-	_oldWSASend = (defWSASend)_upx->hookIatFunction("ws2_32", "WSASend", (unsigned long)&newWSASend);
-	_oldWSARecv = (defWSARecv)_upx->hookIatFunction("ws2_32", "WSARecv", (unsigned long)&newWSARecv);
+	// Try to hook all send/recv functions from ws2_32 by IAT
 	_oldSend = (defSend)_upx->hookIatFunction("ws2_32", "send", (unsigned long)&newSend);
 	_oldRecv = (defRecv)_upx->hookIatFunction("ws2_32", "recv", (unsigned long)&newRecv);
+	_oldWSASend = (defWSASend)_upx->hookIatFunction("ws2_32", "WSASend", (unsigned long)&newWSASend);
+	_oldWSARecv = (defWSARecv)_upx->hookIatFunction("ws2_32", "WSARecv", (unsigned long)&newWSARecv);
+	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction("ws2_32", "WSASendTo", (unsigned long)&newWSASendTo);
+	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction("ws2_32", "WSARecvFrom", (unsigned long)&newWSARecvFrom);
 
 	// Now check for every function if we succeeded and if not lets do some inline hooking
 	try
 	{
 		if(!_oldSend)
 		{
-			addressSend = ((uint32)&send) + 5;
+			addressSend = ((uint32)&send) + OFFSET_JMP;
 			DbgPrint("Hooking send by inline: %08X", send);
 			if((uint32)&send)
 				Memory::writeJump((uint8*)send, (uint8*)CaveSend);
 		}
 		if(!_oldRecv)
 		{
-			addressRecv = ((uint32)&recv) + 0x97;
+			addressRecv = ((uint32)&recv) + OFFSET_RECV;
 			DbgPrint("Hooking recv by inline: %08X", addressRecv);
 			if((uint32)&recv)
 				Memory::writeJump((uint8*)addressRecv, (uint8*)CaveRecv, 1);
 		}
 		if(!_oldWSASend)
 		{
-			addressWSASend = ((uint32)&WSASend) + 5;
+			addressWSASend = ((uint32)&WSASend) + OFFSET_JMP;
 			DbgPrint("Hooking WSASend by inline: %08X", WSASend);
 			if((uint32)&WSASend)
 				Memory::writeJump((uint8*)WSASend, (uint8*)CaveWSASend);
@@ -77,17 +78,24 @@ void Winsock::initialize()
 		}
 		if(!_oldWSARecv)
 		{
-			addressWSARecv = ((uint32)&WSARecv) + 0x95;
+			addressWSARecv = ((uint32)&WSARecv) + OFFSET_WSARECV;
 			DbgPrint("Hooking WSARecv inline: %08X", addressWSARecv);
 			if((uint32)&WSARecv)
 				Memory::writeJump((uint8*)addressWSARecv, (uint8*)CaveWSARecv);
 		}
 		if(!_oldWSASendTo)
 		{
-			addressWSASendTo = ((uint32)&WSASendTo) + 5;
+			addressWSASendTo = ((uint32)&WSASendTo) + OFFSET_JMP;
 			DbgPrint("Hooking WSASendTo inline: %08X", addressWSASendTo);
 			if((uint32)&WSASendTo)
 				Memory::writeJump((uint8*)WSASendTo, (uint8*)CaveWSASendTo);
+		}
+		if(!_oldWSARecvFrom)
+		{
+			addressWSARecvFrom = ((uint32)&WSARecvFrom) + OFFSET_WSARECVFROM;
+			DbgPrint("Hooking WSARecvFrom inline: %08X", addressWSARecvFrom);
+			if((uint32)&WSARecvFrom)
+				Memory::writeJump((uint8*)addressWSARecvFrom, (uint8*)CaveWSARecvFrom);
 		}
 	}
 	catch(...)
@@ -236,6 +244,35 @@ __declspec(naked) void CaveWSASendTo()
 
 		// Return with send
 		jmp addressWSASendTo
+	}
+}
+
+__declspec(naked) void CaveWSARecvFrom()
+{
+	__asm
+	{
+		// Only call our hook function if there was no error
+		cmp eax, 0
+		jne finish
+
+		push eax //Contains state
+		push [ebp+0x28]
+		push [ebp+0x24]
+		push [ebp+0x20]
+		push [ebp+0x1C]
+		push [ebp+0x18]
+		push [ebp+0x14]
+		push [ebp+0x10]
+		push [ebp+0x0C]
+		push [ebp+0x08]
+		call newWSARecvFrom
+		pop eax
+
+		// Restore bytes
+		finish:
+		pop esi
+		leave
+		retn 0x24
 	}
 }
 
