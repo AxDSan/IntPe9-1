@@ -31,11 +31,17 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QSplitter" name="splitter_2">
+        <widget class="QSplitter" name="mainSplitter">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <widget class="QTableView" name="tablePackets">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <family>Consolas</family>
@@ -91,6 +97,11 @@
           </attribute>
           <attribute name="verticalHeaderDefaultSectionSize">
            <number>17</number>
+          </attribute>
+         </widget>
+         <widget class="QTreeView" name="protocolView">
+          <attribute name="headerVisible">
+           <bool>false</bool>
           </attribute>
          </widget>
          <widget class="QWidget" name="hexWidget" native="true">

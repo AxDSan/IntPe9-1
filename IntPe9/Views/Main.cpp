@@ -95,7 +95,13 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.toolBar->addAction(_mainView.scrollAction);
 	_mainView.toolBar->addAction(_mainView.eraseAction);
 	_mainView.toolBar->addAction(_mainView.pythonAction);
-	
+
+
+	// Set initial view
+	QList<int> list;
+	list << 200 << 0 << 100;
+	_mainView.mainSplitter->setSizes(list);
+
 	//Setup connections
 	//Menu
 	connect(_hexView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(ShowHexContextMenu(const QPoint&)));
