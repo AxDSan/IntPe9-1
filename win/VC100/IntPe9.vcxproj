@@ -67,6 +67,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\%(Filename)9\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\..\..\%(Filename)9\GeneratedFiles\qrc_%(Filename).cpp</Command>
     </CustomBuild>
+    <None Include="..\..\IntPe9\Resources\in2.png" />
+    <None Include="..\..\IntPe9\Resources\in3.png" />
+    <None Include="..\..\IntPe9\Resources\out2.png" />
+    <None Include="..\..\IntPe9\Resources\out3.png" />
     <None Include="..\..\IntPe9\Resources\Resources\eraser.png">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

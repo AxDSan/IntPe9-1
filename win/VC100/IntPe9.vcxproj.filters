@@ -139,6 +139,18 @@
     <None Include="..\..\IntPe9\Resources\Resources\no.png">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\IntPe9\Resources\in3.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\in2.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\out3.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\IntPe9\Resources\out2.png">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\IntPe9\EntryPoint.cpp" />

@@ -28,11 +28,8 @@ uint32 Injector::getTimeout()
 	return 50;
 }
 
-
 Injector::Injector(Manager *manager, QWidget *parent)
 {
-	
-
 	//Build processList gui
 	_parent = parent;
 	_processGui = new QDialog(_parent, Qt::Dialog);
@@ -176,7 +173,7 @@ void Injector::selectedProcess(const QModelIndex &index)
 
 	if(!isInjected(pid, _selectedCore))
 		if(!inject(pid, _selectedCore))
-			return;
+			return DebugPrint("Failed to inject the core");
 
 	if(!_manager->hasSniffer(pid))
 	{
@@ -230,8 +227,8 @@ bool Injector::isInjected(uint32 pid, Core *core)
  */
 bool Injector::inject(uint32 pid, Core *core)
 {
-	QString dbg = "Injecting core: ";
-	DebugPrint((dbg+core->getName()).toStdString().c_str());
+	QString dbg = QString("Injecting core: ")+core->getName();
+	DebugPrint(dbg.toStdString().c_str());
 
 	if(core == NULL)
 		return false;
@@ -335,10 +332,10 @@ bool Injector::injectAll()
 	//Walk through all processes
 	do
 	{
-		if(_injected.find(pe32.th32ProcessID) == _injected.end())                                       //If we already injected to this pid skip it!
+		if(_injected.find(pe32.th32ProcessID) == _injected.end())                       //If we already injected to this pid skip it!
 		{
 			QString processName = QString::fromWCharArray(pe32.szExeFile);
-			Core *core = _manager->getCore(processName);                                            //If we have a Core for this process
+			Core *core = _manager->getCore(processName);                                //If we have a Core for this process
 			if(core)
 			{
 				// If the core is not a proxy inject else just start sniffing
@@ -346,9 +343,9 @@ bool Injector::injectAll()
 				{
 					QString dbg = QString("Found an injectable exe: ") + processName;
 					DebugPrint(dbg.toStdString().c_str());
-					if(!isInjected(pe32.th32ProcessID, core))                               //Check if we already injected
+					if(!isInjected(pe32.th32ProcessID, core))                           //Check if we already injected
 						if(!inject(pe32.th32ProcessID, core))                           //Not yet injected so try now
-							continue;                                               //We failed to inject so skip this injection (and try again later)
+							continue;                                                   //We failed to inject so skip this injection (and try again later)
 				}
 
 				_injected.insert(pe32.th32ProcessID);                                   //Remember that we injected to this process
