@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Winsock.h"
 
-bool doFirst = true;
 MessagePacket *sendBuf;
 MessagePacket *recvBuf;
 
@@ -25,6 +24,7 @@ MessagePacket *recvBuf;
 uint32 addressSend = 0;
 uint32 addressRecv = 0;
 uint32 addressWSARecv = 0;
+uint32 addressWSASend = 0;
 
 Winsock::Winsock()
 {
@@ -65,6 +65,14 @@ void Winsock::initialize()
 			DbgPrint("Hooking recv by inline: %08X", addressRecv);
 			if((uint32)&recv)
 				Memory::writeJump((uint8*)addressRecv, (uint8*)CaveRecv, 1);
+		}
+		if(!_oldWSASend)
+		{
+			addressWSASend = ((uint32)&WSASend) + 5;
+			DbgPrint("Hooking WSASend by inline: %08X", WSASend);
+			if((uint32)&WSASend)
+				Memory::writeJump((uint8*)WSASend, (uint8*)CaveWSASend);
+
 		}
 		if(!_oldWSARecv)
 		{
@@ -107,14 +115,14 @@ __declspec(naked) void CaveSend()
 		push ebp
 		mov ebp, esp
 
-		// Push stack and call our function
-		pushad
+		// call our function
+		push eax
 		push [ebp+0x14]
 		push [ebp+0x10]
 		push [ebp+0xC]
 		push [ebp+0x8]
 		call newSend
-		popad
+		pop eax
 
 		// Return with send
 		jmp addressSend
@@ -139,6 +147,32 @@ __declspec(naked) void CaveRecv()
 		pop ebx
 		leave 
 		ret 16
+	}
+}
+
+__declspec(naked) void CaveWSASend()
+{
+	__asm
+	{
+		// Restore prolog
+		mov edi, edi
+		push ebp
+		mov ebp, esp
+
+		// call our function
+		push eax
+		push [ebp+0x20]
+		push [ebp+0x1C]
+		push [ebp+0x18]
+		push [ebp+0x14]
+		push [ebp+0x10]
+		push [ebp+0x0C]
+		push [ebp+0x08]
+		call newWSASend
+		pop eax
+
+		// Return with send
+		jmp addressWSASend
 	}
 }
 
@@ -215,6 +249,8 @@ int WSAAPI newWSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD
 		winsock->sendMessagePacket(sendBuf);
 	}
 
+	if(addressSend) //Inline hook so let codecave jump back
+		return 0;
 	return winsock->_oldWSASend(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
 }
 

@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Forward decelerations
 void CaveSend();
 void CaveRecv();
+void CaveWSASend();
 void CaveWSARecv();
 
 class Winsock : public Skeleton
