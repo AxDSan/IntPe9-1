@@ -23,8 +23,9 @@ MessagePacket *recvBuf;
 // CodeCave addresses
 uint32 addressSend = 0;
 uint32 addressRecv = 0;
-uint32 addressWSARecv = 0;
 uint32 addressWSASend = 0;
+uint32 addressWSARecv = 0;
+uint32 addressWSASendTo = 0;
 
 Winsock::Winsock()
 {
@@ -80,6 +81,13 @@ void Winsock::initialize()
 			DbgPrint("Hooking WSARecv inline: %08X", addressWSARecv);
 			if((uint32)&WSARecv)
 				Memory::writeJump((uint8*)addressWSARecv, (uint8*)CaveWSARecv);
+		}
+		if(!_oldWSASendTo)
+		{
+			addressWSASendTo = ((uint32)&WSASendTo) + 5;
+			DbgPrint("Hooking WSASendTo inline: %08X", addressWSASendTo);
+			if((uint32)&WSASendTo)
+				Memory::writeJump((uint8*)WSASendTo, (uint8*)CaveWSASendTo);
 		}
 	}
 	catch(...)
@@ -203,6 +211,34 @@ __declspec(naked) void CaveWSARecv()
 	}
 }
 
+__declspec(naked) void CaveWSASendTo()
+{
+	__asm
+	{
+		// Restore prolog
+		mov edi, edi
+		push ebp
+		mov ebp, esp
+
+		// call our function
+		push eax
+		push [ebp+0x28]
+		push [ebp+0x24]
+		push [ebp+0x20]
+		push [ebp+0x1C]
+		push [ebp+0x18]
+		push [ebp+0x14]
+		push [ebp+0x10]
+		push [ebp+0x0C]
+		push [ebp+0x08]
+		call newWSASendTo
+		pop eax
+
+		// Return with send
+		jmp addressWSASendTo
+	}
+}
+
 // HOOK wrappers
 int WSAAPI newSend(SOCKET s, const char *buf, int len, int flags)
 {
@@ -264,7 +300,7 @@ int WSAAPI newWSASend(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD
 		}
 	}
 
-	if(addressSend) //Inline hook so let codecave jump back
+	if(addressWSASend) //Inline hook so let codecave jump back
 		return 0;
 	return winsock->_oldWSASend(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine);
 }
@@ -309,6 +345,8 @@ int WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWO
 			winsock->sendMessagePacket(sendBuf);
 		}
 	}
+	if(addressWSASendTo) //Inline hook so let codecave jump back
+		return 0;
 	return winsock->_oldWSASendTo(s, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpTo, iToLen, lpOverlapped, lpCompletionRoutine);
 }
 

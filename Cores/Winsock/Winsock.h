@@ -26,6 +26,7 @@ void CaveSend();
 void CaveRecv();
 void CaveWSASend();
 void CaveWSARecv();
+void CaveWSASendTo();
 
 class Winsock : public Skeleton
 {
