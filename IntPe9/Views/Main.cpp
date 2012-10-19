@@ -96,7 +96,6 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.toolBar->addAction(_mainView.eraseAction);
 	_mainView.toolBar->addAction(_mainView.pythonAction);
 
-
 	// Set initial view
 	QList<int> list;
 	list << 200 << 0 << 100;
@@ -256,4 +255,5 @@ void MainGui::selectedPacketChanged(const QModelIndex &current, const QModelInde
 	PacketList *model = (PacketList*)current.model();
 	Packet *packet = model->getPacketAt(current.row());
 	_hexView->setData(*packet->getData());
+	_mainView.protocolView->setModel(packet);
 }

@@ -48,12 +48,12 @@ int Packet::rowCount(const QModelIndex &parent) const
 
 QModelIndex Packet::parent(const QModelIndex &index) const
 {
-	return createIndex(0, 0);
+	return QModelIndex();
 }
 
 QModelIndex Packet::index(int row, int column, const QModelIndex &parent) const
 {
-	return createIndex(0, 0);
+	return QModelIndex();
 }
 
 QVariant Packet::data(const QModelIndex &index, int role) const
