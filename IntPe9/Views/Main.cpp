@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Windows.h>
 #include <Shlobj.h>
 #include "Main.h"
+#include "Protocol.h"
 
 MainGui *_mainGui;
 
@@ -55,7 +56,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	_mainView.dockDebug->hide();
 	#else
 	_mainGui = this;
-	_mainView.dockDebug->hide();
+	//_mainView.dockDebug->hide();
 	#endif
 
 
@@ -67,6 +68,8 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 	//Install my python version (if they did not have it yet)
 	installPython();
+
+	Protocol *prot = new Protocol("Protocol/League of Legends.xml");
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);

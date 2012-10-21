@@ -307,6 +307,9 @@
     <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_Filter.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\IntPe9\Src\Protocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h">
@@ -329,6 +332,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\typedef.h" />
+    <ClInclude Include="..\..\IntPe9\Src\Protocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\IntPe9\Resources\IntPe.rc">
