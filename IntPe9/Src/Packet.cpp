@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Packet::Packet(MessagePacket *data)
 {
+	protocol = NULL;
+
 	//Copy data
 	_length = data->length;
 	_type = data->type;
@@ -36,29 +38,16 @@ Packet::~Packet()
 	delete _data;
 }
 
-int Packet::columnCount(const QModelIndex &parent) const
+QList<QTreeWidgetItem*> *Packet::getProtocol(Protocol *prot)
 {
-	return 0;
-}
-
-int Packet::rowCount(const QModelIndex &parent) const
-{
-	return 0;
-}
-
-QModelIndex Packet::parent(const QModelIndex &index) const
-{
-	return QModelIndex();
-}
-
-QModelIndex Packet::index(int row, int column, const QModelIndex &parent) const
-{
-	return QModelIndex();
-}
-
-QVariant Packet::data(const QModelIndex &index, int role) const
-{
-	return QVariant();
+	// Build the protocol tree
+	if(protocol == NULL)
+	{
+		protocol = new QList<QTreeWidgetItem*>();
+		for (int i = 0; i < 10; ++i)
+			protocol->append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
+	}
+	return protocol;
 }
 
 QString Packet::toHexString(QByteArray *buffer, int size, int start)

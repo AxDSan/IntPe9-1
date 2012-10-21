@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Protocol.h"
 
 MainGui *_mainGui;
+Protocol *prot;
 
 void debugPrint(const char *str)
 {
@@ -69,7 +70,7 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 	//Install my python version (if they did not have it yet)
 	installPython();
 
-	Protocol *prot = new Protocol("Protocol/League of Legends.xml");
+	prot = new Protocol("Protocol/NXP PN544.xml");
 
 	//Create all sub views
 	_aboutGui = new AboutGui(this);
@@ -257,6 +258,8 @@ void MainGui::selectedPacketChanged(const QModelIndex &current, const QModelInde
 {
 	PacketList *model = (PacketList*)current.model();
 	Packet *packet = model->getPacketAt(current.row());
+
 	_hexView->setData(*packet->getData());
-	_mainView.protocolView->setModel(packet);
+	_mainView.protocolView->clear();
+	_mainView.protocolView->insertTopLevelItems(0, *packet->getProtocol(prot));
 }

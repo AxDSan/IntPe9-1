@@ -24,24 +24,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPixmap>
 #include <QByteArray>
 #include <QStringBuilder>
-#include <QAbstractItemModel>
+#include <QTreeWidgetItem>
+#include <QList>
+#include "Protocol.h"
 
 #define SUMMARY_LEN 16
 
-class Packet : public QAbstractItemModel
+class Packet : public QObject
 {
 	Q_OBJECT
 
 public:
 	Packet(MessagePacket *data);
 	~Packet();
-
-	// Item model
-	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	QModelIndex parent(const QModelIndex &index) const;
-	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 	//Property's
 	QVariant getField(int column);
@@ -52,6 +47,7 @@ public:
 	PacketType getType();
 	QByteArray *getData();
 
+	QList<QTreeWidgetItem*> *getProtocol(Protocol *prot);
 	QString toC();
 	QString toPython();
 
@@ -69,6 +65,7 @@ private:
 	PacketType _type;
 	QByteArray *_data;
 
+	QList<QTreeWidgetItem*> *protocol;
 	//List view fields
 	QString _summary;
 };

@@ -60,13 +60,12 @@ Protocol::Protocol(const char *xml)
 						field.name = xFields.text();
 						field.length = (xFields.hasAttribute("length") ? xFields.attribute("type").toInt() : getLength(field.type));
 						field.isVisible = (xFields.attribute("visible", "true") == "true");
-
-						
 						field.offsetAbsolute = xFields.attribute("offset").toInt(&field.isAbsolute);
 						if(!field.isAbsolute)
 							field.offsetRelative = xFields.attribute("offset");
+						packet->fields.push_back(field);
 
-						xFields = xPacket.nextSiblingElement();
+						xFields = xFields.nextSiblingElement();
 					}
 					xPacket = xPacket.nextSiblingElement();
 				}

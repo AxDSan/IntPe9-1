@@ -99,7 +99,7 @@
            <number>17</number>
           </attribute>
          </widget>
-         <widget class="QTreeView" name="protocolView">
+         <widget class="QTreeWidget" name="protocolView">
           <attribute name="headerVisible">
            <bool>false</bool>
           </attribute>
