@@ -87,21 +87,71 @@ void Injector::eventLoop()
 
 QPixmap Injector::getIcon(uint32 pid)
 {
-	wchar_t filePath[MAX_PATH];
 	HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 	if(process != INVALID_HANDLE_VALUE && process != 0)
 	{
-		DWORD size = MAX_PATH*sizeof(wchar_t);
-		QueryFullProcessImageName(process, 0, filePath, &size);
-		HICON icoHandle = ExtractIcon((HINSTANCE)process, filePath, 0);
-		CloseHandle(process);
+		#ifdef NO_WINXP
+			// Working code from win vista and up
+			wchar_t filePath[MAX_PATH];
+			DWORD size = MAX_PATH*sizeof(wchar_t);
+			QueryFullProcessImageName(process, 0, filePath, &size);
+			HICON icoHandle = ExtractIcon((HINSTANCE)process, filePath, 0);
+			CloseHandle(process);
+			if((int)icoHandle > 1)
+			{
+				QPixmap img = QPixmap::fromWinHICON(icoHandle);
+				DestroyIcon(icoHandle);
+				return img;
+			}
+		#else
+			// Freaking win xp compatibility...
+			wchar_t *driverLetter;
+			wchar_t dosPath[MAX_PATH];
+			wchar_t driveLetters[MAX_PATH];
 
-		if((int)icoHandle > 1)
-		{
-			QPixmap img = QPixmap::fromWinHICON(icoHandle);
-			DestroyIcon(icoHandle);
-			return img;
-		}
+			int i = 0;
+			uint32 prevLength;
+			QString path;
+
+			// Get the dos name and all drive letters
+			GetProcessImageFileName(process, dosPath, MAX_PATH);
+			uint32 length = GetLogicalDriveStrings(MAX_PATH-1, driveLetters);
+			driverLetter = (wchar_t*)&driveLetters;
+			path = QString::fromStdWString(dosPath);
+
+			// Parse all drives and make a translation table
+			while(i < length)
+			{
+				// Interpret the drive letter
+				QString drive;
+				drive = QString::fromStdWString(driverLetter);
+				i += drive.length()+1*(sizeof(wchar_t));
+				drive = drive.remove("\\");
+				QueryDosDevice(drive.toStdWString().c_str(), dosPath, MAX_PATH);
+				driverLetter += drive.length()+2*(sizeof(wchar_t));
+
+				// Check if we have a match already
+				prevLength = path.length();
+				path.replace(QString::fromStdWString(dosPath), drive);
+				if(prevLength != path.length())
+					break;
+			}
+
+			// Get the icon
+			if(prevLength != path.length())
+			{
+				HICON icoHandle = ExtractIconA((HINSTANCE)process, path.toStdString().c_str(), 0);
+				CloseHandle(process);
+				if((int)icoHandle > 1)
+				{
+					QPixmap img = QPixmap::fromWinHICON(icoHandle);
+					DestroyIcon(icoHandle);
+					return img;
+				}
+			}
+			else
+				CloseHandle(process);
+		#endif
 	}
 	QPixmap img(16, 1);
 	img.fill(QColor(0,0,0,0));
