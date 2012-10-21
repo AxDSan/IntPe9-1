@@ -472,6 +472,8 @@ IF NOT EXIST "$(OutDir)\QtGuid4.dll" copy $(QTDIR)\bin\QtGuid4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\QtXmld4.dll" copy $(QTDIR)\bin\QtXmld4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\PythonE9.zip" copy ..\..\dep\lib\PythonE9.zip $(OutDir)
+IF NOT EXIST "$(OutDir)\msvcr100d.dll" copy $(SystemRoot)\System32\msvcr100d.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\msvcp100d.dll" copy $(SystemRoot)\System32\msvcp100d.dll $(OutDir)
 $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
     </PostBuildEvent>
     <PostBuildEvent>
@@ -495,8 +497,10 @@ $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(OutDir)\QtCore4.dll" copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\QtGui4.dll" copy $(QTDIR)\bin\QtGui4.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\QtXml4.dll" copy $(QTDIR)\bin\QtXml4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\PythonE9.zip" copy ..\..\dep\lib\PythonE9.zip $(OutDir)
+IF NOT EXIST "$(OutDir)\msvcr100.dll" copy $(SystemRoot)\System32\msvcr100.dll $(OutDir)
 $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
     </PostBuildEvent>
     <PostBuildEvent>

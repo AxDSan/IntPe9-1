@@ -74,7 +74,7 @@ void Stollmann::finalize()
 bool Stollmann::installProxy(const char *myPath)
 {
 	HKEY hKey;
-	char installPath[MAX_PATH*2];
+	char installPath[MAX_PATH];
 	char proxy[MAX_PATH], original[MAX_PATH];
 
 	long lRet = RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\Stollmann\\NFCStack+Eva R04", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY,  &hKey);
@@ -84,12 +84,12 @@ bool Stollmann::installProxy(const char *myPath)
 		return false;
 	}
 
-	DWORD size;
+	DWORD size = MAX_PATH;
 	lRet = RegQueryValueEx(hKey, "InstallDir", 0, NULL, (LPBYTE)installPath, &size);
 	RegCloseKey(hKey);
 	if(lRet != ERROR_SUCCESS)
 	{
-		DbgExport("Could not read the key (error %i)", lRet);
+		DbgExport("Could not read the key (error %i) (size: %i)", lRet, size);
 		return false;
 	}
 

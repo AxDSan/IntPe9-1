@@ -140,7 +140,7 @@ QPixmap Injector::getIcon(uint32 pid)
 			// Get the icon
 			if(prevLength != path.length())
 			{
-				HICON icoHandle = ExtractIconA((HINSTANCE)process, path.toStdString().c_str(), 0);
+				HICON icoHandle = ExtractIcon((HINSTANCE)process, path.toStdWString().c_str(), 0);
 				CloseHandle(process);
 				if((int)icoHandle > 1)
 				{
