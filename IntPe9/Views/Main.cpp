@@ -148,12 +148,16 @@ void MainGui::addDebugString(char *str)
 
 void MainGui::installPython()
 {
+	
 	wchar_t system32[MAX_PATH];
 	SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_DEFAULT, system32);
+	debugPrint(QString::fromWCharArray(system32).toStdString().c_str());
 	QString pythonE9 = QString::fromWCharArray(system32)+QDir::separator()+"PythonE9.dll";
 	QString pythonLib = QString::fromWCharArray(system32)+QDir::separator()+"PythonE9.zip";
-	CopyFile(L"PythonE9.dll", pythonE9.toStdWString().c_str(), TRUE);
-	CopyFile(L"PythonE9.zip", pythonLib.toStdWString().c_str(), TRUE);
+
+	// Just try to copy but don not overwrite to maximize performance
+	CopyFile(L"PythonE9.dll", pythonE9.toStdWString().c_str(), true);
+	CopyFile(L"PythonE9.zip", pythonLib.toStdWString().c_str(), true);
 }
 
 void MainGui::copyAsC()

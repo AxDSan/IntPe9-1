@@ -465,6 +465,7 @@
       <AdditionalLibraryDirectories>$(QTDIR)\lib</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>qtmaind.lib;QtCored4.lib;QtGuid4.lib;user32.lib;Shell32.lib;QtXmld4.lib;QtXmlPatternsd4.lib</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(OutDir)\QtCored4.dll" copy $(QTDIR)\bin\QtCored4.dll $(OutDir)
@@ -493,6 +494,7 @@ $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;user32.lib;Shell32.lib;QtXml4.lib;QtXmlPatterns4.lib</AdditionalDependencies>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(OutDir)\QtCore4.dll" copy $(QTDIR)\bin\QtCore4.dll $(OutDir)
@@ -501,6 +503,7 @@ IF NOT EXIST "$(OutDir)\QtXml4.dll" copy $(QTDIR)\bin\QtXml4.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\pythonE9.dll" copy ..\..\dep\lib\pythonE9.dll $(OutDir)
 IF NOT EXIST "$(OutDir)\PythonE9.zip" copy ..\..\dep\lib\PythonE9.zip $(OutDir)
 IF NOT EXIST "$(OutDir)\msvcr100.dll" copy $(SystemRoot)\System32\msvcr100.dll $(OutDir)
+IF NOT EXIST "$(OutDir)\msvcp100.dll" copy $(SystemRoot)\System32\msvcp100.dll $(OutDir)
 $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
     </PostBuildEvent>
     <PostBuildEvent>
