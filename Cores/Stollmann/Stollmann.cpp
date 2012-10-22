@@ -18,7 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Stollmann.h"
 
 FARPROC proc[7];
+HANDLE comHandle = NULL;
 uint32 returnAddress;
+
+BOOST_PYTHON_MODULE(stollman)
+{
+	boost::python::class_<Stollmann>("sm")
+		.def("send", &Stollmann::send);
+
+	def("getInstance", &Stollmann::getInstance, boost::python::return_value_policy<boost::python::reference_existing_object>());
+}
 
 Stollmann::Stollmann() : Skeleton()
 {
@@ -59,6 +68,18 @@ void Stollmann::initialize()
 
 	// Start the skeleton
 	start();
+
+	// Start command listener + python
+	startThread();
+
+	// Extend python
+	initstollman();
+	boost::python::object mainModule = boost::python::import("__main__");
+	pythonNamespace = mainModule.attr("__dict__");
+	PyRun_SimpleString("import stollman");
+	PyRun_SimpleString("import cStringIO");
+	PyRun_SimpleString("sm = stollman.getInstance()");
+	PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
 }
 
 void Stollmann::finalize()
@@ -69,6 +90,11 @@ void Stollmann::finalize()
 	FreeLibrary(dllHandle);
 
 	exit();
+}
+
+Stollmann *Stollmann::getInstance()
+{
+	return stollmann;
 }
 
 bool Stollmann::installProxy(const char *myPath)
@@ -117,10 +143,63 @@ bool Stollmann::installProxy(const char *myPath)
 	return true;
 }
 
+// Python extensions
+void Stollmann::parsePython(const char *script)
+{
+	try
+	{
+		exec(script, pythonNamespace);
+	}
+	catch(boost::python::error_already_set const &)
+	{
+		PyErr_Print();
+		boost::python::object sys(boost::python::handle<>(PyImport_ImportModule("sys")));
+		boost::python::object err = sys.attr("stderr");
+		std::string errorText = boost::python::extract<std::string>(err.attr("getvalue")());
+		DbgPrint(errorText.c_str());
+		PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
+	}
+}
+
+uint8 *Stollmann::listToChars(boost::python::list &pList, uint32 *size)
+{
+	boost::python::stl_input_iterator<uint8> begin(pList), end;
+	std::list<uint8>bytes;
+	bytes.assign(begin, end);
+
+	*size = bytes.size();
+	uint8 *buffer;
+	buffer = new uint8[bytes.size()];
+
+	uint32 i = 0;
+	while(!bytes.empty())
+	{
+		buffer[i] = bytes.front();
+		bytes.pop_front(); i++;
+	}
+	return buffer;
+}
+
+void Stollmann::send(boost::python::list &bytes)
+{
+	if(comHandle == NULL)
+		return;
+
+	uint32 length;
+	uint8 *packet = listToChars(bytes, &length);
+	DbgPrint("Wrote %i bytes to com: %08X", length, comHandle);
+	pComWrite(comHandle, packet, length);
+	delete []packet;
+}
+
+// Stollmann hooks
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 {
 	MessagePacket *packet = (MessagePacket*)new uint8[size+sizeof(MessagePacket)];
 	
+	if(comHandle == NULL)
+		comHandle = h;
+
 	DbgPrint("Com write, handle: %08X", h);
 	memcpy(packet->getData(), buffer, size);
 	packet->length = size;

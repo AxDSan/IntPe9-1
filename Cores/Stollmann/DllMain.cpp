@@ -22,7 +22,7 @@ VersionNo Stollmann::versionNo(2, 0);
 char *Stollmann::name = "Stollmann proxy R04";
 char *Stollmann::process = "NFCTester.exe";
 bool Stollmann::hasProcess = true;
-bool Stollmann::hasPython = false;
+bool Stollmann::hasPython = true;
 bool Stollmann::isProxy = true;
 /** Core information end **/
 

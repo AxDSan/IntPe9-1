@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "General/Memory.h"
 #include "Helper.h"
 
+#include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
+
 #define SLASH "\\"
 #define APP_DIR "Application"
 #define TARGET_ORIG "ehciTransport.orig.dll"
@@ -49,6 +52,12 @@ public:
 	// Proxy
 	int comWrite(HANDLE h, void* buffer, int size);
 	void comTransport(HANDLE h, int eventNo, bool a3, void *buffer, uint32 size);
+
+	// Python
+	void parsePython(const char *script);
+	uint8 *listToChars(boost::python::list &pList, uint32 *size);
+	void send(boost::python::list &bytes);
+	Stollmann *getInstance();
 
 	// Proxy old functions
 	ComWrite pComWrite;

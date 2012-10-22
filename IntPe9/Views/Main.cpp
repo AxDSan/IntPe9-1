@@ -264,6 +264,6 @@ void MainGui::selectedPacketChanged(const QModelIndex &current, const QModelInde
 	Packet *packet = model->getPacketAt(current.row());
 
 	_hexView->setData(*packet->getData());
-	_mainView.protocolView->clear();
-	_mainView.protocolView->insertTopLevelItems(0, *packet->getProtocol(prot));
+	//_mainView.protocolView->clear();
+	//_mainView.protocolView->insertTopLevelItems(0, *packet->getProtocol(prot));
 }
