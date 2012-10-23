@@ -55,9 +55,7 @@ public:
 
 	// Python
 	void parsePython(const char *script);
-	uint8 *listToChars(boost::python::list &pList, uint32 *size);
-	void send(boost::python::list &bytes);
-	Stollmann *getInstance();
+	void pythonComWrite(void* buffer, int size);
 
 	// Proxy old functions
 	ComWrite pComWrite;

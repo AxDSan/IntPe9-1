@@ -11,6 +11,9 @@
     <ClCompile Include="..\..\Cores\Helper.cpp">
       <Filter>Skeleton\Helper</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Cores\Stollmann\PythonWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Cores\Skeleton.h">
@@ -21,6 +24,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Cores\Helper.h">
       <Filter>Skeleton\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cores\Stollmann\PythonWrapper.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

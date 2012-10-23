@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Stollmann.h"
+#include "PythonWrapper.h"
 
 FARPROC proc[7];
 HANDLE comHandle = NULL;
@@ -23,10 +24,10 @@ uint32 returnAddress;
 
 BOOST_PYTHON_MODULE(stollman)
 {
-	boost::python::class_<Stollmann>("sm")
-		.def("send", &Stollmann::send);
+	boost::python::class_<PythonWrapper>("stollman")
+		.def("send", &PythonWrapper::send);
 
-	def("getInstance", &Stollmann::getInstance, boost::python::return_value_policy<boost::python::reference_existing_object>());
+	def("getInstance", &PythonWrapper::getInstance, boost::python::return_value_policy<boost::python::reference_existing_object>());
 }
 
 Stollmann::Stollmann() : Skeleton()
@@ -80,6 +81,7 @@ void Stollmann::initialize()
 	PyRun_SimpleString("import cStringIO");
 	PyRun_SimpleString("sm = stollman.getInstance()");
 	PyRun_SimpleString("sys.stderr = cStringIO.StringIO()");
+	PyRun_SimpleString("sys.stdout = sm");
 }
 
 void Stollmann::finalize()
@@ -90,11 +92,6 @@ void Stollmann::finalize()
 	FreeLibrary(dllHandle);
 
 	exit();
-}
-
-Stollmann *Stollmann::getInstance()
-{
-	return stollmann;
 }
 
 bool Stollmann::installProxy(const char *myPath)
@@ -161,37 +158,6 @@ void Stollmann::parsePython(const char *script)
 	}
 }
 
-uint8 *Stollmann::listToChars(boost::python::list &pList, uint32 *size)
-{
-	boost::python::stl_input_iterator<uint8> begin(pList), end;
-	std::list<uint8>bytes;
-	bytes.assign(begin, end);
-
-	*size = bytes.size();
-	uint8 *buffer;
-	buffer = new uint8[bytes.size()];
-
-	uint32 i = 0;
-	while(!bytes.empty())
-	{
-		buffer[i] = bytes.front();
-		bytes.pop_front(); i++;
-	}
-	return buffer;
-}
-
-void Stollmann::send(boost::python::list &bytes)
-{
-	if(comHandle == NULL)
-		return;
-
-	uint32 length;
-	uint8 *packet = listToChars(bytes, &length);
-	DbgPrint("Wrote %i bytes to com: %08X", length, comHandle);
-	pComWrite(comHandle, packet, length);
-	delete []packet;
-}
-
 // Stollmann hooks
 int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 {
@@ -210,6 +176,26 @@ int Stollmann::comWrite(HANDLE h, void* buffer, int size)
 
 	delete []packet;
 	return pComWrite(h, buffer, size);
+}
+
+void Stollmann::pythonComWrite(void* buffer, int size)
+{
+	// Guard
+	if(comHandle == NULL)
+		return;
+
+	MessagePacket *packet = (MessagePacket*)new uint8[size+sizeof(MessagePacket)];
+
+	DbgPrint("Python com write, handle: %08X", comHandle);
+	packet->reset();
+	memcpy(packet->getData(), buffer, size);
+	packet->length = size;
+	packet->type = INJECT_SEND;
+
+	sendMessagePacket(packet);
+
+	delete []packet;
+	pComWrite(comHandle, buffer, size);
 }
 
 void Stollmann::comTransport(HANDLE h, int eventNo, bool a3, void *buffer, uint32 size)
