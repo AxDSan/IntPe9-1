@@ -18,7 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Winsock.h"
 
 uint32 addressSend = 0;
+uint32 addressSendTo = 0;
 uint32 addressRecv = 0;
+uint32 addressRecvFrom = 0;
 uint32 addressWSASend = 0;
 uint32 addressWSARecv = 0;
 uint32 addressWSASendTo = 0;
@@ -45,6 +47,8 @@ void Winsock::initialize()
 	// Try to hook all send/recv functions from ws2_32 by IAT
 	_oldSend = (defSend)_upx->hookIatFunction("ws2_32", "send", (unsigned long)&newSend);
 	_oldRecv = (defRecv)_upx->hookIatFunction("ws2_32", "recv", (unsigned long)&newRecv);
+	_oldSendTo = (defSendTo)_upx->hookIatFunction("ws2_32", "sendto", (unsigned long)&newSendTo);
+	_oldRecvFrom = (defRecvFrom)_upx->hookIatFunction("ws2_32", "recvfrom", (unsigned long)&newRecvFrom);
 	_oldWSASend = (defWSASend)_upx->hookIatFunction("ws2_32", "WSASend", (unsigned long)&newWSASend);
 	_oldWSARecv = (defWSARecv)_upx->hookIatFunction("ws2_32", "WSARecv", (unsigned long)&newWSARecv);
 	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction("ws2_32", "WSASendTo", (unsigned long)&newWSASendTo);
@@ -66,6 +70,20 @@ void Winsock::initialize()
 			DbgPrint("Hooking recv by inline: %08X", addressRecv);
 			if((uint32)&recv)
 				Memory::writeJump((uint8*)addressRecv, (uint8*)CaveRecv, 1);
+		}
+		if(!_oldSendTo)
+		{
+			addressSendTo = ((uint32)&sendto) + OFFSET_JMP;
+			DbgPrint("Hooking sendto by inline: %08X", sendto);
+			if((uint32)&sendto)
+				Memory::writeJump((uint8*)sendto, (uint8*)CaveSendTo);
+		}
+		if(!_oldRecvFrom)
+		{
+			addressRecvFrom = ((uint32)&recvfrom) + OFFSET_RECVFROM;
+			DbgPrint("Hooking recvfrom by inline: %08X", addressRecvFrom);
+			if((uint32)&recvfrom)
+				Memory::writeJump((uint8*)addressRecvFrom, (uint8*)CaveRecvFrom, 1);
 		}
 		if(!_oldWSASend)
 		{
@@ -159,6 +177,50 @@ void WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved)
 	{
 		recvBuf->reset();
 		recvBuf->type = RECV;
+		recvBuf->length = bytesRecved;
+		memcpy(recvBuf->getData(), buf, recvBuf->length);
+		winsock->sendMessagePacket(recvBuf);
+	}
+}
+
+int WSAAPI newSendTo(SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen)
+{
+	// Get data and send it to front end
+	if(MP_MAX_SIZE < len)
+		winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", len, MP_MAX_SIZE);
+	else
+	{
+		sendBuf->reset();
+		sendBuf->type = SENDTO;
+		sendBuf->length = len;
+		memcpy(sendBuf->getData(), buf, sendBuf->length);
+		winsock->sendMessagePacket(sendBuf);
+	}
+
+	if(addressSend) //Inline hook so let codecave jump back
+		return 0;
+	return winsock->_oldSendTo(s, buf, len, flags, to, tolen);
+}
+
+int WSAAPI newRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen)
+{
+	int bytesRecved = winsock->_oldRecvFrom(s, buf, len, flags, from, fromlen);
+	inlineRecvFrom(s, buf, len, flags, from, fromlen, bytesRecved);
+	return bytesRecved;
+}
+
+void WSAAPI inlineRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen, int bytesRecved)
+{
+	if(bytesRecved <= 0)
+		return;
+
+	// Get data and send it to front end
+	if(MP_MAX_SIZE < bytesRecved)
+		winsock->DbgPrint("Tried to sniff a packet that is crazy big: %i, and i only have space for: %i", bytesRecved, MP_MAX_SIZE);
+	else
+	{
+		recvBuf->reset();
+		recvBuf->type = RECVFROM;
 		recvBuf->length = bytesRecved;
 		memcpy(recvBuf->getData(), buf, recvBuf->length);
 		winsock->sendMessagePacket(recvBuf);

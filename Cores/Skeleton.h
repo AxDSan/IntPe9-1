@@ -51,6 +51,8 @@ typedef int	   (WSAAPI *defWSARecv)(SOCKET s, LPWSABUF lpBuffers, DWORD dwBuffer
 typedef SOCKET (WSAAPI *defWSASocketA)(int af, int type, int protocol, LPWSAPROTOCOL_INFOA lpProtocolInfo, GROUP g, DWORD dwFlags);
 typedef int    (WSAAPI *defSend)(SOCKET s, const char *buf, int len, int flags);
 typedef int    (WSAAPI *defRecv)(SOCKET s, char *buf, int len, int flags);
+typedef int    (WSAAPI *defSendTo)(SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen);
+typedef int    (WSAAPI *defRecvFrom)(SOCKET s, const char *buf, int len, int flags, struct sockaddr *from, int *fromlen);
 
 int    WSAAPI newWSASendTo(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, const struct sockaddr *lpTo, int iToLen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine);
 int    WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesRecvd, LPDWORD lpFlags, struct sockaddr *lpFrom, LPINT lpFromlen, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine);
@@ -61,7 +63,8 @@ int    WSAAPI newWSARecv(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPDW
 SOCKET WSAAPI newWSASocketA(int af, int type, int protocol, LPWSAPROTOCOL_INFOA lpProtocolInfo, GROUP g, DWORD dwFlags);
 int    WSAAPI newSend(SOCKET s, const char *buf, int len, int flags);
 int    WSAAPI newRecv(SOCKET s, char *buf, int len, int flags);
-void   WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved = 0);
+int    WSAAPI newSendTo(SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen);
+int    WSAAPI newRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen);
 
 class Skeleton
 {
@@ -125,6 +128,8 @@ public:
 	defWSASocketA             _oldWSASocketA;
 	defSend                   _oldSend;
 	defRecv                   _oldRecv;
+	defSendTo                 _oldSendTo;
+	defRecvFrom               _oldRecvFrom;
 };
 
 #endif

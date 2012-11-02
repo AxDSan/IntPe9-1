@@ -58,7 +58,55 @@ __declspec(naked) void CaveRecv()
 		pop esi
 		pop ebx
 		leave 
-		ret 16
+		ret 0x10
+	}
+}
+
+__declspec(naked) void CaveSendTo()
+{
+	__asm
+	{
+		// Restore prolog
+		mov edi, edi
+		push ebp
+		mov ebp, esp
+
+		// call our function
+		push eax
+		push [ebp+0x1C]
+		push [ebp+0x18]
+		push [ebp+0x14]
+		push [ebp+0x10]
+		push [ebp+0xC]
+		push [ebp+0x8]
+		call newSendTo
+		pop eax
+
+		// Return with send
+		jmp addressSendTo
+	}
+}
+
+__declspec(naked) void CaveRecvFrom()
+{
+	__asm
+	{
+		push eax // Eax contains ret bytes so save it
+		push eax
+		push [ebp+0x1C]
+		push [ebp+0x18]
+		push [ebp+0x14]
+		push [ebp+0x10]
+		push [ebp+0x0C]
+		push [ebp+0x08]
+		call inlineRecvFrom
+		pop eax
+
+		// Restore bytes 
+		pop esi
+		pop ebx
+		leave 
+		ret 0x18
 	}
 }
 

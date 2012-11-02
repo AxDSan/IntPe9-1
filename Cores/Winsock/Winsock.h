@@ -23,7 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Static addresses
 extern uint32 addressSend;
+extern uint32 addressSendTo;
 extern uint32 addressRecv;
+extern uint32 addressRecvFrom;
 extern uint32 addressWSASend;
 extern uint32 addressWSARecv;
 extern uint32 addressWSASendTo;
@@ -31,15 +33,20 @@ extern uint32 addressWSARecvFrom;
 
 // Forward decelerations
 void CaveSend();
+void CaveSendTo();
 void CaveRecv();
+void CaveRecvFrom();
 void CaveWSASend();
 void CaveWSARecv();
 void CaveWSASendTo();
 void CaveWSARecvFrom();
+void WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved = 0);
+void WSAAPI inlineRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen, int bytesRecved = 0);
 
 // Offsets for ws2_32.dll 
 #define OFFSET_JMP 5
 #define OFFSET_RECV 0x97
+#define OFFSET_RECVFROM 0x9B
 #define OFFSET_WSARECV 0x95
 #define OFFSET_WSARECVFROM 0x8F
 
