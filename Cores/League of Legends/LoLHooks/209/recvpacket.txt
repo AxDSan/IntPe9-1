@@ -1,0 +1,30 @@
+.text:0097EA91                 add     esp, 10h
+.text:0097EA94                 jmp     short loc_97EADF
+.text:0097EA96 ; ---------------------------------------------------------------------------
+.text:0097EA96
+.text:0097EA96 loc_97EA96:                             ; CODE XREF: lol_enet_loop+42Ej
+.text:0097EA96                 cmp     esi, 3
+.text:0097EA99                 jnz     short loc_97EABA
+.text:0097EA9B                 mov     eax, [ebp+CriticalSection.DebugInfo]
+.text:0097EA9E                 test    eax, eax
+.text:0097EAA0                 jz      short loc_97EABA
+.text:0097EAA2                 cmp     dword ptr [edi+0F0h], 0
+.text:0097EAA9                 jz      short loc_97EABA
+.text:0097EAAB                 movzx   ax, byte ptr [eax]
+.text:0097EAAF                 mov     edx, [ebp+CriticalSection.LockCount]
+.text:0097EAB2                 push    eax
+.text:0097EAB3                 mov     eax, edi
+.text:0097EAB5                 call    handlePacket
+.text:0097EABA
+.text:0097EABA loc_97EABA:                             ; CODE XREF: lol_enet_loop+426j
+.text:0097EABA                                         ; lol_enet_loop+469j ...
+.text:0097EABA                 mov     ecx, [ebx-4]
+.text:0097EABD                 mov     [esp+160h+lpCriticalSection], 0
+.text:0097EAC5                 mov     eax, [ebp+CriticalSection.DebugInfo]
+.text:0097EAC8                 mov     edx, [ecx]
+.text:0097EACA                 mov     edx, [edx+0Ch]
+.text:0097EACD                 push    eax
+.text:0097EACE                 mov     eax, [ebp+CriticalSection.LockCount]
+.text:0097EAD1                 push    eax
+.text:0097EAD2                 mov     eax, [esp+168h+var_128]
+.text:0097EAD6                 push    eax

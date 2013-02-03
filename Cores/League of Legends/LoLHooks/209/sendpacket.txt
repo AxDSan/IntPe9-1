@@ -1,0 +1,123 @@
+55 8B EC 83 E4 F8 64 A1 00 00 00 00 6A FF 68 ?? ?? ?? ?? 50 8B 45 14 64 ?? ?? ?? ?? ?? ?? 83
+
+CPU Disasm
+Address   Hex dump          Command                                  Comments
+0097E360  /.  55            PUSH EBP
+0097E361  |.  8BEC          MOV EBP,ESP
+0097E363  |.  83E4 F8       AND ESP,FFFFFFF8                         ; QWORD (8.-byte) stack alignment
+0097E366  |.  64:A1 0000000 MOV EAX,DWORD PTR FS:[0]
+0097E36C  |.  6A FF         PUSH -1
+0097E36E  |.  68 4CE8BE00   PUSH 00BEE84C                            ; Entry point
+0097E373  |.  50            PUSH EAX
+0097E374  |.  8B45 14       MOV EAX,DWORD PTR SS:[ARG.4]
+0097E377  |.  64:8925 00000 MOV DWORD PTR FS:[0],ESP                 ; Installs SE handler 0BEE84C
+0097E37E  |.  83EC 10       SUB ESP,10
+0097E381  |.  53            PUSH EBX
+0097E382  |.  56            PUSH ESI
+0097E383  |.  57            PUSH EDI
+0097E384  |.  33FF          XOR EDI,EDI
+0097E386  |.  2BC7          SUB EAX,EDI
+0097E388  |.  8BD9          MOV EBX,ECX
+0097E38A  |.  74 17         JZ SHORT 0097E3A3
+0097E38C  |.  83E8 01       SUB EAX,1                                ; Switch (cases 1..2, 3 exits)
+0097E38F  |.  74 0E         JZ SHORT 0097E39F
+0097E391  |.  83E8 01       SUB EAX,1
+0097E394  |.  0F85 05010000 JNZ 0097E49F
+0097E39A  |.  8D77 02       LEA ESI,[EDI+2]                          ; Case 2 of switch League_of_Legends.97E38C
+0097E39D  |.  EB 09         JMP SHORT 0097E3A8
+0097E39F  |>  33F6          XOR ESI,ESI                              ; Case 1 of switch League_of_Legends.97E38C
+0097E3A1  |.  EB 05         JMP SHORT 0097E3A8
+0097E3A3  |>  BE 01000000   MOV ESI,1
+0097E3A8  |>  39BB 2CFFFFFF CMP DWORD PTR DS:[EBX-0D4],EDI
+0097E3AE  |.  0F84 EB000000 JE 0097E49F
+0097E3B4  |.  39BB 28FFFFFF CMP DWORD PTR DS:[EBX-0D8],EDI
+0097E3BA  |.  0F84 DF000000 JE 0097E49F
+0097E3C0  |.  8D4424 14     LEA EAX,[LOCAL.5]
+0097E3C4  |.  50            PUSH EAX                                 ; /Arg1 => OFFSET LOCAL.5
+0097E3C5  |.  B8 5CFEE503   MOV EAX,OFFSET 03E5FE5C                  ; |
+0097E3CA  |.  E8 1180A9FF   CALL 004163E0                            ; \League_of_Legends.004163E0
+0097E3CF  |.  8B45 0C       MOV EAX,DWORD PTR SS:[ARG.2]
+0097E3D2  |.  3BC7          CMP EAX,EDI
+0097E3D4  |.  897C24 24     MOV DWORD PTR SS:[LOCAL.1],EDI
+0097E3D8  |.  74 0D         JE SHORT 0097E3E7
+0097E3DA  |.  66:0FB608     MOVZX CX,BYTE PTR DS:[EAX]
+0097E3DE  |.  0FB7D1        MOVZX EDX,CX
+0097E3E1  |.  895424 10     MOV DWORD PTR SS:[LOCAL.6],EDX
+0097E3E5  |.  EB 04         JMP SHORT 0097E3EB
+0097E3E7  |>  897C24 10     MOV DWORD PTR SS:[LOCAL.6],EDI
+0097E3EB  |>  397B 0C       CMP DWORD PTR DS:[EBX+0C],EDI
+0097E3EE  |.  8B7D 08       MOV EDI,DWORD PTR SS:[ARG.1]
+0097E3F1  |.  74 27         JE SHORT 0097E41A
+0097E3F3  |.  57            PUSH EDI                                 ; /Arg3 => [ARG.1]
+0097E3F4  |.  50            PUSH EAX                                 ; |Arg2 => [ARG.2]
+0097E3F5  |.  68 10A7070C   PUSH OFFSET 0C07A710                     ; |Arg1 = League_of_Legends.0C07A710
+0097E3FA  |.  E8 A7ADDDFF   CALL <JMP.&MSVCR80.memcpy>               ; \MSVCR80.memcpy
+0097E3FF  |.  8B43 0C       MOV EAX,DWORD PTR DS:[EBX+0C]
+0097E402  |.  83C4 0C       ADD ESP,0C
+0097E405  |.  57            PUSH EDI                                 ; /Arg3
+0097E406  |.  68 10A7070C   PUSH OFFSET 0C07A710                     ; |Arg2 = League_of_Legends.0C07A710
+0097E40B  |.  50            PUSH EAX                                 ; |Arg1
+0097E40C  |.  E8 3F482100   CALL 00B92C50                            ; \League_of_Legends.00B92C50
+0097E411  |.  56            PUSH ESI
+0097E412  |.  57            PUSH EDI
+0097E413  |.  68 10A7070C   PUSH OFFSET 0C07A710
+0097E418  |.  EB 03         JMP SHORT 0097E41D
+0097E41A  |>  56            PUSH ESI
+0097E41B  |.  57            PUSH EDI
+0097E41C  |.  50            PUSH EAX
+0097E41D  |>  E8 0EEFFFFF   CALL 0097D330                            ; \League_of_Legends.0097D330
+0097E422  |.  8B4D 10       MOV ECX,DWORD PTR SS:[ARG.3]
+0097E425  |.  8B93 2CFFFFFF MOV EDX,DWORD PTR DS:[EBX-0D4]
+0097E42B  |.  83C4 0C       ADD ESP,0C
+0097E42E  |.  51            PUSH ECX                                 ; /Arg2 => [ARG.3]
+0097E42F  |.  52            PUSH EDX                                 ; |Arg1
+0097E430  |.  8BF0          MOV ESI,EAX                              ; |
+0097E432  |.  E8 D9F6FFFF   CALL 0097DB10                            ; \League_of_Legends.0097DB10
+0097E437  |.  83C4 08       ADD ESP,8
+0097E43A  |.  837B 10 00    CMP DWORD PTR DS:[EBX+10],0
+0097E43E  |.  74 40         JE SHORT 0097E480
+0097E440  |.  8B4424 10     MOV EAX,DWORD PTR SS:[LOCAL.6]
+0097E444  |.  66:3D 0001    CMP AX,100
+0097E448  |.  8B5B 10       MOV EBX,DWORD PTR DS:[EBX+10]
+0097E44B  |.  8B13          MOV EDX,DWORD PTR DS:[EBX]
+0097E44D  |.  6A 01         PUSH 1
+0097E44F  |.  8BCB          MOV ECX,EBX
+0097E451  |.  57            PUSH EDI
+0097E452  |.  73 25         JAE SHORT 0097E479
+0097E454  |.  50            PUSH EAX
+0097E455  |.  8B42 08       MOV EAX,DWORD PTR DS:[EDX+8]
+0097E458  |.  FFD0          CALL EAX
+0097E45A  |.  8B4424 14     MOV EAX,DWORD PTR SS:[ESP+14]
+0097E45E  |.  E8 6D880400   CALL 009C6CD0                            ; [League_of_Legends.009C6CD0
+0097E463  |.  B0 01         MOV AL,1
+0097E465  |.  8B4C24 1C     MOV ECX,DWORD PTR SS:[ESP+1C]
+0097E469  |.  64:890D 00000 MOV DWORD PTR FS:[0],ECX
+0097E470  |.  5F            POP EDI
+0097E471  |.  5E            POP ESI
+0097E472  |.  5B            POP EBX
+0097E473  |.  8BE5          MOV ESP,EBP
+0097E475  |.  5D            POP EBP
+0097E476  |.  C2 1000       RETN 10
+0097E479  |>  8B42 08       MOV EAX,DWORD PTR DS:[EDX+8]
+0097E47C  |.  6A 00         PUSH 0
+0097E47E  |.  FFD0          CALL EAX
+0097E480  |>  8B4424 14     MOV EAX,DWORD PTR SS:[ESP+14]
+0097E484  |.  E8 47880400   CALL 009C6CD0                            ; [League_of_Legends.009C6CD0
+0097E489  |.  B0 01         MOV AL,1
+0097E48B  |.  8B4C24 1C     MOV ECX,DWORD PTR SS:[ESP+1C]
+0097E48F  |.  64:890D 00000 MOV DWORD PTR FS:[0],ECX
+0097E496  |.  5F            POP EDI
+0097E497  |.  5E            POP ESI
+0097E498  |.  5B            POP EBX
+0097E499  |.  8BE5          MOV ESP,EBP
+0097E49B  |.  5D            POP EBP
+0097E49C  |.  C2 1000       RETN 10
+0097E49F  |>  8B4C24 1C     MOV ECX,DWORD PTR SS:[LOCAL.3]           ; Default case of switch League_of_Legends.97E38C
+0097E4A3  |.  5F            POP EDI
+0097E4A4  |.  5E            POP ESI
+0097E4A5  |.  32C0          XOR AL,AL
+0097E4A7  |.  64:890D 00000 MOV DWORD PTR FS:[0],ECX
+0097E4AE  |.  5B            POP EBX
+0097E4AF  |.  8BE5          MOV ESP,EBP
+0097E4B1  |.  5D            POP EBP
+0097E4B2  \.  C2 1000       RETN 10

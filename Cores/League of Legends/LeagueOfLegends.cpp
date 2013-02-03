@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Signatures.h"
 
 /** Core information begin **/
-VersionNo LeagueOfLegends::versionNo(2, 5);
+VersionNo LeagueOfLegends::versionNo(2, 6);
 char *LeagueOfLegends::name = "LoL inline";
 char *LeagueOfLegends::process = "League of Legends.exe";
 bool LeagueOfLegends::hasProcess = true;
@@ -240,7 +240,7 @@ static NAKED void AsmRecvPacket()
 		push eax
 		call LeagueOfLegends::stealRecvPacket
 		mov eax,[ebx+0x08]
-		cmp byte ptr [eax],0xFF
+		test eax, eax
 		RET
 	}
 }

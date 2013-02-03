@@ -126,10 +126,10 @@ public:
 	defWSASend                _oldWSASend;
 	defWSARecv                _oldWSARecv;
 	defWSASocketA             _oldWSASocketA;
-	defSend                   _oldSend;
-	defRecv                   _oldRecv;
-	defSendTo                 _oldSendTo;
-	defRecvFrom               _oldRecvFrom;
+	defSend                   _oldSend2, _oldSend;
+	defRecv                   _oldRecv2, _oldRecv;
+	defSendTo                 _oldSendTo2, _oldSendTo;
+	defRecvFrom               _oldRecvFrom2, _oldRecvFrom;
 };
 
 #endif

@@ -492,7 +492,7 @@ $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;user32.lib;Shell32.lib;QtXml4.lib;QtXmlPatterns4.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
@@ -515,7 +515,7 @@ $(SolutionDir)..\dep\mark $(TargetPath) Int9 48</Command>
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir="..\..\IntPe9\GeneratedFiles" MocDir="..\..\IntPe9\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir="..\..\IntPe9\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" QtVersion_x0020_Win32="4.8.3" />
+      <UserProperties UicDir="..\..\IntPe9\GeneratedFiles" MocDir="..\..\IntPe9\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir="..\..\IntPe9\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" QtVersion_x0020_Win32="4.8.3" Qt5Version_x0020_Win32="5.0.1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

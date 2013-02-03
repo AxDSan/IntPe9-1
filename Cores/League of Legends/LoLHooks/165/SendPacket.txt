@@ -70,7 +70,7 @@ restore:	mov fs:[00000000],esp
 	00754130 - 50                    - push eax
 	00754131 - E8 0A1D1A00           - call 008F5E40
 	00754136 - 8B 4D 10              - mov ecx,[ebp+10]
-	00754139 - 8B 93 34FFFFFF        - mov edx,[ebx-000000CC]
+	00754139 - 8B 93 34FFFFFF        - mov edx,[ebx-000000CC] 8B 4D 10 8B 93 34 FF FF FF 83 C4 0C
 	0075413F - 83 C4 0C              - add esp,0C
 	00754142 - 51                    - push ecx
 	00754143 - 52                    - push edx
@@ -78,7 +78,7 @@ restore:	mov fs:[00000000],esp
 	00754146 - E8 65F5FFFF           - call 007536B0
 	0075414B - 83 C4 08              - add esp,08
 	0075414E - 83 7B 10 00           - cmp dword ptr [ebx+10],00
-	00754152 - 74 1E                 - je 00754172
+	00754152 - 74 1E                 - je 00754172 74 ?? 8B 44 24 10 66 3D 00 01
 	00754154 - 8B 44 24 10           - mov eax,[esp+10]
 	00754158 - 66 3D 0001            - cmp ax,0100
 	0075415C - 8B 5B 10              - mov ebx,[ebx+10]
@@ -112,3 +112,106 @@ restore:	mov fs:[00000000],esp
 	007541A3 - 8B E5                 - mov esp,ebp
 	007541A5 - 5D                    - pop ebp
 	007541A6 - C2 1000               - ret 0010
+	
+# 0.0.0.209
+.text:0097E360 ; Attributes: bp-based frame
+.text:0097E360
+.text:0097E360 ; int __stdcall lol_send_packet1(size_t Size, void *Src, int, int)
+.text:0097E360 lol_send_packet1 proc near              ; DATA XREF: .rdata:017188ACo
+.text:0097E360
+.text:0097E360 var_18          = dword ptr -18h
+.text:0097E360 var_14          = dword ptr -14h
+.text:0097E360 var_C           = dword ptr -0Ch
+.text:0097E360 var_4           = dword ptr -4
+.text:0097E360 dataLenght      = dword ptr  8
+.text:0097E360 data            = dword ptr  0Ch
+.text:0097E360 arg_8           = dword ptr  10h
+.text:0097E360 arg_C           = dword ptr  14h
+.text:0097E360
+.text:0097E360                 push    ebp
+.text:0097E361                 mov     ebp, esp
+.text:0097E363                 and     esp, 0FFFFFFF8h
+.text:0097E366                 mov     eax, large fs:0
+.text:0097E36C                 push    0FFFFFFFFh
+.text:0097E36E                 push    offset sub_BEE84C
+
+char __userpurge lol_send_packet1<al>(int a1<eax>, int a2<ecx>, size_t Size, const void *Src, char a5, int a6)
+{
+  int v6; // ebx@1
+  signed int v7; // esi@4
+  int v8; // eax@15
+  int v9; // edx@15
+  int v10; // ecx@15
+  int v11; // edx@16
+  int v12; // ebx@16
+  int v14; // edx@17
+  int v15; // ecx@17
+  const void *v16; // [sp-14h] [bp-34h]@13
+  size_t v17; // [sp-10h] [bp-30h]@13
+  enet_uint32 v18; // [sp-Ch] [bp-2Ch]@13
+  int v19; // [sp+8h] [bp-18h]@10
+  int v20; // [sp+Ch] [bp-14h]@9
+  int v21; // [sp+14h] [bp-Ch]@1
+  int (*v22)(); // [sp+18h] [bp-8h]@1
+  int v23; // [sp+1Ch] [bp-4h]@1
+
+  v23 = -1;
+  v22 = sub_BEE84C;
+  v21 = a1;
+  v6 = a2;
+  if ( a6 )
+  {
+    if ( a6 == 1 )
+    {
+      v7 = 0;
+    }
+    else
+    {
+      if ( a6 != 2 )
+        return 0;
+      v7 = 2;
+    }
+  }
+  else
+  {
+    v7 = 1;
+  }
+  if ( !*(_DWORD *)(a2 - 212) || !*(_DWORD *)(a2 - 216) )
+    return 0;
+  sub_4163E0(&v20);
+  v23 = 0;
+  if ( Src )
+    v19 = *(_BYTE *)Src;
+  else
+    v19 = 0;
+  if ( *(_DWORD *)(v6 + 12) )
+  {
+    memcpy(&unk_C07A710, Src, Size);
+    sub_B92C50(*(_DWORD *)(v6 + 12), &unk_C07A710, Size);
+    v18 = v7;
+    v17 = Size;
+    v16 = &unk_C07A710;
+  }
+  else
+  {
+    v18 = v7;
+    v17 = Size;
+    v16 = Src;
+  }
+  v8 = (int)enet_packet_create(v16, v17, v18);
+  sub_97DB10(v8, *(_DWORD *)(v6 - 212), a5);
+  if ( *(_DWORD *)(v6 + 16) )
+  {
+    v12 = *(_DWORD *)(v6 + 16);
+    v11 = *(_DWORD *)v12;
+    if ( (_WORD)v19 < 0x100u )
+    {
+      (*(void (__thiscall **)(int, int, size_t, signed int))(v11 + 8))(v12, v19, Size, 1);
+      sub_9C6CD0(v15, v14);
+      return 1;
+    }
+    (*(void (__thiscall **)(int, _DWORD, size_t, signed int))(v9 + 8))(v12, 0, Size, 1);
+  }
+  sub_9C6CD0(v10, v9);
+  return 1;
+}

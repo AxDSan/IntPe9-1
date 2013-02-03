@@ -17,10 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Winsock.h"
 
+uint32 isRecvFrom = 0;
 uint32 addressSend = 0;
 uint32 addressSendTo = 0;
 uint32 addressRecv = 0;
 uint32 addressRecvFrom = 0;
+uint32 addressSend2 = 0;
+uint32 addressSendTo2 = 0;
+uint32 addressRecv2 = 0;
+uint32 addressRecvFrom2 = 0;
 uint32 addressWSASend = 0;
 uint32 addressWSARecv = 0;
 uint32 addressWSASendTo = 0;
@@ -45,74 +50,147 @@ void Winsock::initialize()
 	recvBuf = (MessagePacket*)new uint8[MP_MAX_SIZE];
 	
 	// Try to hook all send/recv functions from ws2_32 by IAT
-	_oldSend = (defSend)_upx->hookIatFunction("ws2_32", "send", (unsigned long)&newSend);
-	_oldRecv = (defRecv)_upx->hookIatFunction("ws2_32", "recv", (unsigned long)&newRecv);
-	_oldSendTo = (defSendTo)_upx->hookIatFunction("ws2_32", "sendto", (unsigned long)&newSendTo);
-	_oldRecvFrom = (defRecvFrom)_upx->hookIatFunction("ws2_32", "recvfrom", (unsigned long)&newRecvFrom);
+	_oldSend2 = (defSend)_upx->hookIatFunction("ws2_32", "send", (unsigned long)&newSend);
+	_oldRecv2 = (defRecv)_upx->hookIatFunction("ws2_32", "recv", (unsigned long)&newRecv);
+	_oldSendTo2 = (defSendTo)_upx->hookIatFunction("ws2_32", "sendto", (unsigned long)&newSendTo);
+	_oldRecvFrom2 = (defRecvFrom)_upx->hookIatFunction("ws2_32", "recvfrom", (unsigned long)&newRecvFrom);
 	_oldWSASend = (defWSASend)_upx->hookIatFunction("ws2_32", "WSASend", (unsigned long)&newWSASend);
 	_oldWSARecv = (defWSARecv)_upx->hookIatFunction("ws2_32", "WSARecv", (unsigned long)&newWSARecv);
 	_oldWSASendTo = (defWSASendTo)_upx->hookIatFunction("ws2_32", "WSASendTo", (unsigned long)&newWSASendTo);
 	_oldWSARecvFrom = (defWSARecvFrom)_upx->hookIatFunction("ws2_32", "WSARecvFrom", (unsigned long)&newWSARecvFrom);
 
+	// Try to hook all send/recv function from wsock32 by IAT
+	_oldSend = (defSend)_upx->hookIatFunction("wsock32", "send", (unsigned long)&newSend);
+	_oldRecv = (defRecv)_upx->hookIatFunction("wsock32", "recv", (unsigned long)&newRecv);
+	_oldSendTo = (defSendTo)_upx->hookIatFunction("wsock32", "sendto", (unsigned long)&newSendTo);
+	_oldRecvFrom = (defRecvFrom)_upx->hookIatFunction("wsock32", "recvfrom", (unsigned long)&newRecvFrom);
+
 	// Now check for every function if we succeeded and if not lets do some inline hooking
 	try
 	{
-		if(!_oldSend)
+		HMODULE ws2_32 = GetModuleHandle("ws2_32");
+		HMODULE wsock32 = GetModuleHandle("wsock32");
+
+		/*if(!_oldSend)
 		{
-			addressSend = ((uint32)&send) + OFFSET_JMP;
-			DbgPrint("Hooking send by inline: %08X", send);
-			if((uint32)&send)
-				Memory::writeJump((uint8*)send, (uint8*)CaveSend);
+			uint32 address = (uint32)GetProcAddress(wsock32, "WSOCK32.send");
+			addressSend = address + OFFSET_JMP;
+			DbgPrint("Hooking send by inline: %08X", address);
+			if(address)
+				Memory::writeJump((uint8*)address, (uint8*)CaveSend);
+			else
+				DbgPrint("   could not find the function");
 		}
 		if(!_oldRecv)
 		{
-			addressRecv = ((uint32)&recv) + OFFSET_RECV;
+			uint32 address = (uint32)GetProcAddress(wsock32, "recv");
+			addressRecv = address + OFFSET_RECV;
 			DbgPrint("Hooking recv by inline: %08X", addressRecv);
-			if((uint32)&recv)
+			if(address)
 				Memory::writeJump((uint8*)addressRecv, (uint8*)CaveRecv, 1);
+			else
+				DbgPrint("   could not find the function");
 		}
 		if(!_oldSendTo)
 		{
-			addressSendTo = ((uint32)&sendto) + OFFSET_JMP;
-			DbgPrint("Hooking sendto by inline: %08X", sendto);
-			if((uint32)&sendto)
-				Memory::writeJump((uint8*)sendto, (uint8*)CaveSendTo);
-		}
+			uint32 address = (uint32)GetProcAddress(wsock32, "sendto");
+			addressSendTo = address + OFFSET_JMP;
+			DbgPrint("Hooking sendto by inline: %08X", address);
+			if(address)
+				Memory::writeJump((uint8*)address, (uint8*)CaveSendTo);
+			else
+				DbgPrint("   could not find the function");
+		}*/
 		if(!_oldRecvFrom)
 		{
-			addressRecvFrom = ((uint32)&recvfrom) + OFFSET_RECVFROM;
+			uint32 address = (uint32)GetProcAddress(wsock32, "recvfrom");
+			addressRecvFrom = address + OFFSET_RECVFROM;
 			DbgPrint("Hooking recvfrom by inline: %08X", addressRecvFrom);
-			if((uint32)&recvfrom)
-				Memory::writeJump((uint8*)addressRecvFrom, (uint8*)CaveRecvFrom, 1);
+			if(address)
+				Memory::writeJump((uint8*)addressRecvFrom, (uint8*)CaveRecvFrom, 2);
+			else
+				DbgPrint("   could not find the function");
+		}
+		
+		if(!_oldSend2)
+		{
+			uint32 address = (uint32)GetProcAddress(ws2_32, "send");
+			addressSend2 = address + OFFSET_JMP;
+			DbgPrint("Hooking send2 by inline: %08X", address);
+			if(address)
+				Memory::writeJump((uint8*)address, (uint8*)CaveSend2);
+			else
+				DbgPrint("   could not find the function");
+		}
+		if(!_oldRecv2)
+		{
+			uint32 address = (uint32)GetProcAddress(ws2_32, "recv");
+			addressRecv2 = address + OFFSET_RECV2;
+			DbgPrint("Hooking recv2 by inline: %08X", addressRecv2);
+			if(address)
+				Memory::writeJump((uint8*)addressRecv2, (uint8*)CaveRecv2, 1);
+			else
+				DbgPrint("   could not find the function");
+		}
+		if(!_oldSendTo2)
+		{
+			uint32 address = (uint32)GetProcAddress(ws2_32, "sendto");
+			addressSendTo2 = address + OFFSET_JMP;
+			DbgPrint("Hooking sendto2 by inline: %08X", address);
+			if(address)
+				Memory::writeJump((uint8*)address, (uint8*)CaveSendTo2);
+			else
+				DbgPrint("   could not find the function");
+		}
+		if(!_oldRecvFrom2)
+		{
+			uint32 address = (uint32)GetProcAddress(ws2_32, "recvfrom");
+			addressRecvFrom2 = address + OFFSET_RECVFROM2;
+			DbgPrint("Hooking recvfrom2 by inline: %08X", addressRecvFrom2);
+			if(address)
+				Memory::writeJump((uint8*)addressRecvFrom2, (uint8*)CaveRecvFrom2, 1);
+			else
+				DbgPrint("   could not find the function");
 		}
 		if(!_oldWSASend)
 		{
-			addressWSASend = ((uint32)&WSASend) + OFFSET_JMP;
-			DbgPrint("Hooking WSASend by inline: %08X", WSASend);
-			if((uint32)&WSASend)
-				Memory::writeJump((uint8*)WSASend, (uint8*)CaveWSASend);
-
+			uint32 address = (uint32)GetProcAddress(ws2_32, "WSASend");
+			addressWSASend = address + OFFSET_JMP;
+			DbgPrint("Hooking WSASend by inline: %08X", address);
+			if(address)
+				Memory::writeJump((uint8*)address, (uint8*)CaveWSASend);
+			else
+				DbgPrint("   could not find the function");
 		}
 		if(!_oldWSARecv)
 		{
-			addressWSARecv = ((uint32)&WSARecv) + OFFSET_WSARECV;
+			uint32 address = (uint32)GetProcAddress(ws2_32, "WSARecv");
+			addressWSARecv = address + OFFSET_WSARECV;
 			DbgPrint("Hooking WSARecv inline: %08X", addressWSARecv);
-			if((uint32)&WSARecv)
+			if(address)
 				Memory::writeJump((uint8*)addressWSARecv, (uint8*)CaveWSARecv);
+			else
+				DbgPrint("   could not find the function");
 		}
 		if(!_oldWSASendTo)
 		{
-			addressWSASendTo = ((uint32)&WSASendTo) + OFFSET_JMP;
-			DbgPrint("Hooking WSASendTo inline: %08X", addressWSASendTo);
-			if((uint32)&WSASendTo)
-				Memory::writeJump((uint8*)WSASendTo, (uint8*)CaveWSASendTo);
+			uint32 address = (uint32)GetProcAddress(ws2_32, "WSASendTo");
+			addressWSASendTo = address + OFFSET_JMP;
+			DbgPrint("Hooking WSASendTo inline: %08X", address);
+			if(address)
+				Memory::writeJump((uint8*)address, (uint8*)CaveWSASendTo);
+			else
+				DbgPrint("   could not find the function");
 		}
 		if(!_oldWSARecvFrom)
 		{
-			addressWSARecvFrom = ((uint32)&WSARecvFrom) + OFFSET_WSARECVFROM;
+			uint32 address = (uint32)GetProcAddress(ws2_32, "WSARecvFrom");
+			addressWSARecvFrom = address + OFFSET_WSARECVFROM;
 			DbgPrint("Hooking WSARecvFrom inline: %08X", addressWSARecvFrom);
-			if((uint32)&WSARecvFrom)
+			if(address)
 				Memory::writeJump((uint8*)addressWSARecvFrom, (uint8*)CaveWSARecvFrom);
+			else
+				DbgPrint("   could not find the function");
 		}
 	}
 	catch(...)
@@ -161,11 +239,11 @@ int WSAAPI newSend(SOCKET s, const char *buf, int len, int flags)
 int WSAAPI newRecv(SOCKET s, char *buf, int len, int flags)
 {
 	int bytesRecved = winsock->_oldRecv(s, buf, len, flags);
-	inlineRecv(s, buf, len, flags, bytesRecved);
+	inlineRecv2(s, buf, len, flags, bytesRecved);
 	return bytesRecved;
 }
 
-void WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved)
+void WSAAPI inlineRecv2(SOCKET s, char *buf, int len, int flags, int bytesRecved)
 {
 	if(bytesRecved <= 0)
 		return;
@@ -205,11 +283,11 @@ int WSAAPI newSendTo(SOCKET s, const char *buf, int len, int flags, const struct
 int WSAAPI newRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen)
 {
 	int bytesRecved = winsock->_oldRecvFrom(s, buf, len, flags, from, fromlen);
-	inlineRecvFrom(s, buf, len, flags, from, fromlen, bytesRecved);
+	inlineRecvFrom2(s, buf, len, flags, from, fromlen, bytesRecved);
 	return bytesRecved;
 }
 
-void WSAAPI inlineRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen, int bytesRecved)
+void WSAAPI inlineRecvFrom2(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen, int bytesRecved)
 {
 	if(bytesRecved <= 0)
 		return;
@@ -297,8 +375,14 @@ int WSAAPI newWSARecvFrom(SOCKET s, LPWSABUF lpBuffers, DWORD dwBufferCount, LPD
 {
 	int errorNo = 0;
 
+	// Check for inline hook from ws2_32
 	if(!addressWSARecvFrom)
-		errorNo = winsock->_oldWSARecvFrom(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpFrom, lpFromlen, lpOverlapped, lpCompletionRoutine);
+	{
+		if(isRecvFrom) // Check for inline hook from wsock32
+			isRecvFrom = 0;
+		else
+			errorNo = winsock->_oldWSARecvFrom(s, lpBuffers, dwBufferCount, lpNumberOfBytesRecvd, lpFlags, lpFrom, lpFromlen, lpOverlapped, lpCompletionRoutine);
+	}
 
 	if(MP_MAX_SIZE < *lpNumberOfBytesRecvd)
 	{

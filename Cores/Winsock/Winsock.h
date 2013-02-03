@@ -22,10 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "General/Memory.h"
 
 // Static addresses
+extern uint32 isRecvFrom;
 extern uint32 addressSend;
 extern uint32 addressSendTo;
+extern uint32 addressSend2;
+extern uint32 addressSendTo2;
 extern uint32 addressRecv;
 extern uint32 addressRecvFrom;
+extern uint32 addressRecv2;
+extern uint32 addressRecvFrom2;
 extern uint32 addressWSASend;
 extern uint32 addressWSARecv;
 extern uint32 addressWSASendTo;
@@ -36,17 +41,22 @@ void CaveSend();
 void CaveSendTo();
 void CaveRecv();
 void CaveRecvFrom();
+void CaveSend2();
+void CaveSendTo2();
+void CaveRecv2();
+void CaveRecvFrom2();
 void CaveWSASend();
 void CaveWSARecv();
 void CaveWSASendTo();
 void CaveWSARecvFrom();
-void WSAAPI inlineRecv(SOCKET s, char *buf, int len, int flags, int bytesRecved = 0);
-void WSAAPI inlineRecvFrom(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen, int bytesRecved = 0);
+void WSAAPI inlineRecv2(SOCKET s, char *buf, int len, int flags, int bytesRecved = 0);
+void WSAAPI inlineRecvFrom2(SOCKET s, char *buf, int len, int flags, struct sockaddr *from, int *fromlen, int bytesRecved = 0);
 
 // Offsets for ws2_32.dll 
 #define OFFSET_JMP 5
-#define OFFSET_RECV 0x97
-#define OFFSET_RECVFROM 0x9B
+#define OFFSET_RECV2 0x97
+#define OFFSET_RECVFROM 0x5A
+#define OFFSET_RECVFROM2 0x9B
 #define OFFSET_WSARECV 0x95
 #define OFFSET_WSARECVFROM 0x8F
 
