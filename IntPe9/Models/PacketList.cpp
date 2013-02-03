@@ -36,7 +36,7 @@ void PacketList::clear()
 	_packets.clear();
 	_filteredPackets.clear();
 	mutexList.unlock();
-	reset();
+	//reset();
 	refresh();
 }
 

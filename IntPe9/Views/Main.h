@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Common.h>
 
 #include <QMessageBox>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <QStyledItemDelegate>
 #include <QFile>
 #include <QSettings>
@@ -44,7 +44,7 @@ class MainGui : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainGui(QWidget *parent = 0, Qt::WFlags flags = 0);
+	MainGui(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~MainGui();
 
 	//Methods

@@ -126,7 +126,7 @@ p, li { white-space: pre-wrap; }
   <include location="../Resources/IntPe.qrc"/>
   <include location="../Resources/IntPe.qrc"/>
   <include location="../Resources/IntPe.qrc"/>
-  <include location="../IntPe.qrc"/>
+  <include location="../Resources/IntPe.qrc"/>
  </resources>
  <connections>
   <connection>

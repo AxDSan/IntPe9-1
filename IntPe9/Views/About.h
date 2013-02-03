@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ABOUT_H
 #define ABOUT_H
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include "ui_About.h"
 
 class AboutGui : public QDialog
@@ -26,7 +26,7 @@ class AboutGui : public QDialog
 	Q_OBJECT
 
 public:
-	AboutGui(QWidget *parent = 0, Qt::WFlags flags = 0);
+	AboutGui(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~AboutGui();
 
 	Ui::aboutView *getView();

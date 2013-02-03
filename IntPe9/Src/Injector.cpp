@@ -99,7 +99,7 @@ QPixmap Injector::getIcon(uint32 pid)
 			CloseHandle(process);
 			if((int)icoHandle > 1)
 			{
-				QPixmap img = QPixmap::fromWinHICON(icoHandle);
+				QPixmap img; //= QPixmap::fromWinHICON(icoHandle);
 				DestroyIcon(icoHandle);
 				return img;
 			}
@@ -144,7 +144,7 @@ QPixmap Injector::getIcon(uint32 pid)
 				CloseHandle(process);
 				if((int)icoHandle > 1)
 				{
-					QPixmap img = QPixmap::fromWinHICON(icoHandle);
+					QPixmap img; // = qt_pixmapFromWinHICON(icoHandle);
 					DestroyIcon(icoHandle);
 					return img;
 				}

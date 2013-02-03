@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "About.h"
 
-AboutGui::AboutGui(QWidget *parent, Qt::WFlags flags)
+AboutGui::AboutGui(QWidget *parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 {
 	_aboutView.setupUi(this);

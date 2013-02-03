@@ -15,8 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QtGui/QApplication>
-#include <QCleanlooksStyle>
+#include <QtWidgets/QApplication>
 #include <QSharedMemory>
 #include "Views\Main.h"
 
@@ -34,7 +33,7 @@ int main(int argc, char *argv[])
 	{
 		// Start application
 		QApplication a(argc, argv);
-		a.setStyle(new QCleanlooksStyle); //FANCY!
+		a.setStyle(QStyleFactory::create("Fusion")); //FANCY!
 		MainGui mainGui;
 		QObject::connect(&a, SIGNAL(aboutToQuit()), &mainGui, SLOT(closing()));
 		mainGui.show();

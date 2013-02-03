@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "FilterView.h"
 
-FilterView::FilterView(QWidget *parent, Qt::WFlags flags)
+FilterView::FilterView(QWidget *parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 {
 	ui.setupUi(this);

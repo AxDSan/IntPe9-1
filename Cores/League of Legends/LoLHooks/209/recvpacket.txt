@@ -1,3 +1,4 @@
+
 .text:0097EA91                 add     esp, 10h
 .text:0097EA94                 jmp     short loc_97EADF
 .text:0097EA96 ; ---------------------------------------------------------------------------
@@ -28,3 +29,59 @@
 .text:0097EAD1                 push    eax
 .text:0097EAD2                 mov     eax, [esp+168h+var_128]
 .text:0097EAD6                 push    eax
+
+
+CPU Disasm
+Address   Hex dump          Command                                  Comments
+0097EA63  |.  8BF4          |MOV ESI,ESP
+0097EA65  |.  896424 18     |MOV DWORD PTR SS:[LOCAL.83],ESP
+0097EA69  |.  51            |PUSH ECX                                ; /Arg3 => 0
+0097EA6A  |.  B8 80DF9700   |MOV EAX,0097DF80                        ; |Entry point
+0097EA6F  |.  50            |PUSH EAX                                ; |Arg2 => League_of_Legends.97DF80, Entry point
+0097EA70  |.  8D4424 24     |LEA EAX,[LOCAL.82]                      ; |
+0097EA74  |.  50            |PUSH EAX                                ; |Arg1 => OFFSET LOCAL.82
+0097EA75  |.  897C24 28     |MOV DWORD PTR SS:[LOCAL.82],EDI         ; |
+0097EA79  |.  E8 F238BBFF   |CALL 00532370                           ; \League_of_Legends.00532370
+0097EA7E  |.  8B4C24 3C     |MOV ECX,DWORD PTR SS:[LOCAL.74]
+0097EA82  |.  8B55 0C       |MOV EDX,DWORD PTR SS:[EBP+0C]
+0097EA85  |.  8B7D 08       |MOV EDI,DWORD PTR SS:[EBP+8]
+0097EA88  |.  51            |PUSH ECX
+0097EA89  |.  6A 03         |PUSH 3
+0097EA8B  |.  52            |PUSH EDX
+0097EA8C  |.  E8 FF080000   |CALL 0097F390
+0097EA91  |.  83C4 10       |ADD ESP,10
+0097EA94  |.  EB 49         |JMP SHORT 0097EADF
+
+8B 45 08 85 C0 74 ?? 83 BF
+
+0097EA96  |>  83FE 03       |CMP ESI,3
+0097EA99  |.  75 1F         |JNE SHORT 0097EABA
+0097EA9B  |.  8B45 08       |MOV EAX,DWORD PTR SS:[EBP+8]
+0097EA9E  |.  85C0          |TEST EAX,EAX
+0097EAA0  |.  74 18         |JZ SHORT 0097EABA
+0097EAA2  |.  83BF F0000000 |CMP DWORD PTR DS:[EDI+0F0],0
+0097EAA9  |.  74 0F         |JE SHORT 0097EABA
+0097EAAB  |.  66:0FB600     |MOVZX AX,BYTE PTR DS:[EAX]
+0097EAAF  |.  8B55 0C       |MOV EDX,DWORD PTR SS:[EBP+0C]
+0097EAB2  |.  50            |PUSH EAX                                ; /Arg1
+0097EAB3  |.  8BC7          |MOV EAX,EDI                             ; |
+0097EAB5  |.  E8 26F4FFFF   |CALL 0097DEE0                           ; \League_of_Legends.0097DEE0
+0097EABA  |>  8B4B FC       |MOV ECX,DWORD PTR DS:[EBX-4]
+0097EABD  |.  C74424 18 000 |MOV DWORD PTR SS:[LOCAL.82],0
+0097EAC5  |.  8B45 08       |MOV EAX,DWORD PTR SS:[EBP+8]
+0097EAC8  |.  8B11          |MOV EDX,DWORD PTR DS:[ECX]
+0097EACA  |.  8B52 0C       |MOV EDX,DWORD PTR DS:[EDX+0C]
+0097EACD  |.  50            |PUSH EAX
+0097EACE  |.  8B45 0C       |MOV EAX,DWORD PTR SS:[EBP+0C]
+0097EAD1  |.  50            |PUSH EAX
+0097EAD2  |.  8B4424 40     |MOV EAX,DWORD PTR SS:[LOCAL.74]
+0097EAD6  |.  50            |PUSH EAX
+0097EAD7  |.  56            |PUSH ESI
+0097EAD8  |.  8D4424 28     |LEA EAX,[LOCAL.82]
+0097EADC  |.  50            |PUSH EAX
+0097EADD  |.  FFD2          |CALL EDX
+0097EADF  |>  8B45 10       |MOV EAX,DWORD PTR SS:[EBP+10]
+0097EAE2  |.  85C0          |TEST EAX,EAX
+0097EAE4  |.  74 06         |JZ SHORT 0097EAEC
+0097EAE6  |.  55            |PUSH EBP
+0097EAE7  |.  FFD0          |CALL EAX

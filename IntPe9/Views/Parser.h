@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PYTHON_H
 #define PYTHON_H
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 //Classes
 #include "Sniffer.h"
@@ -31,7 +31,7 @@ class ParserGui : public QDialog
 	Q_OBJECT
 
 public:
-	ParserGui(QWidget *parent = 0, Qt::WFlags flags = 0);
+	ParserGui(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~ParserGui();
 
 

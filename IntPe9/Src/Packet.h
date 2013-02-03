@@ -69,5 +69,6 @@ private:
 	//List view fields
 	QString _summary;
 };
-
+Q_DECLARE_METATYPE(Packet*);
+Q_DECLARE_METATYPE(QVector<Packet*>*);
 #endif

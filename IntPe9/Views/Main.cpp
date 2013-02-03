@@ -34,7 +34,7 @@ void debugPrint(char *str)
 	QMetaObject::invokeMethod(_mainGui, "addDebugString", Q_ARG(char*, str));
 }
 
-MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
+MainGui::MainGui(QWidget *parent, Qt::WindowFlags flags)
 	: QMainWindow(parent, flags)
 {
 	//In debug we can run from VS that will change the run dir, so fix that! (if needed)
@@ -87,13 +87,13 @@ MainGui::MainGui(QWidget *parent, Qt::WFlags flags)
 
 	//Set models
 	_mainView.tableSniffers->setModel(_manager->getSnifferModel());
-	_mainView.tableSniffers->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+	_mainView.tableSniffers->horizontalHeader()->setSectionsMovable(false);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(0, 25);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(1, 25);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(2, 40);
 	_mainView.tableSniffers->horizontalHeader()->resizeSection(3, 50);
 	_mainView.tableCores->setModel(_manager->getCoreModel());
-	_mainView.tableCores->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+	_mainView.tableCores->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	//Add actions to the scrollbar
 	_mainView.toolBar->addAction(_mainView.scrollAction);
@@ -243,11 +243,11 @@ void MainGui::setActiveSniffer(Sniffer *sniffer)
 		_mainView.buttonNewFilter->setEnabled(true);
 
 		//Header setup
-		_mainView.tablePackets->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+		_mainView.tablePackets->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 		_mainView.tablePackets->horizontalHeader()->resizeSection(0, 25);
 		_mainView.tablePackets->horizontalHeader()->resizeSection(1, 45);
 		_mainView.tablePackets->horizontalHeader()->resizeSection(2, 420);
-		_mainView.tableFilters->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+		_mainView.tableFilters->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 		_mainView.tableFilters->horizontalHeader()->resizeSection(0, 19);
 		_mainView.tableFilters->horizontalHeader()->resizeSection(1, 80);
 		_mainView.tableFilters->horizontalHeader()->resizeSection(2, 63);

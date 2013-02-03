@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef FILTER_VIEW_H
 #define FILTER_VIEW_H
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 //Classes
 #include "Filter.h"
@@ -33,7 +33,7 @@ class FilterView : public QDialog
 	Q_OBJECT
 
 public:
-	FilterView(QWidget *parent = 0, Qt::WFlags flags = 0);
+	FilterView(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	~FilterView();
 
 	

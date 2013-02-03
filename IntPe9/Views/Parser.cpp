@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Parser.h"
 
-ParserGui::ParserGui(QWidget *parent, Qt::WFlags flags)
+ParserGui::ParserGui(QWidget *parent, Qt::WindowFlags flags)
 : QDialog(parent, flags)
 {
 	_parserView.setupUi(this);
