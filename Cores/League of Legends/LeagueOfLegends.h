@@ -58,6 +58,8 @@ struct ChatPacket
 		LOCAL = 1,
 	};
 
+	uint32 cmd;
+	uint16 unk;
 	uint32 playerId;
 	Type type;
 	uint32 size;
@@ -70,6 +72,8 @@ struct ChatPacket
 	static ChatPacket *create(uint8 *text, uint32 length)
 	{
 		ChatPacket *packet = (ChatPacket*)malloc(sizeof(ChatPacket)+length);
+		packet->cmd = 0x2c;
+		packet->unk = 0;
 		packet->playerId = MYSELF;
 		packet->type = ALL;
 		packet->size = length;

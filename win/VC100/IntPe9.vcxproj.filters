@@ -110,6 +110,9 @@
     <CustomBuild Include="..\..\IntPe9\Views\FilterView.h">
       <Filter>Views</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\IntPe9\QHexEdit\xbytearray.h">
+      <Filter>QHexEdit</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\IntPe9\QHexEdit\license.txt">
@@ -310,12 +313,15 @@
     <ClCompile Include="..\..\IntPe9\Src\Protocol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Debug\moc_xbytearray.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\IntPe9\GeneratedFiles\Release\moc_xbytearray.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\IntPe9\QHexEdit\commands.h">
-      <Filter>QHexEdit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\IntPe9\QHexEdit\xbytearray.h">
       <Filter>QHexEdit</Filter>
     </ClInclude>
     <ClInclude Include="..\..\IntPe9\GeneratedFiles\ui_About.h">

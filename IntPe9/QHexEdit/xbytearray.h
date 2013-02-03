@@ -14,8 +14,9 @@ XByteArray also provides some functionality to insert, replace and remove
 single chars and QByteArras. Additionally some functions support rendering
 and converting to readable strings.
 */
-class XByteArray
+class XByteArray : public QObject
 {
+	Q_OBJECT
 public:
     explicit XByteArray();
 

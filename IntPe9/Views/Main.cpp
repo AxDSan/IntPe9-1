@@ -130,6 +130,8 @@ MainGui::MainGui(QWidget *parent, Qt::WindowFlags flags)
 	connect(_manager, SIGNAL(activeSnifferChanged(Sniffer*)), this, SLOT(setActiveSniffer(Sniffer*)));
 
 	qRegisterMetaType<char*>("char*");
+	qRegisterMetaType<QList<QPersistentModelIndex>>("QList<QPersistentModelIndex>");
+	qRegisterMetaType<QAbstractItemModel::LayoutChangeHint>("QAbstractItemModel::LayoutChangeHint");
 
 	DebugPrint("Connections are up and running.");
 }
@@ -249,6 +251,7 @@ void MainGui::setActiveSniffer(Sniffer *sniffer)
 		_mainView.tablePackets->horizontalHeader()->resizeSection(2, 420);
 		_mainView.tableFilters->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 		_mainView.tableFilters->horizontalHeader()->resizeSection(0, 19);
+
 		_mainView.tableFilters->horizontalHeader()->resizeSection(1, 80);
 		_mainView.tableFilters->horizontalHeader()->resizeSection(2, 63);
 
